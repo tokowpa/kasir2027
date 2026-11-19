@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kasir Realtime Firebase</title>
+  <!-- Dexie.js untuk Database Lokal Super Cepat -->
+  <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
+  <style>
+    :root {
+      --bg: #eef2f6;
+      --surface: #ffffff;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 30px;
+    }
+
+    /* Header & Navigasi */
+    header {
+      background: var(--surface);
+      padding: 12px 16px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 14px auto;
+      padding: 0 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+
+    /* Panel Checkout Atas (Total & Bayar) */
+    .checkout-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+    }
+
+    .total-box label, .pay-box label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .total-amount {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .change-amount {
+      font-size: 0.9rem;
+      margin-top: 4px;
+      font-weight: 600;
+      color: #4ade80;
+    }
+
+    .pay-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .pay-input:focus {
+      outline: 2px solid #38bdf8;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      grid-column: span 2;
+    }
+
+    /* Input & Tombol */
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-outline { background: #f1f5f9; color: var(--text); }
+    .btn-sm { padding: 6px 10px; font-size: 0.8rem; border-radius: 7px; }
+
+    /* Search & Dropdown Hasil */
+    .search-wrapper {
+      position: relative;
+    }
+
+    .search-results {
+      position: absolute;
+      top: 105%;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 50;
+      display: none;
+    }
+
+    .search-item {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .search-item:hover {
+      background: #f8fafc;
+    }
+
+    /* Keranjang Belanja */
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .cart-info {
+      flex: 1;
+    }
+
+    .cart-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .cart-price {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Daftar Produk (Tab Kelola) */
+    .product-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: none;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span>KASIR REALTIME</span>
+      <span id="syncStatus" class="status-badge">Menghubungkan...</span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('kasir')">Kasir</button>
+      <button class="tab-btn" onclick="switchTab('produk')">Kelola Produk</button>
+      <button class="tab-btn" onclick="switchTab('pengaturan')">Pengaturan</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- ================= TAB 1: KASIR ================= -->
+    <div id="tab-kasir">
+      <!-- Panel Checkout Atas -->
+      <div class="checkout-top">
+        <div class="total-box">
+          <label>TOTAL BELANJA</label>
+          <div class="total-amount" id="displayTotal">Rp 0</div>
+          <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+        </div>
+        <div class="pay-box">
+          <label>TUNAI / BAYAR (Rp)</label>
+          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="action-row">
+          <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
+          <button class="btn btn-success" style="flex:2" onclick="prosesBayar(false)">Selesai</button>
+          <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak RawBT</button>
+        </div>
+      </div>
+
+      <!-- Scan Barcode / Pencarian Produk -->
+      <div class="card">
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" placeholder="Scan barcode atau ketik nama produk..." autocomplete="off" autofocus>
+          <div id="searchResults" class="search-results"></div>
+        </div>
+      </div>
+
+      <!-- Keranjang Belanja -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <strong>Keranjang Belanja (<span id="cartCount">0</span>)</strong>
+          <small style="color:var(--muted)">Harga otomatis update realtime</small>
+        </div>
+        <div id="cartList">
+          <p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 2: KELOLA PRODUK ================= -->
+    <div id="tab-produk" class="hidden">
+      <div class="card">
+        <h3 style="margin-bottom:10px; font-size:1rem;">Tambah / Ubah Harga Produk</h3>
+        <form id="productForm" style="display:grid; gap:10px;">
+          <input type="text" id="prodBarcode" placeholder="Kode Barcode / ID Unik (Wajib)" required>
+          <input type="text" id="prodName" placeholder="Nama Produk (Contoh: Indomie Goreng)" required>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <input type="text" id="prodPrice" inputmode="numeric" placeholder="Harga Jual (Rp)" required>
+            <input type="number" id="prodStock" placeholder="Stok (Opsional)" value="100">
+          </div>
+          <button type="submit" class="btn btn-primary">Simpan & Sinkronkan ke Semua HP</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+          <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
+          <input type="text" id="filterProdInput" placeholder="Cari produk..." style="max-width:200px; padding:6px 10px;">
+        </div>
+        <div id="productList"></div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 3: PENGATURAN ================= -->
+    <div id="tab-pengaturan" class="hidden">
+      <div class="card" style="display:grid; gap:10px;">
+        <h3 style="font-size:1rem;">Identitas Toko & Struk</h3>
+        <input type="text" id="storeNameInput" placeholder="Nama Toko (Untuk Struk)">
+        <input type="text" id="storeAddrInput" placeholder="Alamat / No HP Toko">
+        <button class="btn btn-primary" onclick="saveStoreSettings()">Simpan Pengaturan</button>
+        <hr style="border:none; border-top:1px solid var(--border); margin:6px 0;">
+        <button class="btn btn-outline" onclick="forceFullResync()">Sinkron Ulang Semua Data dari Cloud</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- ================= SCRIPT FIREBASE & LOGIKA KASIR ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // =========================================================================
+    // 1. GANTI KONFIGURASI FIREBASE DI BAWAH INI DENGAN PROJECT FIREBASE ANDA
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
+  authDomain: "wpastore-1d2c3.firebaseapp.com",
+  databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "wpastore-1d2c3",
+  storageBucket: "wpastore-1d2c3.firebasestorage.app",
+  messagingSenderId: "752685099267",
+  appId: "1:752685099267:web:8c516725cdd0885739a136"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const dbCloud = getFirestore(app);
+
+    // =========================================================================
+    // 2. DATABASE LOKAL INDEXEDDB (DEXIE)
+    // =========================================================================
+    const dbLocal = new Dexie("KasirRealtimeDB");
+    dbLocal.version(1).stores({
+      products: "id, barcode, name, price, stock, updatedAt"
+    });
+
+    let cart = [];
+    let searchTimeout = null;
+    let unsubscribeListener = null;
+
+    // Helper Format Angka (100.000)
+    const formatRibuan = (num) => Number(num || 0).toLocaleString("id-ID");
+    const parseRibuan = (str) => Number(String(str).replace(/\D/g, "")) || 0;
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.style.display = "block";
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.style.display = "none"; }, 3000);
+    }
+
+    // =========================================================================
+    // 3. SINKRONISASI REALTIME FIRESTORE -> INDEXEDDB -> KERANJANG AKTIF
+    // =========================================================================
+    function startRealtimeSync() {
+      if (unsubscribeListener) unsubscribeListener();
+
+      const lastSync = Number(localStorage.getItem("lastSyncTime")) || 0;
+      const q = query(
+        collection(dbCloud, "products"),
+        where("updatedAt", ">", lastSync)
+      );
+
+      unsubscribeListener = onSnapshot(q, async (snapshot) => {
+        const statusEl = document.getElementById("syncStatus");
+        statusEl.innerText = "🟢 Realtime Aktif";
+        statusEl.style.background = "#dcfce7";
+        statusEl.style.color = "#166534";
+
+        let maxTime = lastSync;
+        const itemsToPut = [];
+        let updatedCount = 0;
+
+        snapshot.docChanges().forEach((change) => {
+          const data = change.doc.data();
+          const item = { id: change.doc.id, ...data };
+
+          if (change.type === "added" || change.type === "modified") {
+            itemsToPut.push(item);
+            if (data.updatedAt > maxTime) maxTime = data.updatedAt;
+            updatedCount++;
+
+            // Jika barang ini sedang ada di keranjang kasir, langsung update harganya!
+            const inCart = cart.find(c => c.id === item.id);
+            if (inCart && inCart.price !== item.price) {
+              inCart.price = item.price;
+              inCart.name = item.name;
+              showToast(`Harga "${item.name}" diperbarui ke Rp ${formatRibuan(item.price)}`);
+            }
+          }
+
+          if (change.type === "removed") {
+            dbLocal.products.delete(change.doc.id);
+          }
+        });
+
+        if (itemsToPut.length > 0) {
+          await dbLocal.products.bulkPut(itemsToPut);
+          localStorage.setItem("lastSyncTime", maxTime);
+          renderCart();
+          renderProductList();
+          if (lastSync > 0 && updatedCount > 0) {
+            showToast(`${updatedCount} data produk tersinkronisasi!`);
+          }
+        }
+      }, (err) => {
+        console.error(err);
+        const statusEl = document.getElementById("syncStatus");
+        statusEl.innerText = "🟠 Offline (Lokal)";
+        statusEl.style.background = "#fef3c7";
+        statusEl.style.color = "#92400e";
+      });
+    }
+
+    // =========================================================================
+    // 4. LOGIKA KASIR (SCAN BARCODE, PENCARIAN, KERANJANG, KEMBALIAN)
+    // =========================================================================
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+
+    // Tekan Enter (Barcode Scanner Hardware)
+    searchInput.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const code = searchInput.value.trim();
+        if (!code) return;
+
+        const exact = await dbLocal.products.where("barcode").equals(code).first();
+        if (exact) {
+          addToCart(exact);
+          searchInput.value = "";
+          searchResults.style.display = "none";
+        } else {
+          showToast("Barcode tidak ditemukan!");
+        }
+      }
+    });
+
+    // Ketik Nama Produk (Debounce 150ms)
+    searchInput.addEventListener("input", () => {
+      clearTimeout(searchTimeout);
+      const kw = searchInput.value.trim().toLowerCase();
+      if (!kw) {
+        searchResults.style.display = "none";
+        return;
+      }
+
+      searchTimeout = setTimeout(async () => {
+        const matches = await dbLocal.products
+          .filter(p => p.name.toLowerCase().includes(kw) || p.barcode.includes(kw))
+          .limit(15)
+          .toArray();
+
+        if (matches.length === 0) {
+          searchResults.innerHTML = `<div class="search-item" style="color:var(--muted)">Produk tidak ditemukan</div>`;
+        } else {
+          searchResults.innerHTML = matches.map(p => `
+            <div class="search-item" onclick="selectProduct('${p.id}')">
+              <div>
+                <strong>${p.name}</strong><br>
+                <small style="color:var(--muted)">Kode: ${p.barcode}</small>
+              </div>
+              <strong style="color:var(--primary)">Rp ${formatRibuan(p.price)}</strong>
+            </div>
+          `).join("");
+        }
+        searchResults.style.display = "block";
+      }, 150);
+    });
+
+    window.selectProduct = async (id) => {
+      const prod = await dbLocal.products.get(id);
+      if (prod) {
+        addToCart(prod);
+        searchInput.value = "";
+        searchResults.style.display = "none";
+        searchInput.focus();
+      }
+    };
+
+    function addToCart(product) {
+      const existing = cart.find(item => item.id === product.id);
+      if (existing) {
+        existing.qty += 1;
+        existing.price = product.price; // Pastikan selalu harga terbaru
+      } else {
+        cart.unshift({
+          id: product.id,
+          barcode: product.barcode,
+          name: product.name,
+          price: Number(product.price),
+          qty: 1
+        });
+      }
+      renderCart();
+    }
+
+    window.updateQty = (id, delta) => {
+      const idx = cart.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      cart[idx].qty += delta;
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      renderCart();
+    };
+
+    window.clearCart = () => {
+      cart = [];
+      document.getElementById("inputBayar").value = "";
+      renderCart();
+      searchInput.focus();
+    };
+
+    function getCartTotal() {
+      return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    }
+
+    function renderCart() {
+      const listEl = document.getElementById("cartList");
+      const total = getCartTotal();
+      document.getElementById("displayTotal").innerText = "Rp " + formatRibuan(total);
+      document.getElementById("cartCount").innerText = cart.reduce((s, i) => s + i.qty, 0);
+
+      if (cart.length === 0) {
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>`;
+      } else {
+        listEl.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <div class="cart-info">
+              <div class="cart-title">${item.name}</div>
+              <div class="cart-price">Rp ${formatRibuan(item.price)} x ${item.qty} = <strong>Rp ${formatRibuan(item.price * item.qty)}</strong></div>
+            </div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
+              <strong style="min-width:22px; text-align:center;">${item.qty}</strong>
+              <button class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
+            </div>
+          </div>
+        `).join("");
+      }
+      hitungKembalian();
+    }
+
+    // Format input bayar otomatis (100.000)
+    const inputBayar = document.getElementById("inputBayar");
+    inputBayar.addEventListener("input", () => {
+      const raw = parseRibuan(inputBayar.value);
+      inputBayar.value = raw > 0 ? formatRibuan(raw) : "";
+      hitungKembalian();
+    });
+
+    function hitungKembalian() {
+      const total = getCartTotal();
+      const bayar = parseRibuan(inputBayar.value);
+      const kembali = bayar - total;
+      const el = document.getElementById("displayChange");
+      if (bayar === 0) {
+        el.innerText = "Kembalian: Rp 0";
+        el.style.color = "#4ade80";
+      } else if (kembali < 0) {
+        el.innerText = "Kurang: Rp " + formatRibuan(Math.abs(kembali));
+        el.style.color = "#f87171";
+      } else {
+        el.innerText = "Kembalian: Rp " + formatRibuan(kembali);
+        el.style.color = "#4ade80";
+      }
+    }
+
+    // =========================================================================
+    // 5. PROSES BAYAR & CETAK STRUK RAWBT (58mm)
+    // =========================================================================
+    window.prosesBayar = (cetakStruk) => {
+      if (cart.length === 0) return showToast("Keranjang masih kosong!");
+      const total = getCartTotal();
+      const bayar = parseRibuan(inputBayar.value) || total;
+      const kembali = bayar - total;
+
+      if (bayar < total) return showToast("Uang pembayaran kurang!");
+
+      if (cetakStruk) {
+        const namaToko = localStorage.getItem("storeName") || "TOKO KASIR REALTIME";
+        const alamatToko = localStorage.getItem("storeAddr") || "Terima Kasih Atas Kunjungan Anda";
+        const waktu = new Date().toLocaleString("id-ID");
+
+        let struk = `${namaToko}\n${alamatToko}\n${waktu}\n--------------------------------\n`;
+        cart.forEach(item => {
+          struk += `${item.name}\n`;
+          struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
+        });
+        struk += `--------------------------------\n`;
+        struk += `TOTAL   : Rp ${formatRibuan(total)}\n`;
+        struk += `BAYAR   : Rp ${formatRibuan(bayar)}\n`;
+        struk += `KEMBALI : Rp ${formatRibuan(kembali)}\n`;
+        struk += `--------------------------------\nTerima Kasih\n\n\n`;
+
+        // Kirim ke aplikasi RawBT Android
+        window.location.href = "rawbt:" + encodeURIComponent(struk);
+      }
+
+      showToast("Transaksi berhasil!");
+      clearCart();
+    };
+
+    // =========================================================================
+    // 6. KELOLA PRODUK (TAMBAH / UBAH HARGA REALTIME KE FIREBASE)
+    // =========================================================================
+    const prodPriceInput = document.getElementById("prodPrice");
+    prodPriceInput.addEventListener("input", () => {
+      const raw = parseRibuan(prodPriceInput.value);
+      prodPriceInput.value = raw > 0 ? formatRibuan(raw) : "";
+    });
+
+    document.getElementById("productForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const barcode = document.getElementById("prodBarcode").value.trim();
+      const name = document.getElementById("prodName").value.trim();
+      const price = parseRibuan(prodPriceInput.value);
+      const stock = Number(document.getElementById("prodStock").value) || 0;
+
+      if (!barcode || !name || price <= 0) return showToast("Lengkapi data dengan benar!");
+
+      try {
+        await setDoc(doc(dbCloud, "products", barcode), {
+          barcode,
+          name,
+          price,
+          stock,
+          updatedAt: Date.now() // Trigger realtime ke HP kasir!
+        }, { merge: true });
+
+        showToast("Produk & harga berhasil disimpan!");
+        e.target.reset();
+      } catch (err) {
+        alert("Gagal menyimpan ke Firebase. Pastikan konfigurasi & Rules benar.\n" + err.message);
+      }
+    });
+
+    window.editProduct = async (id) => {
+      const p = await dbLocal.products.get(id);
+      if (!p) return;
+      document.getElementById("prodBarcode").value = p.barcode;
+      document.getElementById("prodName").value = p.name;
+      document.getElementById("prodPrice").value = formatRibuan(p.price);
+      document.getElementById("prodStock").value = p.stock || 0;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    window.deleteProduct = async (id) => {
+      if (!confirm("Hapus produk ini dari semua perangkat?")) return;
+      await deleteDoc(doc(dbCloud, "products", id));
+      await dbLocal.products.delete(id);
+      renderProductList();
+      showToast("Produk dihapus");
+    };
+
+    document.getElementById("filterProdInput").addEventListener("input", renderProductList);
+
+    async function renderProductList() {
+      const kw = document.getElementById("filterProdInput").value.trim().toLowerCase();
+      const all = await dbLocal.products.toArray();
+      document.getElementById("totalProdCount").innerText = all.length;
+
+      const filtered = kw 
+        ? all.filter(p => p.name.toLowerCase().includes(kw) || p.barcode.includes(kw))
+        : all;
+
+      const listEl = document.getElementById("productList");
+      listEl.innerHTML = filtered.slice(0, 50).map(p => `
+        <div class="product-row">
+          <div>
+            <strong>${p.name}</strong><br>
+            <small style="color:var(--muted)">Kode: ${p.barcode} | Harga: <b style="color:var(--primary)">Rp ${formatRibuan(p.price)}</b></small>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Ubah</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Hapus</button>
+          </div>
+        </div>
+      `).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
+    }
+
+    // =========================================================================
+    // 7. NAVIGASI TAB & PENGATURAN
+    // =========================================================================
+    window.switchTab = (tabName) => {
+      ["kasir", "produk", "pengaturan"].forEach(t => {
+        document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
+      });
+      document.querySelectorAll(".tab-btn").forEach((btn, i) => {
+        const names = ["kasir", "produk", "pengaturan"];
+        btn.classList.toggle("active", names[i] === tabName);
+      });
+      if (tabName === "produk") renderProductList();
+      if (tabName === "kasir") searchInput.focus();
+    };
+
+    window.saveStoreSettings = () => {
+      localStorage.setItem("storeName", document.getElementById("storeNameInput").value.trim());
+      localStorage.setItem("storeAddr", document.getElementById("storeAddrInput").value.trim());
+      showToast("Pengaturan toko disimpan!");
+    };
+
+    window.forceFullResync = async () => {
+      if (!confirm("Unduh ulang seluruh katalog produk dari Firebase?")) return;
+      localStorage.setItem("lastSyncTime", "0");
+      await dbLocal.products.clear();
+      startRealtimeSync();
+      showToast("Menyinkronkan ulang data...");
+    };
+
+    // Load pengaturan & jalankan sinkronisasi saat startup
+    document.getElementById("storeNameInput").value = localStorage.getItem("storeName") || "";
+    document.getElementById("storeAddrInput").value = localStorage.getItem("storeAddr") || "";
+    startRealtimeSync();
+  </script>
+</body>
+</html>
