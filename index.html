@@ -11,6 +11,8 @@
       --surface: #ffffff;
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
+      --bright-blue: #00b4ff;
+      --input-blue: #38bdf8;
       --success: #16a34a;
       --warning: #d97706;
       --danger: #dc2626;
@@ -35,7 +37,7 @@
 
     header {
       background: var(--surface);
-      padding: 12px 16px;
+      padding: 12px 20px;
       box-shadow: var(--shadow);
       position: sticky;
       top: 0;
@@ -44,12 +46,12 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
 
     .brand {
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       color: var(--primary);
       display: flex;
       align-items: center;
@@ -76,10 +78,10 @@
     .tab-btn {
       border: none;
       background: transparent;
-      padding: 7px 12px;
+      padding: 7px 14px;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--muted);
       cursor: pointer;
     }
@@ -91,9 +93,40 @@
     }
 
     .container {
-      max-width: 860px;
-      margin: 14px auto;
-      padding: 0 12px;
+      max-width: 1220px;
+      margin: 16px auto;
+      padding: 0 16px;
+    }
+
+    /* Layout Menu Kasir Mode Desktop: Kiri Keranjang, Kanan Checkout + Pencarian */
+    .kasir-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .kasir-left {
+      order: 1;
+    }
+
+    .kasir-right {
+      order: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .kasir-grid {
+        grid-template-columns: 1fr;
+      }
+      .kasir-left {
+        order: 2;
+      }
+      .kasir-right {
+        order: 1;
+      }
     }
 
     .card {
@@ -104,15 +137,19 @@
       margin-bottom: 12px;
     }
 
+    .kasir-grid .card {
+      margin-bottom: 0;
+    }
+
     .checkout-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       background: linear-gradient(135deg, #1e293b, #0f172a);
       color: #ffffff;
-      padding: 14px;
+      padding: 16px;
       border-radius: 14px;
-      margin-bottom: 12px;
+      box-shadow: var(--shadow);
     }
 
     .total-box label, .pay-box label {
@@ -120,13 +157,15 @@
       color: #cbd5e1;
       display: block;
       margin-bottom: 4px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
+    /* Nominal Total Belanja Warna Biru Cerah */
     .total-amount {
-      font-size: 1.65rem;
-      font-weight: 800;
-      color: #38bdf8;
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--bright-blue);
+      text-shadow: 0 0 12px rgba(0, 180, 255, 0.25);
     }
 
     .change-amount {
@@ -136,14 +175,15 @@
       color: #4ade80;
     }
 
+    /* Input Uang Pembeli Tulisan Biru */
     .pay-input {
       width: 100%;
       padding: 10px 12px;
       border-radius: 8px;
-      border: 1.5px solid #475569;
+      border: 1.5px solid #38bdf8;
       background: #0f172a;
-      color: #ffffff !important;
-      caret-color: #38bdf8;
+      color: var(--input-blue) !important;
+      caret-color: var(--bright-blue);
       font-size: 1.25rem;
       font-weight: 800;
       text-align: right;
@@ -154,8 +194,8 @@
     }
 
     .pay-input:focus {
-      outline: 2px solid #38bdf8;
-      border-color: #38bdf8;
+      outline: 2px solid var(--bright-blue);
+      border-color: var(--bright-blue);
     }
 
     .buyer-row {
@@ -163,19 +203,27 @@
       margin-top: 2px;
     }
 
+    /* Input Nama Pembeli Tulisan Biru */
     .buyer-input {
       width: 100%;
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-radius: 8px;
-      border: 1px solid #475569;
+      border: 1.5px solid #475569;
       background: #1e293b;
-      color: #ffffff !important;
-      caret-color: #38bdf8;
-      font-size: 0.9rem;
+      color: var(--input-blue) !important;
+      caret-color: var(--bright-blue);
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
     .buyer-input::placeholder {
       color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .buyer-input:focus {
+      outline: none;
+      border-color: var(--bright-blue);
     }
 
     .action-row {
@@ -191,7 +239,7 @@
       color: #92400e;
       padding: 10px 12px;
       border-radius: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -336,11 +384,11 @@
     .cart-item {
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      padding: 12px;
       border-radius: 12px;
       border: 1px solid var(--border);
-      margin-bottom: 8px;
-      gap: 8px;
+      margin-bottom: 10px;
+      gap: 10px;
     }
 
     .cart-top {
@@ -352,7 +400,7 @@
 
     .cart-title {
       font-weight: 800;
-      font-size: 0.96rem;
+      font-size: 0.98rem;
     }
 
     .cart-note {
@@ -361,28 +409,55 @@
       font-style: italic;
     }
 
+    /* Baris Bawah Keranjang: Variasi Kiri, Qty Tengah, Hapus Kanan */
     .cart-bottom {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
+      gap: 10px;
+    }
+
+    .cart-unit-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       flex-wrap: wrap;
-      gap: 8px;
+      justify-self: start;
     }
 
     .qty-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      justify-self: center;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 4px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .qty-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: #fff;
       font-weight: 800;
+      font-size: 1rem;
       cursor: pointer;
+    }
+
+    .cart-delete-right {
+      justify-self: end;
+    }
+
+    @media (max-width: 520px) {
+      .cart-bottom {
+        grid-template-columns: 1fr auto;
+      }
+      .cart-unit-left {
+        grid-column: span 2;
+      }
     }
 
     .product-row, .trx-row {
@@ -461,40 +536,49 @@
         <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal Edit</button>
       </div>
 
-      <div class="checkout-top">
-        <div class="total-box">
-          <label>TOTAL BELANJA</label>
-          <div class="total-amount" id="displayTotal">Rp 0</div>
-          <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+      <div class="kasir-grid">
+        <!-- KIRI: KERANJANG BELANJA -->
+        <div class="kasir-left">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong>Keranjang Belanja (<span id="cartCount">0</span>)</strong>
+              <small style="color:var(--muted)">Warna otomatis sesuai variasi</small>
+            </div>
+            <div id="cartList">
+              <p style="text-align:center; color:var(--muted); padding:28px 0;">Keranjang masih kosong</p>
+            </div>
+          </div>
         </div>
-        <div class="pay-box">
-          <label>UANG PEMBELI (Rp) — Kosong/Kurang = Hutang</label>
-          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
-        </div>
-        <div class="buyer-row">
-          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama Pembeli (Opsional — disarankan untuk catatan hutang)" autocomplete="off">
-        </div>
-        <div class="action-row">
-          <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
-          <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak RawBT</button>
-        </div>
-      </div>
 
-      <div class="card">
-        <div class="search-wrapper">
-          <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
-          <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
-          <div id="searchResults" class="search-results"></div>
-        </div>
-      </div>
+        <!-- KANAN: TOTAL BELANJA & PENCARIAN PRODUK -->
+        <div class="kasir-right">
+          <div class="checkout-top">
+            <div class="total-box">
+              <label>TOTAL BELANJA</label>
+              <div class="total-amount" id="displayTotal">Rp 0</div>
+              <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+            </div>
+            <div class="pay-box">
+              <label>UANG PEMBELI (Rp) — Kosong/Kurang = Hutang</label>
+              <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+            </div>
+            <div class="buyer-row">
+              <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama Pembeli (Opsional — untuk catatan hutang)" autocomplete="off">
+            </div>
+            <div class="action-row">
+              <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
+              <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak RawBT</button>
+            </div>
+          </div>
 
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-          <strong>Keranjang Belanja (<span id="cartCount">0</span>)</strong>
-          <small style="color:var(--muted)">Warna otomatis sesuai variasi</small>
-        </div>
-        <div id="cartList">
-          <p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>
+          <div class="card">
+            <label class="field-label">Cari / Scan Barcode Produk</label>
+            <div class="search-wrapper">
+              <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
+              <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
+              <div id="searchResults" class="search-results"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -587,9 +671,6 @@
       getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // =========================================================================
-    // 1. KONFIGURASI FIREBASE ANDA
-    // =========================================================================
     const firebaseConfig = {
         apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
   authDomain: "wpastore-1d2c3.firebaseapp.com",
@@ -603,9 +684,6 @@
     const app = initializeApp(firebaseConfig);
     const dbCloud = getFirestore(app);
 
-    // =========================================================================
-    // 2. DAFTAR VARIASI SATUAN & WARNA BACKGROUND
-    // =========================================================================
     const VARIANT_UNITS = [
       { key: "karton",  label: "Karton",  cls: "unit-karton" },
       { key: "pcs",     label: "Pcs",     cls: "unit-pcs" },
@@ -622,10 +700,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    // =========================================================================
-    // 3. DATABASE LOKAL INDEXEDDB (DEXIE)
-    // =========================================================================
-    const dbLocal = new Dexie("KasirRealtimeV4DB");
+    const dbLocal = new Dexie("KasirRealtimeV5DB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -680,9 +755,6 @@
       t._timer = setTimeout(() => { t.style.display = "none"; }, 3000);
     }
 
-    // =========================================================================
-    // 4. SINKRONISASI REALTIME PRODUK & TRANSAKSI
-    // =========================================================================
     function startRealtimeSync() {
       if (unsubProducts) unsubProducts();
       if (unsubTransactions) unsubTransactions();
@@ -769,9 +841,6 @@
       }
     }
 
-    // =========================================================================
-    // 5. KASIR: PENCARIAN JEDA 0,5 DETIK, KERANJANG & HAPUS ITEM
-    // =========================================================================
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
     const kasirLoader = document.getElementById("kasirSearchLoader");
@@ -796,7 +865,6 @@
       }
     });
 
-    // Jeda 500ms (0,5 detik) setelah berhenti mengetik
     searchInput.addEventListener("input", () => {
       clearTimeout(kasirSearchTimer);
       const kw = searchInput.value.trim().toLowerCase();
@@ -903,7 +971,6 @@
       renderCart();
     };
 
-    // Hapus langsung item dari keranjang jika tidak jadi dibeli
     window.removeCartItem = (uid) => {
       cart = cart.filter(i => i.uid !== uid);
       renderCart();
@@ -936,7 +1003,7 @@
       document.getElementById("cartCount").innerText = cart.reduce((s, i) => s + i.qty, 0);
 
       if (cart.length === 0) {
-        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>`;
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:28px 0;">Keranjang masih kosong</p>`;
       } else {
         listEl.innerHTML = cart.map(item => {
           const meta = getUnitMeta(item.unit);
@@ -954,22 +1021,24 @@
                   <span class="cart-title" style="margin-left:6px;">${item.name}</span>
                   ${item.note ? `<div class="cart-note">Catatan: ${item.note}</div>` : ""}
                 </div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
-                  <button class="btn btn-danger btn-sm" onclick="removeCartItem('${item.uid}')" title="Hapus item">🗑️</button>
-                </div>
+                <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
               </div>
               <div class="cart-bottom">
-                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <div class="cart-unit-left">
                   <select onchange="changeCartUnit('${item.uid}', this.value)" style="width:auto; padding:5px 8px; font-size:0.8rem; font-weight:700;">
                     ${unitOptions}
                   </select>
                   <small style="font-weight:700;">@ Rp ${formatRibuan(item.price)}</small>
                 </div>
+
                 <div class="qty-controls">
                   <button class="qty-btn" onclick="updateQty('${item.uid}', -1)">-</button>
-                  <strong style="min-width:22px; text-align:center;">${item.qty}</strong>
+                  <strong style="min-width:24px; text-align:center;">${item.qty}</strong>
                   <button class="qty-btn" onclick="updateQty('${item.uid}', 1)">+</button>
+                </div>
+
+                <div class="cart-delete-right">
+                  <button class="btn btn-danger btn-sm" onclick="removeCartItem('${item.uid}')" title="Hapus item">🗑️ Hapus</button>
                 </div>
               </div>
             </div>
@@ -1005,14 +1074,11 @@
       }
     }
 
-    // =========================================================================
-    // 6. TRANSAKSI & SISTEM HUTANG OTOMATIS
-    // =========================================================================
     window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
 
       const total = getCartTotal();
-      const bayar = parseRibuan(inputBayar.value); // Boleh 0 atau kurang dari total -> masuk HUTANG
+      const bayar = parseRibuan(inputBayar.value);
       const buyerName = document.getElementById("inputBuyerName").value.trim() || "Tanpa Nama";
 
       const isHutang = bayar < total;
@@ -1169,9 +1235,6 @@
       showToast(`Transaksi #${trx.code} dimuat ke keranjang beserta uang bayar`);
     };
 
-    // =========================================================================
-    // 7. KELOLA PRODUK: VARIASI SATUAN, HARGA BELI & CATATAN OPSIONAL
-    // =========================================================================
     const variantRowsContainer = document.getElementById("variantRowsContainer");
 
     window.toggleExtraFields = () => {
@@ -1357,9 +1420,6 @@
       }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
     }
 
-    // =========================================================================
-    // 8. NAVIGASI & PENGATURAN
-    // =========================================================================
     window.switchTab = (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
