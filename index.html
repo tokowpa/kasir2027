@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kasir Realtime Firebase</title>
-  <!-- Dexie.js untuk Database Lokal Super Cepat -->
+  <title>Kasir Realtime Firebase - Ecer & Karton</title>
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <style>
     :root {
@@ -13,6 +12,7 @@
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
       --success: #16a34a;
+      --warning: #d97706;
       --danger: #dc2626;
       --text: #1e293b;
       --muted: #64748b;
@@ -30,10 +30,9 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding-bottom: 30px;
+      padding-bottom: 40px;
     }
 
-    /* Header & Navigasi */
     header {
       background: var(--surface);
       padding: 12px 16px;
@@ -50,7 +49,7 @@
 
     .brand {
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--primary);
       display: flex;
       align-items: center;
@@ -58,28 +57,29 @@
     }
 
     .status-badge {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       padding: 4px 10px;
       border-radius: 99px;
       background: #f1f5f9;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .tabs {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       background: var(--bg);
       padding: 4px;
       border-radius: 10px;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
       border: none;
       background: transparent;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--muted);
       cursor: pointer;
     }
@@ -91,7 +91,7 @@
     }
 
     .container {
-      max-width: 800px;
+      max-width: 840px;
       margin: 14px auto;
       padding: 0 12px;
     }
@@ -104,7 +104,6 @@
       margin-bottom: 12px;
     }
 
-    /* Panel Checkout Atas (Total & Bayar) */
     .checkout-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -159,19 +158,41 @@
       grid-column: span 2;
     }
 
-    /* Input & Tombol */
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      padding: 11px 12px;
-      border: 1.5px solid var(--border);
+    .edit-banner {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      padding: 10px 12px;
       border-radius: 10px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border 0.2s;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
     }
 
-    input:focus {
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border 0.2s;
+      background: #fff;
+    }
+
+    input:focus, textarea:focus {
       border-color: var(--primary);
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 4px;
     }
 
     .btn {
@@ -179,7 +200,7 @@
       padding: 10px 14px;
       border-radius: 10px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -189,11 +210,11 @@
 
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-success { background: var(--success); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
     .btn-danger { background: var(--danger); color: #fff; }
     .btn-outline { background: #f1f5f9; color: var(--text); }
-    .btn-sm { padding: 6px 10px; font-size: 0.8rem; border-radius: 7px; }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; border-radius: 7px; }
 
-    /* Search & Dropdown Hasil */
     .search-wrapper {
       position: relative;
     }
@@ -207,7 +228,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-      max-height: 240px;
+      max-height: 260px;
       overflow-y: auto;
       z-index: 50;
       display: none;
@@ -220,24 +241,26 @@
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
+      gap: 8px;
     }
 
     .search-item:hover {
       background: #f8fafc;
     }
 
-    /* Keranjang Belanja */
     .cart-item {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
       gap: 8px;
     }
 
-    .cart-info {
-      flex: 1;
+    .cart-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
     }
 
     .cart-title {
@@ -245,9 +268,48 @@
       font-size: 0.95rem;
     }
 
-    .cart-price {
-      font-size: 0.82rem;
+    .cart-note {
+      font-size: 0.76rem;
       color: var(--muted);
+      font-style: italic;
+    }
+
+    .cart-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Tombol Pilihan Eceran / Kartonan */
+    .unit-toggle {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 8px;
+      gap: 3px;
+    }
+
+    .unit-btn {
+      border: none;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .unit-btn.active-ecer {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .unit-btn.active-karton {
+      background: var(--warning);
+      color: #fff;
     }
 
     .qty-controls {
@@ -266,14 +328,24 @@
       cursor: pointer;
     }
 
-    /* Daftar Produk (Tab Kelola) */
-    .product-row {
+    .product-row, .trx-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
       gap: 8px;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      font-weight: 600;
+      margin-top: 3px;
     }
 
     .toast {
@@ -305,6 +377,7 @@
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('kasir')">Kasir</button>
       <button class="tab-btn" onclick="switchTab('produk')">Kelola Produk</button>
+      <button class="tab-btn" onclick="switchTab('riwayat')">Riwayat</button>
       <button class="tab-btn" onclick="switchTab('pengaturan')">Pengaturan</button>
     </div>
   </header>
@@ -312,7 +385,11 @@
   <div class="container">
     <!-- ================= TAB 1: KASIR ================= -->
     <div id="tab-kasir">
-      <!-- Panel Checkout Atas -->
+      <div id="editTrxBanner" class="edit-banner hidden">
+        <span>✏️ Sedang mengedit transaksi #<strong id="editingTrxCode"></strong></span>
+        <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal Edit</button>
+      </div>
+
       <div class="checkout-top">
         <div class="total-box">
           <label>TOTAL BELANJA</label>
@@ -320,29 +397,27 @@
           <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
         </div>
         <div class="pay-box">
-          <label>TUNAI / BAYAR (Rp)</label>
+          <label>UANG PEMBELI (Rp)</label>
           <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0">
         </div>
         <div class="action-row">
           <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
-          <button class="btn btn-success" style="flex:2" onclick="prosesBayar(false)">Selesai</button>
+          <button class="btn btn-success" style="flex:2" onclick="prosesBayar(false)">Simpan</button>
           <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak RawBT</button>
         </div>
       </div>
 
-      <!-- Scan Barcode / Pencarian Produk -->
       <div class="card">
         <div class="search-wrapper">
-          <input type="text" id="searchInput" placeholder="Scan barcode atau ketik nama produk..." autocomplete="off" autofocus>
+          <input type="text" id="searchInput" placeholder="Scan barcode / ketik nama / catatan produk..." autocomplete="off" autofocus>
           <div id="searchResults" class="search-results"></div>
         </div>
       </div>
 
-      <!-- Keranjang Belanja -->
       <div class="card">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
           <strong>Keranjang Belanja (<span id="cartCount">0</span>)</strong>
-          <small style="color:var(--muted)">Harga otomatis update realtime</small>
+          <small style="color:var(--muted)">🛒 Eceran | 📦 Kartonan</small>
         </div>
         <div id="cartList">
           <p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>
@@ -353,28 +428,68 @@
     <!-- ================= TAB 2: KELOLA PRODUK ================= -->
     <div id="tab-produk" class="hidden">
       <div class="card">
-        <h3 style="margin-bottom:10px; font-size:1rem;">Tambah / Ubah Harga Produk</h3>
+        <h3 style="margin-bottom:10px; font-size:1rem;">Tambah / Ubah Produk</h3>
         <form id="productForm" style="display:grid; gap:10px;">
-          <input type="text" id="prodBarcode" placeholder="Kode Barcode / ID Unik (Wajib)" required>
-          <input type="text" id="prodName" placeholder="Nama Produk (Contoh: Indomie Goreng)" required>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <input type="text" id="prodPrice" inputmode="numeric" placeholder="Harga Jual (Rp)" required>
-            <input type="number" id="prodStock" placeholder="Stok (Opsional)" value="100">
+          <input type="hidden" id="prodDocId">
+
+          <div>
+            <label class="field-label">Nama Produk (Wajib)</label>
+            <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
           </div>
-          <button type="submit" class="btn btn-primary">Simpan & Sinkronkan ke Semua HP</button>
+
+          <div>
+            <label class="field-label">Kode Barcode (Opsional - Bisa Banyak, Pisahkan Koma / Enter)</label>
+            <textarea id="prodBarcodes" rows="2" placeholder="Kosongkan jika tidak ada barcode. Contoh: 8992761136014, 8992761999991"></textarea>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <div>
+              <label class="field-label">🛒 Harga Eceran (Wajib)</label>
+              <input type="text" id="prodPriceEcer" inputmode="numeric" placeholder="0" required>
+            </div>
+            <div>
+              <label class="field-label">📦 Harga Kartonan</label>
+              <input type="text" id="prodPriceKarton" inputmode="numeric" placeholder="Opsional">
+            </div>
+            <div>
+              <label class="field-label">💰 Harga Beli</label>
+              <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="Opsional">
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">Catatan Produk (Opsional)</label>
+            <input type="text" id="prodNote" placeholder="Contoh: 1 karton isi 40 pcs / rentengan">
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button type="submit" class="btn btn-primary" style="flex:1">Simpan & Sinkronkan Realtime</button>
+            <button type="button" class="btn btn-outline" onclick="resetProductForm()">Bersihkan</button>
+          </div>
         </form>
       </div>
 
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
           <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
-          <input type="text" id="filterProdInput" placeholder="Cari produk..." style="max-width:200px; padding:6px 10px;">
+          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / catatan..." style="max-width:240px; padding:6px 10px;">
         </div>
         <div id="productList"></div>
       </div>
     </div>
 
-    <!-- ================= TAB 3: PENGATURAN ================= -->
+    <!-- ================= TAB 3: RIWAYAT TRANSAKSI ================= -->
+    <div id="tab-riwayat" class="hidden">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong>Riwayat Transaksi (<span id="totalTrxCount">0</span>)</strong>
+          <small style="color:var(--muted)">Klik Edit untuk muat ulang ke keranjang</small>
+        </div>
+        <div id="transactionList"></div>
+      </div>
+    </div>
+
+    <!-- ================= TAB 4: PENGATURAN ================= -->
     <div id="tab-pengaturan" class="hidden">
       <div class="card" style="display:grid; gap:10px;">
         <h3 style="font-size:1rem;">Identitas Toko & Struk</h3>
@@ -397,10 +512,10 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     // =========================================================================
-    // 1. GANTI KONFIGURASI FIREBASE DI BAWAH INI DENGAN PROJECT FIREBASE ANDA
+    // 1. GANTI KONFIGURASI FIREBASE ANDA DI SINI
     // =========================================================================
     const firebaseConfig = {
-      apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
+        apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
   authDomain: "wpastore-1d2c3.firebaseapp.com",
   databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wpastore-1d2c3",
@@ -413,20 +528,32 @@
     const dbCloud = getFirestore(app);
 
     // =========================================================================
-    // 2. DATABASE LOKAL INDEXEDDB (DEXIE)
+    // 2. DATABASE LOKAL INDEXEDDB (DEXIE) - TANPA STOK
     // =========================================================================
-    const dbLocal = new Dexie("KasirRealtimeDB");
+    const dbLocal = new Dexie("KasirRealtimeV2DB");
     dbLocal.version(1).stores({
-      products: "id, barcode, name, price, stock, updatedAt"
+      products: "id, name, *barcodes, priceEcer, priceKarton, buyPrice, note, updatedAt",
+      transactions: "id, code, total, paid, change, createdAt, updatedAt"
     });
 
     let cart = [];
+    let editingTrxId = null;
     let searchTimeout = null;
-    let unsubscribeListener = null;
+    let unsubProducts = null;
+    let unsubTransactions = null;
 
-    // Helper Format Angka (100.000)
     const formatRibuan = (num) => Number(num || 0).toLocaleString("id-ID");
-    const parseRibuan = (str) => Number(String(str).replace(/\D/g, "")) || 0;
+    const parseRibuan = (str) => Number(String(str || "").replace(/\D/g, "")) || 0;
+
+    function parseBarcodeList(rawText) {
+      if (!rawText) return [];
+      return [...new Set(
+        String(rawText)
+          .split(/[\n,]+/)
+          .map(b => b.trim())
+          .filter(Boolean)
+      )];
+    }
 
     function showToast(msg) {
       const t = document.getElementById("toast");
@@ -437,43 +564,47 @@
     }
 
     // =========================================================================
-    // 3. SINKRONISASI REALTIME FIRESTORE -> INDEXEDDB -> KERANJANG AKTIF
+    // 3. SINKRONISASI REALTIME PRODUK & TRANSAKSI
     // =========================================================================
     function startRealtimeSync() {
-      if (unsubscribeListener) unsubscribeListener();
+      if (unsubProducts) unsubProducts();
+      if (unsubTransactions) unsubTransactions();
 
-      const lastSync = Number(localStorage.getItem("lastSyncTime")) || 0;
-      const q = query(
-        collection(dbCloud, "products"),
-        where("updatedAt", ">", lastSync)
-      );
+      const lastProdSync = Number(localStorage.getItem("lastProdSync")) || 0;
+      const qProd = query(collection(dbCloud, "products"), where("updatedAt", ">", lastProdSync));
 
-      unsubscribeListener = onSnapshot(q, async (snapshot) => {
-        const statusEl = document.getElementById("syncStatus");
-        statusEl.innerText = "🟢 Realtime Aktif";
-        statusEl.style.background = "#dcfce7";
-        statusEl.style.color = "#166534";
-
-        let maxTime = lastSync;
+      unsubProducts = onSnapshot(qProd, async (snapshot) => {
+        setSyncStatus(true);
+        let maxTime = lastProdSync;
         const itemsToPut = [];
-        let updatedCount = 0;
 
         snapshot.docChanges().forEach((change) => {
           const data = change.doc.data();
-          const item = { id: change.doc.id, ...data };
+          const item = {
+            id: change.doc.id,
+            name: data.name || "",
+            barcodes: Array.isArray(data.barcodes) ? data.barcodes : [],
+            priceEcer: Number(data.priceEcer || 0),
+            priceKarton: Number(data.priceKarton || 0),
+            buyPrice: Number(data.buyPrice || 0),
+            note: data.note || "",
+            updatedAt: Number(data.updatedAt || Date.now())
+          };
 
           if (change.type === "added" || change.type === "modified") {
             itemsToPut.push(item);
-            if (data.updatedAt > maxTime) maxTime = data.updatedAt;
-            updatedCount++;
+            if (item.updatedAt > maxTime) maxTime = item.updatedAt;
 
-            // Jika barang ini sedang ada di keranjang kasir, langsung update harganya!
-            const inCart = cart.find(c => c.id === item.id);
-            if (inCart && inCart.price !== item.price) {
-              inCart.price = item.price;
-              inCart.name = item.name;
-              showToast(`Harga "${item.name}" diperbarui ke Rp ${formatRibuan(item.price)}`);
-            }
+            // Update harga produk di keranjang aktif jika harga Ecer / Karton berubah
+            cart.forEach(c => {
+              if (c.productId === item.id) {
+                c.name = item.name;
+                c.note = item.note;
+                c.priceEcer = item.priceEcer;
+                c.priceKarton = item.priceKarton;
+                c.price = getEffectivePrice(item, c.unitType);
+              }
+            });
           }
 
           if (change.type === "removed") {
@@ -483,38 +614,77 @@
 
         if (itemsToPut.length > 0) {
           await dbLocal.products.bulkPut(itemsToPut);
-          localStorage.setItem("lastSyncTime", maxTime);
+          localStorage.setItem("lastProdSync", maxTime);
           renderCart();
           renderProductList();
-          if (lastSync > 0 && updatedCount > 0) {
-            showToast(`${updatedCount} data produk tersinkronisasi!`);
-          }
+          if (lastProdSync > 0) showToast(`${itemsToPut.length} produk tersinkronisasi!`);
         }
-      }, (err) => {
-        console.error(err);
-        const statusEl = document.getElementById("syncStatus");
-        statusEl.innerText = "🟠 Offline (Lokal)";
-        statusEl.style.background = "#fef3c7";
-        statusEl.style.color = "#92400e";
-      });
+      }, () => setSyncStatus(false));
+
+      const lastTrxSync = Number(localStorage.getItem("lastTrxSync")) || 0;
+      const qTrx = query(collection(dbCloud, "transactions"), where("updatedAt", ">", lastTrxSync));
+
+      unsubTransactions = onSnapshot(qTrx, async (snapshot) => {
+        setSyncStatus(true);
+        let maxTrxTime = lastTrxSync;
+        const trxToPut = [];
+
+        snapshot.docChanges().forEach((change) => {
+          const data = change.doc.data();
+          const trx = { id: change.doc.id, ...data };
+          if (change.type === "added" || change.type === "modified") {
+            trxToPut.push(trx);
+            if ((trx.updatedAt || 0) > maxTrxTime) maxTrxTime = trx.updatedAt;
+          }
+          if (change.type === "removed") {
+            dbLocal.transactions.delete(change.doc.id);
+          }
+        });
+
+        if (trxToPut.length > 0) {
+          await dbLocal.transactions.bulkPut(trxToPut);
+          localStorage.setItem("lastTrxSync", maxTrxTime);
+          renderTransactions();
+        }
+      }, () => setSyncStatus(false));
+    }
+
+    function setSyncStatus(online) {
+      const el = document.getElementById("syncStatus");
+      if (online) {
+        el.innerText = "🟢 Realtime Aktif";
+        el.style.background = "#dcfce7";
+        el.style.color = "#166534";
+      } else {
+        el.innerText = "🟠 Offline (Lokal)";
+        el.style.background = "#fef3c7";
+        el.style.color = "#92400e";
+      }
     }
 
     // =========================================================================
-    // 4. LOGIKA KASIR (SCAN BARCODE, PENCARIAN, KERANJANG, KEMBALIAN)
+    // 4. LOGIKA KERANJANG, ECERAN & KARTONAN
     // =========================================================================
+    function getEffectivePrice(product, unitType) {
+      if (unitType === "karton" && Number(product.priceKarton) > 0) {
+        return Number(product.priceKarton);
+      }
+      return Number(product.priceEcer || 0);
+    }
+
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
 
-    // Tekan Enter (Barcode Scanner Hardware)
     searchInput.addEventListener("keydown", async (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         const code = searchInput.value.trim();
         if (!code) return;
 
-        const exact = await dbLocal.products.where("barcode").equals(code).first();
+        // Cari berdasarkan multi-barcode terlebih dahulu
+        const exact = await dbLocal.products.where("barcodes").equals(code).first();
         if (exact) {
-          addToCart(exact);
+          addToCart(exact, "ecer");
           searchInput.value = "";
           searchResults.style.display = "none";
         } else {
@@ -523,7 +693,6 @@
       }
     });
 
-    // Ketik Nama Produk (Debounce 150ms)
     searchInput.addEventListener("input", () => {
       clearTimeout(searchTimeout);
       const kw = searchInput.value.trim().toLowerCase();
@@ -534,7 +703,11 @@
 
       searchTimeout = setTimeout(async () => {
         const matches = await dbLocal.products
-          .filter(p => p.name.toLowerCase().includes(kw) || p.barcode.includes(kw))
+          .filter(p =>
+            p.name.toLowerCase().includes(kw) ||
+            (p.note && p.note.toLowerCase().includes(kw)) ||
+            (Array.isArray(p.barcodes) && p.barcodes.some(b => b.toLowerCase().includes(kw)))
+          )
           .limit(15)
           .toArray();
 
@@ -544,10 +717,14 @@
           searchResults.innerHTML = matches.map(p => `
             <div class="search-item" onclick="selectProduct('${p.id}')">
               <div>
-                <strong>${p.name}</strong><br>
-                <small style="color:var(--muted)">Kode: ${p.barcode}</small>
+                <strong>${p.name}</strong>
+                ${p.note ? `<span class="badge-tag">${p.note}</span>` : ""}<br>
+                <small style="color:var(--muted)">
+                  🛒 Ecer: Rp ${formatRibuan(p.priceEcer)}
+                  ${p.priceKarton > 0 ? `| 📦 Karton: Rp ${formatRibuan(p.priceKarton)}` : ""}
+                </small>
               </div>
-              <strong style="color:var(--primary)">Rp ${formatRibuan(p.price)}</strong>
+              <strong style="color:var(--primary)">Rp ${formatRibuan(p.priceEcer)}</strong>
             </div>
           `).join("");
         }
@@ -558,32 +735,59 @@
     window.selectProduct = async (id) => {
       const prod = await dbLocal.products.get(id);
       if (prod) {
-        addToCart(prod);
+        addToCart(prod, "ecer");
         searchInput.value = "";
         searchResults.style.display = "none";
         searchInput.focus();
       }
     };
 
-    function addToCart(product) {
-      const existing = cart.find(item => item.id === product.id);
+    function addToCart(product, unitType = "ecer") {
+      const price = getEffectivePrice(product, unitType);
+      const existing = cart.find(item => item.productId === product.id && item.unitType === unitType);
+
       if (existing) {
         existing.qty += 1;
-        existing.price = product.price; // Pastikan selalu harga terbaru
+        existing.price = price;
+        existing.priceEcer = Number(product.priceEcer || 0);
+        existing.priceKarton = Number(product.priceKarton || 0);
       } else {
         cart.unshift({
-          id: product.id,
-          barcode: product.barcode,
+          uid: product.id + "_" + unitType + "_" + Date.now(),
+          productId: product.id,
           name: product.name,
-          price: Number(product.price),
+          note: product.note || "",
+          unitType,
+          price,
+          priceEcer: Number(product.priceEcer || 0),
+          priceKarton: Number(product.priceKarton || 0),
           qty: 1
         });
       }
       renderCart();
     }
 
-    window.updateQty = (id, delta) => {
-      const idx = cart.findIndex(i => i.id === id);
+    window.setCartUnit = async (uid, newUnit) => {
+      const item = cart.find(i => i.uid === uid);
+      if (!item) return;
+
+      const freshProd = await dbLocal.products.get(item.productId);
+      const priceEcer = freshProd ? Number(freshProd.priceEcer || 0) : item.priceEcer;
+      const priceKarton = freshProd ? Number(freshProd.priceKarton || 0) : item.priceKarton;
+
+      if (newUnit === "karton" && priceKarton <= 0) {
+        return showToast("Harga kartonan belum diatur untuk produk ini!");
+      }
+
+      item.unitType = newUnit;
+      item.priceEcer = priceEcer;
+      item.priceKarton = priceKarton;
+      item.price = newUnit === "karton" ? priceKarton : priceEcer;
+      renderCart();
+    };
+
+    window.updateQty = (uid, delta) => {
+      const idx = cart.findIndex(i => i.uid === uid);
       if (idx === -1) return;
       cart[idx].qty += delta;
       if (cart[idx].qty <= 0) cart.splice(idx, 1);
@@ -592,9 +796,16 @@
 
     window.clearCart = () => {
       cart = [];
+      editingTrxId = null;
+      document.getElementById("editTrxBanner").classList.add("hidden");
       document.getElementById("inputBayar").value = "";
       renderCart();
       searchInput.focus();
+    };
+
+    window.cancelEditTransaction = () => {
+      clearCart();
+      showToast("Edit transaksi dibatalkan");
     };
 
     function getCartTotal() {
@@ -610,24 +821,39 @@
       if (cart.length === 0) {
         listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>`;
       } else {
-        listEl.innerHTML = cart.map(item => `
-          <div class="cart-item">
-            <div class="cart-info">
-              <div class="cart-title">${item.name}</div>
-              <div class="cart-price">Rp ${formatRibuan(item.price)} x ${item.qty} = <strong>Rp ${formatRibuan(item.price * item.qty)}</strong></div>
+        listEl.innerHTML = cart.map(item => {
+          const isKarton = item.unitType === "karton";
+          return `
+            <div class="cart-item">
+              <div class="cart-top">
+                <div>
+                  <div class="cart-title">${item.name}</div>
+                  ${item.note ? `<div class="cart-note">Catatan: ${item.note}</div>` : ""}
+                </div>
+                <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
+              </div>
+              <div class="cart-bottom">
+                <div class="unit-toggle">
+                  <button class="unit-btn ${!isKarton ? "active-ecer" : ""}" onclick="setCartUnit('${item.uid}', 'ecer')">
+                    🛒 Ecer (${formatRibuan(item.priceEcer)})
+                  </button>
+                  <button class="unit-btn ${isKarton ? "active-karton" : ""}" onclick="setCartUnit('${item.uid}', 'karton')">
+                    📦 Karton ${item.priceKarton > 0 ? `(${formatRibuan(item.priceKarton)})` : "(Kosong)"}
+                  </button>
+                </div>
+                <div class="qty-controls">
+                  <button class="qty-btn" onclick="updateQty('${item.uid}', -1)">-</button>
+                  <strong style="min-width:22px; text-align:center;">${item.qty}</strong>
+                  <button class="qty-btn" onclick="updateQty('${item.uid}', 1)">+</button>
+                </div>
+              </div>
             </div>
-            <div class="qty-controls">
-              <button class="qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
-              <strong style="min-width:22px; text-align:center;">${item.qty}</strong>
-              <button class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
-            </div>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       }
       hitungKembalian();
     }
 
-    // Format input bayar otomatis (100.000)
     const inputBayar = document.getElementById("inputBayar");
     inputBayar.addEventListener("input", () => {
       const raw = parseRibuan(inputBayar.value);
@@ -653,24 +879,48 @@
     }
 
     // =========================================================================
-    // 5. PROSES BAYAR & CETAK STRUK RAWBT (58mm)
+    // 5. SIMPAN TRANSAKSI, RIWAYAT & EDIT KE KERANJANG + UANG PEMBELI
     // =========================================================================
-    window.prosesBayar = (cetakStruk) => {
+    window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
       const total = getCartTotal();
-      const bayar = parseRibuan(inputBayar.value) || total;
+      const bayar = parseRibuan(inputBayar.value);
+      if (bayar < total) return showToast("Uang pembeli kurang atau belum diisi!");
       const kembali = bayar - total;
 
-      if (bayar < total) return showToast("Uang pembayaran kurang!");
+      const now = Date.now();
+      const trxId = editingTrxId || ("trx_" + now);
+      const code = editingTrxId
+        ? (document.getElementById("editingTrxCode").innerText || trxId.slice(-6))
+        : String(now).slice(-6);
+
+      const trxData = {
+        id: trxId,
+        code,
+        items: cart.map(i => ({ ...i })),
+        total,
+        paid: bayar,
+        change: kembali,
+        createdAt: editingTrxId ? ((await dbLocal.transactions.get(trxId))?.createdAt || now) : now,
+        updatedAt: now
+      };
+
+      await dbLocal.transactions.put(trxData);
+      try {
+        await setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true });
+      } catch (e) {
+        console.warn("Simpan lokal sukses, sinkron cloud menyusul:", e);
+      }
 
       if (cetakStruk) {
         const namaToko = localStorage.getItem("storeName") || "TOKO KASIR REALTIME";
         const alamatToko = localStorage.getItem("storeAddr") || "Terima Kasih Atas Kunjungan Anda";
         const waktu = new Date().toLocaleString("id-ID");
 
-        let struk = `${namaToko}\n${alamatToko}\n${waktu}\n--------------------------------\n`;
+        let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\n--------------------------------\n`;
         cart.forEach(item => {
-          struk += `${item.name}\n`;
+          const labelUnit = item.unitType === "karton" ? "[KARTON]" : "[ECER]";
+          struk += `${item.name} ${labelUnit}\n`;
           struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
         });
         struk += `--------------------------------\n`;
@@ -679,55 +929,137 @@
         struk += `KEMBALI : Rp ${formatRibuan(kembali)}\n`;
         struk += `--------------------------------\nTerima Kasih\n\n\n`;
 
-        // Kirim ke aplikasi RawBT Android
         window.location.href = "rawbt:" + encodeURIComponent(struk);
       }
 
-      showToast("Transaksi berhasil!");
+      showToast(editingTrxId ? "Transaksi berhasil diperbarui!" : "Transaksi tersimpan!");
       clearCart();
+      renderTransactions();
+    };
+
+    async function renderTransactions() {
+      const all = await dbLocal.transactions.orderBy("updatedAt").reverse().toArray();
+      document.getElementById("totalTrxCount").innerText = all.length;
+      const listEl = document.getElementById("transactionList");
+
+      if (all.length === 0) {
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:16px;">Belum ada transaksi</p>`;
+        return;
+      }
+
+      listEl.innerHTML = all.slice(0, 50).map(trx => {
+        const ringkas = (trx.items || []).map(i => `${i.name} (${i.qty} ${i.unitType === "karton" ? "Ktn" : "Ecr"})`).join(", ");
+        return `
+          <div class="trx-row">
+            <div>
+              <strong>#${trx.code}</strong> • <small style="color:var(--muted)">${new Date(trx.createdAt || trx.updatedAt).toLocaleString("id-ID")}</small><br>
+              <small style="color:var(--muted)">${ringkas}</small><br>
+              <small>
+                Total: <b style="color:var(--primary)">Rp ${formatRibuan(trx.total)}</b> |
+                Bayar: <b>Rp ${formatRibuan(trx.paid)}</b> |
+                Kembali: <b style="color:var(--success)">Rp ${formatRibuan(trx.change)}</b>
+              </small>
+            </div>
+            <button class="btn btn-warning btn-sm" onclick="editTransaction('${trx.id}')">✏️ Edit</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Muat kembali transaksi ke keranjang belanja beserta uang pembeli
+    window.editTransaction = async (trxId) => {
+      const trx = await dbLocal.transactions.get(trxId);
+      if (!trx) return showToast("Data transaksi tidak ditemukan");
+
+      cart = (trx.items || []).map((item, idx) => ({
+        uid: item.uid || (item.productId + "_" + idx + "_" + Date.now()),
+        productId: item.productId,
+        name: item.name,
+        note: item.note || "",
+        unitType: item.unitType || "ecer",
+        price: Number(item.price || 0),
+        priceEcer: Number(item.priceEcer || item.price || 0),
+        priceKarton: Number(item.priceKarton || 0),
+        qty: Number(item.qty || 1)
+      }));
+
+      editingTrxId = trx.id;
+      document.getElementById("editingTrxCode").innerText = trx.code;
+      document.getElementById("editTrxBanner").classList.remove("hidden");
+
+      // Isi kembali uang pembeli
+      const paidNum = Number(trx.paid || 0);
+      inputBayar.value = paidNum > 0 ? formatRibuan(paidNum) : "";
+
+      renderCart();
+      switchTab("kasir");
+      showToast(`Transaksi #${trx.code} dimuat ke keranjang beserta uang bayar`);
     };
 
     // =========================================================================
-    // 6. KELOLA PRODUK (TAMBAH / UBAH HARGA REALTIME KE FIREBASE)
+    // 6. KELOLA PRODUK (MULTI-BARCODE OPSIONAL, HARGA BELI OPSIONAL, CATATAN)
     // =========================================================================
-    const prodPriceInput = document.getElementById("prodPrice");
-    prodPriceInput.addEventListener("input", () => {
-      const raw = parseRibuan(prodPriceInput.value);
-      prodPriceInput.value = raw > 0 ? formatRibuan(raw) : "";
+    ["prodPriceEcer", "prodPriceKarton", "prodBuyPrice"].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", () => {
+        const raw = parseRibuan(el.value);
+        el.value = raw > 0 ? formatRibuan(raw) : "";
+      });
     });
 
     document.getElementById("productForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const barcode = document.getElementById("prodBarcode").value.trim();
+      const existingId = document.getElementById("prodDocId").value.trim();
       const name = document.getElementById("prodName").value.trim();
-      const price = parseRibuan(prodPriceInput.value);
-      const stock = Number(document.getElementById("prodStock").value) || 0;
+      const barcodes = parseBarcodeList(document.getElementById("prodBarcodes").value);
+      const priceEcer = parseRibuan(document.getElementById("prodPriceEcer").value);
+      const priceKarton = parseRibuan(document.getElementById("prodPriceKarton").value); // Opsional
+      const buyPrice = parseRibuan(document.getElementById("prodBuyPrice").value); // Opsional
+      const note = document.getElementById("prodNote").value.trim(); // Opsional
 
-      if (!barcode || !name || price <= 0) return showToast("Lengkapi data dengan benar!");
+      if (!name || priceEcer <= 0) {
+        return showToast("Nama produk dan Harga Eceran wajib diisi!");
+      }
+
+      const docId = existingId || (barcodes[0] ? "bc_" + barcodes[0] : "prod_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
+
+      const payload = {
+        id: docId,
+        name,
+        barcodes,
+        priceEcer,
+        priceKarton,
+        buyPrice,
+        note,
+        updatedAt: Date.now()
+      };
 
       try {
-        await setDoc(doc(dbCloud, "products", barcode), {
-          barcode,
-          name,
-          price,
-          stock,
-          updatedAt: Date.now() // Trigger realtime ke HP kasir!
-        }, { merge: true });
-
-        showToast("Produk & harga berhasil disimpan!");
-        e.target.reset();
+        await setDoc(doc(dbCloud, "products", docId), payload, { merge: true });
+        await dbLocal.products.put(payload);
+        showToast("Produk tersimpan & tersinkron realtime!");
+        resetProductForm();
+        renderProductList();
       } catch (err) {
-        alert("Gagal menyimpan ke Firebase. Pastikan konfigurasi & Rules benar.\n" + err.message);
+        alert("Gagal menyimpan ke Firebase:\n" + err.message);
       }
     });
+
+    window.resetProductForm = () => {
+      document.getElementById("productForm").reset();
+      document.getElementById("prodDocId").value = "";
+    };
 
     window.editProduct = async (id) => {
       const p = await dbLocal.products.get(id);
       if (!p) return;
-      document.getElementById("prodBarcode").value = p.barcode;
-      document.getElementById("prodName").value = p.name;
-      document.getElementById("prodPrice").value = formatRibuan(p.price);
-      document.getElementById("prodStock").value = p.stock || 0;
+      document.getElementById("prodDocId").value = p.id;
+      document.getElementById("prodName").value = p.name || "";
+      document.getElementById("prodBarcodes").value = Array.isArray(p.barcodes) ? p.barcodes.join(", ") : "";
+      document.getElementById("prodPriceEcer").value = p.priceEcer ? formatRibuan(p.priceEcer) : "";
+      document.getElementById("prodPriceKarton").value = p.priceKarton ? formatRibuan(p.priceKarton) : "";
+      document.getElementById("prodBuyPrice").value = p.buyPrice ? formatRibuan(p.buyPrice) : "";
+      document.getElementById("prodNote").value = p.note || "";
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
@@ -746,37 +1078,51 @@
       const all = await dbLocal.products.toArray();
       document.getElementById("totalProdCount").innerText = all.length;
 
-      const filtered = kw 
-        ? all.filter(p => p.name.toLowerCase().includes(kw) || p.barcode.includes(kw))
+      const filtered = kw
+        ? all.filter(p =>
+            p.name.toLowerCase().includes(kw) ||
+            (p.note && p.note.toLowerCase().includes(kw)) ||
+            (Array.isArray(p.barcodes) && p.barcodes.some(b => b.toLowerCase().includes(kw)))
+          )
         : all;
 
       const listEl = document.getElementById("productList");
-      listEl.innerHTML = filtered.slice(0, 50).map(p => `
-        <div class="product-row">
-          <div>
-            <strong>${p.name}</strong><br>
-            <small style="color:var(--muted)">Kode: ${p.barcode} | Harga: <b style="color:var(--primary)">Rp ${formatRibuan(p.price)}</b></small>
+      listEl.innerHTML = filtered.slice(0, 60).map(p => {
+        const bcText = Array.isArray(p.barcodes) && p.barcodes.length > 0 ? p.barcodes.join(", ") : "Tanpa Barcode";
+        return `
+          <div class="product-row">
+            <div>
+              <strong>${p.name}</strong>
+              ${p.note ? `<span class="badge-tag">${p.note}</span>` : ""}<br>
+              <small style="color:var(--muted)">Barcode: ${bcText}</small><br>
+              <small>
+                🛒 Ecer: <b style="color:var(--primary)">Rp ${formatRibuan(p.priceEcer)}</b>
+                ${p.priceKarton > 0 ? `| 📦 Karton: <b style="color:var(--warning)">Rp ${formatRibuan(p.priceKarton)}</b>` : ""}
+                ${p.buyPrice > 0 ? `| 💰 Beli: <b>Rp ${formatRibuan(p.buyPrice)}</b>` : ""}
+              </small>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Ubah</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Hapus</button>
+            </div>
           </div>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Ubah</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Hapus</button>
-          </div>
-        </div>
-      `).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
+        `;
+      }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
     }
 
     // =========================================================================
-    // 7. NAVIGASI TAB & PENGATURAN
+    // 7. NAVIGASI & PENGATURAN
     // =========================================================================
     window.switchTab = (tabName) => {
-      ["kasir", "produk", "pengaturan"].forEach(t => {
+      ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
       });
+      const names = ["kasir", "produk", "riwayat", "pengaturan"];
       document.querySelectorAll(".tab-btn").forEach((btn, i) => {
-        const names = ["kasir", "produk", "pengaturan"];
         btn.classList.toggle("active", names[i] === tabName);
       });
       if (tabName === "produk") renderProductList();
+      if (tabName === "riwayat") renderTransactions();
       if (tabName === "kasir") searchInput.focus();
     };
 
@@ -787,17 +1133,19 @@
     };
 
     window.forceFullResync = async () => {
-      if (!confirm("Unduh ulang seluruh katalog produk dari Firebase?")) return;
-      localStorage.setItem("lastSyncTime", "0");
+      if (!confirm("Unduh ulang seluruh data produk & riwayat dari Firebase?")) return;
+      localStorage.setItem("lastProdSync", "0");
+      localStorage.setItem("lastTrxSync", "0");
       await dbLocal.products.clear();
+      await dbLocal.transactions.clear();
       startRealtimeSync();
       showToast("Menyinkronkan ulang data...");
     };
 
-    // Load pengaturan & jalankan sinkronisasi saat startup
     document.getElementById("storeNameInput").value = localStorage.getItem("storeName") || "";
     document.getElementById("storeAddrInput").value = localStorage.getItem("storeAddr") || "";
     startRealtimeSync();
+    renderTransactions();
   </script>
 </body>
 </html>
