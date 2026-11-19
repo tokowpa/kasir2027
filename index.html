@@ -101,14 +101,14 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 12px;
       flex: 1;
     }
 
     .hc-total-wrap {
       display: flex;
       flex-direction: column;
-      min-width: 150px;
+      min-width: 145px;
     }
 
     .hc-label {
@@ -140,14 +140,14 @@
     }
 
     .pay-input {
-      width: 155px;
+      width: 148px;
       padding: 7px 10px;
       border-radius: 8px;
       border: 1.5px solid #38bdf8;
       background: #0f172a;
       color: var(--input-blue) !important;
       caret-color: var(--bright-blue);
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 800;
       text-align: right;
     }
@@ -161,8 +161,40 @@
       border-color: var(--bright-blue);
     }
 
+    /* Rekomendasi Uang Pembeli di Antara Uang Pembeli & Nama Pembeli */
+    .hc-suggest-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-width: 245px;
+    }
+
+    .suggest-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .suggest-btn {
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      background: rgba(15, 23, 42, 0.85);
+      color: #7dd3fc;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 7px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .suggest-btn:hover {
+      background: var(--bright-blue);
+      color: #0f172a;
+      border-color: var(--bright-blue);
+    }
+
     .buyer-input {
-      width: 190px;
+      width: 175px;
       padding: 8px 10px;
       border-radius: 8px;
       border: 1.5px solid #475569;
@@ -243,8 +275,9 @@
       .kasir-right {
         order: 1;
       }
-      .pay-input, .buyer-input {
+      .pay-input, .buyer-input, .hc-suggest-wrap {
         width: 100%;
+        max-width: 100%;
       }
     }
 
@@ -464,7 +497,6 @@
       justify-self: start;
     }
 
-    /* Tombol Qty Diperbesar & Di Tengah */
     .qty-controls {
       display: flex;
       align-items: center;
@@ -610,6 +642,14 @@
         <div class="hc-field">
           <span class="hc-label">Uang Pembeli (Rp)</span>
           <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+        </div>
+
+        <!-- REKOMENDASI UANG PEMBELI DI ANTARA UANG PEMBELI & NAMA PEMBELI -->
+        <div class="hc-suggest-wrap">
+          <span class="hc-label">Rekomendasi Uang</span>
+          <div id="suggestMoneyButtons" class="suggest-chips">
+            <span style="font-size:0.72rem; color:#94a3b8;">-</span>
+          </div>
         </div>
 
         <div class="hc-field">
@@ -788,7 +828,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
+        apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
   authDomain: "wpastore-1d2c3.firebaseapp.com",
   databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wpastore-1d2c3",
@@ -928,7 +968,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV8DB");
+    const dbLocal = new Dexie("KasirRealtimeV9DB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -946,6 +986,28 @@
 
     const formatRibuan = (num) => Number(num || 0).toLocaleString("id-ID");
     const parseRibuan = (str) => Number(String(str || "").replace(/\D/g, "")) || 0;
+
+    // Format tanggal, jam, dan menit saja (tanpa detik/milidetik)
+    function formatDateTimeNoSeconds(ts) {
+      const d = new Date(ts || Date.now());
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    // Perataan teks untuk struk thermal 45mm / 80mm
+    function centerText(text, width) {
+      const str = String(text || "");
+      if (str.length >= width) return str;
+      const leftPad = Math.floor((width - str.length) / 2);
+      return " ".repeat(leftPad) + str;
+    }
+
+    function alignRightLine(leftLabel, rightValue, width) {
+      const l = String(leftLabel || "");
+      const r = String(rightValue || "");
+      const spaceCount = Math.max(1, width - l.length - r.length);
+      return l + " ".repeat(spaceCount) + r;
+    }
 
     function parseBarcodes(raw) {
       if (Array.isArray(raw)) return [...new Set(raw.map(x => String(x).trim()).filter(Boolean))];
@@ -1190,7 +1252,6 @@
       renderCart();
     };
 
-    // Minimal qty 1: jika qty 1 dan tekan -, tidak dihapus
     window.updateQty = (uid, delta) => {
       const idx = cart.findIndex(i => i.uid === uid);
       if (idx === -1) return;
@@ -1229,11 +1290,42 @@
       return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     }
 
+    // =========================================================================
+    // REKOMENDASI UANG PEMBELI OTOMATIS
+    // =========================================================================
+    function renderMoneySuggestions(total) {
+      const container = document.getElementById("suggestMoneyButtons");
+      if (!total || total <= 0) {
+        container.innerHTML = `<span style="font-size:0.72rem; color:#94a3b8;">-</span>`;
+        return;
+      }
+
+      const candidates = new Set([total]);
+      const steps = [5000, 10000, 20000, 50000, 100000];
+      steps.forEach(step => {
+        const roundedUp = Math.ceil(total / step) * step;
+        if (roundedUp >= total) candidates.add(roundedUp);
+      });
+
+      const sorted = [...candidates].sort((a, b) => a - b).slice(0, 4);
+      container.innerHTML = sorted.map(amount => {
+        const label = amount === total ? `Pas ${formatRibuan(amount)}` : formatRibuan(amount);
+        return `<button type="button" class="suggest-btn" onclick="applySuggestedMoney(${amount})">${label}</button>`;
+      }).join("");
+    }
+
+    window.applySuggestedMoney = (amount) => {
+      inputBayar.value = formatRibuan(amount);
+      hitungKembalian();
+      playScanSuccessSound();
+    };
+
     function renderCart() {
       const listEl = document.getElementById("cartList");
       const total = getCartTotal();
       document.getElementById("displayTotal").innerText = "Rp " + formatRibuan(total);
       document.getElementById("cartCount").innerText = cart.reduce((s, i) => s + i.qty, 0);
+      renderMoneySuggestions(total);
 
       if (cart.length === 0) {
         listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:24px 0;">Keranjang masih kosong</p>`;
@@ -1306,24 +1398,44 @@
       }
     }
 
+    // =========================================================================
+    // CETAK NOTA RAPI: NAMA TOKO DI TENGAH, SUBTOTAL RATA KANAN, WAKTU TANPA DETIK
+    // =========================================================================
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
       const paperSize = localStorage.getItem("paperSize") || "80";
-      const line = paperSize === "45" ? "------------------------" : "--------------------------------";
-      let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\nPembeli: ${buyerName}\nStatus : ${status}\n${line}\n`;
-      cart.forEach(item => {
-        const uLabel = getUnitMeta(item.unit).label.toUpperCase();
-        struk += `${item.name} [${uLabel}]\n`;
-        struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
-      });
-      struk += `${line}\n`;
-      struk += `TOTAL   : Rp ${formatRibuan(total)}\n`;
-      struk += `BAYAR   : Rp ${formatRibuan(bayar)}\n`;
-      if (status === "HUTANG") {
-        struk += `HUTANG  : Rp ${formatRibuan(debt)}\n`;
-      } else {
-        struk += `KEMBALI : Rp ${formatRibuan(change)}\n`;
+      const width = paperSize === "45" ? 26 : 36;
+      const line = "-".repeat(width);
+
+      let struk = "";
+      struk += centerText(namaToko.toUpperCase(), width) + "\n";
+      if (alamatToko) {
+        struk += centerText(alamatToko, width) + "\n";
       }
-      struk += `${line}\nTerima Kasih\n\n\n`;
+      struk += `${line}\n`;
+      struk += `No     : #${code}\n`;
+      struk += `Waktu  : ${waktu}\n`;
+      struk += `Pembeli: ${buyerName}\n`;
+      struk += `Status : ${status}\n`;
+      struk += `${line}\n`;
+
+      cart.forEach(item => {
+        const uLabel = getUnitMeta(item.unit).label;
+        const subtotalStr = "Rp " + formatRibuan(item.qty * item.price);
+        struk += `${item.name} (${uLabel})\n`;
+        const leftQtyPrice = `${item.qty} x ${formatRibuan(item.price)}`;
+        struk += alignRightLine(leftQtyPrice, subtotalStr, width) + "\n";
+      });
+
+      struk += `${line}\n`;
+      struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
+      struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
+      if (status === "HUTANG") {
+        struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
+      } else {
+        struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
+      }
+      struk += `${line}\n`;
+      struk += centerText("Terima Kasih", width) + "\n\n\n";
       return struk;
     }
 
@@ -1368,8 +1480,8 @@
 
       if (cetakStruk) {
         const namaToko = localStorage.getItem("storeName") || "TOKO KASIR";
-        const alamatToko = localStorage.getItem("storeAddr") || "Terima Kasih Atas Kunjungan Anda";
-        const waktu = new Date().toLocaleString("id-ID");
+        const alamatToko = localStorage.getItem("storeAddr") || "";
+        const waktu = formatDateTimeNoSeconds(now);
         const struk = buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change);
         window.location.href = "rawbt:" + encodeURIComponent(struk);
       }
@@ -1381,7 +1493,7 @@
     };
 
     // =========================================================================
-    // RIWAYAT TRANSAKSI (50 PER HALAMAN + PENCARIAN NAMA PEMBELI)
+    // RIWAYAT TRANSAKSI (50 PER HALAMAN + WAKTU TANPA DETIK)
     // =========================================================================
     const filterTrxInput = document.getElementById("filterTrxInput");
     const trxSearchLoader = document.getElementById("trxSearchLoader");
@@ -1449,7 +1561,7 @@
           <div class="trx-row">
             <div>
               <strong>#${trx.code}</strong> • <strong>${trx.buyerName || "Tanpa Nama"}</strong> ${statusBadge}<br>
-              <small style="color:var(--muted)">${new Date(trx.createdAt || trx.updatedAt).toLocaleString("id-ID")} • ${ringkas}</small><br>
+              <small style="color:var(--muted)">${formatDateTimeNoSeconds(trx.createdAt || trx.updatedAt)} • ${ringkas}</small><br>
               <small>
                 Total: <b style="color:var(--primary)">Rp ${formatRibuan(trx.total)}</b> |
                 Bayar: <b>Rp ${formatRibuan(trx.paid)}</b> |
@@ -1703,7 +1815,7 @@
     }
 
     // =========================================================================
-    // NAVIGASI & PENGATURAN (UKURAN PRINT 45mm/80mm + HAPUS RIWAYAT KECUALI HUTANG)
+    // NAVIGASI & PENGATURAN
     // =========================================================================
     window.switchTab = (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
