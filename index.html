@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kasir Realtime Firebase - Ecer & Karton</title>
+  <title>Kasir Realtime Firebase - Variasi Satuan</title>
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <style>
     :root {
@@ -91,7 +91,7 @@
     }
 
     .container {
-      max-width: 840px;
+      max-width: 860px;
       margin: 14px auto;
       padding: 0 12px;
     }
@@ -183,7 +183,7 @@
       background: #fff;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       border-color: var(--primary);
     }
 
@@ -228,7 +228,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-      max-height: 260px;
+      max-height: 280px;
       overflow-y: auto;
       z-index: 50;
       display: none;
@@ -248,12 +248,65 @@
       background: #f8fafc;
     }
 
+    /* Warna Background Tiap Variasi */
+    .var-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.73rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 7px;
+      border: 1px solid rgba(0,0,0,0.08);
+      text-transform: uppercase;
+    }
+
+    .unit-karton { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+    .unit-pcs    { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    .unit-renteng{ background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+    .unit-kg     { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+    .unit-gram   { background: #ccfbf1; color: #0f766e; border-color: #5eead4; }
+    .unit-bal    { background: #e0e7ff; color: #4338ca; border-color: #a5b4fc; }
+    .unit-slop   { background: #ffe4e6; color: #be123c; border-color: #fda4af; }
+    .unit-pak    { background: #cffafe; color: #0e7490; border-color: #67e8f9; }
+    .unit-sak    { background: #e7e5e4; color: #57534e; border-color: #d6d3d1; }
+
+    /* Baris Variasi pada Form Produk */
+    .variant-builder {
+      border: 1px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .variant-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 1.2fr auto;
+      gap: 6px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .variant-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
     .cart-item {
       display: flex;
       flex-direction: column;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
       gap: 8px;
+      transition: background 0.2s;
     }
 
     .cart-top {
@@ -264,8 +317,8 @@
     }
 
     .cart-title {
-      font-weight: 700;
-      font-size: 0.95rem;
+      font-weight: 800;
+      font-size: 0.96rem;
     }
 
     .cart-note {
@@ -282,36 +335,6 @@
       gap: 8px;
     }
 
-    /* Tombol Pilihan Eceran / Kartonan */
-    .unit-toggle {
-      display: inline-flex;
-      background: #f1f5f9;
-      padding: 3px;
-      border-radius: 8px;
-      gap: 3px;
-    }
-
-    .unit-btn {
-      border: none;
-      padding: 5px 9px;
-      border-radius: 6px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: transparent;
-      color: var(--muted);
-    }
-
-    .unit-btn.active-ecer {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .unit-btn.active-karton {
-      background: var(--warning);
-      color: #fff;
-    }
-
     .qty-controls {
       display: flex;
       align-items: center;
@@ -323,7 +346,7 @@
       height: 28px;
       border-radius: 7px;
       border: 1px solid var(--border);
-      background: #f8fafc;
+      background: #fff;
       font-weight: 800;
       cursor: pointer;
     }
@@ -337,15 +360,11 @@
       gap: 8px;
     }
 
-    .badge-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: #e2e8f0;
-      color: #334155;
-      font-weight: 600;
-      margin-top: 3px;
+    .var-badges-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
     }
 
     .toast {
@@ -409,7 +428,7 @@
 
       <div class="card">
         <div class="search-wrapper">
-          <input type="text" id="searchInput" placeholder="Scan barcode / ketik nama / catatan produk..." autocomplete="off" autofocus>
+          <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk..." autocomplete="off" autofocus>
           <div id="searchResults" class="search-results"></div>
         </div>
       </div>
@@ -417,7 +436,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
           <strong>Keranjang Belanja (<span id="cartCount">0</span>)</strong>
-          <small style="color:var(--muted)">🛒 Eceran | 📦 Kartonan</small>
+          <small style="color:var(--muted)">Warna otomatis sesuai variasi</small>
         </div>
         <div id="cartList">
           <p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>
@@ -428,7 +447,13 @@
     <!-- ================= TAB 2: KELOLA PRODUK ================= -->
     <div id="tab-produk" class="hidden">
       <div class="card">
-        <h3 style="margin-bottom:10px; font-size:1rem;">Tambah / Ubah Produk</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <h3 id="productFormTitle" style="font-size:1rem;">Tambah Produk Baru</h3>
+          <button type="button" id="toggleExtraBtn" class="btn btn-outline btn-sm" onclick="toggleExtraFields()">
+            + Harga Beli & Catatan
+          </button>
+        </div>
+
         <form id="productForm" style="display:grid; gap:10px;">
           <input type="hidden" id="prodDocId">
 
@@ -437,29 +462,25 @@
             <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
           </div>
 
-          <div>
-            <label class="field-label">Kode Barcode (Opsional - Bisa Banyak, Pisahkan Koma / Enter)</label>
-            <textarea id="prodBarcodes" rows="2" placeholder="Kosongkan jika tidak ada barcode. Contoh: 8992761136014, 8992761999991"></textarea>
+          <!-- Sistem Variasi: karton, pcs, renteng, kg, gram, bal, slop, pak, sak -->
+          <div class="variant-builder">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="field-label" style="margin:0;">Variasi Satuan, Harga & Barcode Masing-Masing</label>
+              <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">+ Tambah Variasi</button>
+            </div>
+            <div id="variantRowsContainer" style="display:grid; gap:8px;"></div>
           </div>
 
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+          <!-- Disembunyikan saat tambah produk baru -->
+          <div id="extraFieldsBox" class="hidden" style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px;">
             <div>
-              <label class="field-label">🛒 Harga Eceran (Wajib)</label>
-              <input type="text" id="prodPriceEcer" inputmode="numeric" placeholder="0" required>
+              <label class="field-label">Harga Beli (Opsional)</label>
+              <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="0">
             </div>
             <div>
-              <label class="field-label">📦 Harga Kartonan</label>
-              <input type="text" id="prodPriceKarton" inputmode="numeric" placeholder="Opsional">
+              <label class="field-label">Catatan (Opsional)</label>
+              <input type="text" id="prodNote" placeholder="Catatan tambahan produk...">
             </div>
-            <div>
-              <label class="field-label">💰 Harga Beli</label>
-              <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="Opsional">
-            </div>
-          </div>
-
-          <div>
-            <label class="field-label">Catatan Produk (Opsional)</label>
-            <input type="text" id="prodNote" placeholder="Contoh: 1 karton isi 40 pcs / rentengan">
           </div>
 
           <div style="display:flex; gap:8px;">
@@ -472,7 +493,7 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
           <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
-          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / catatan..." style="max-width:240px; padding:6px 10px;">
+          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:240px; padding:6px 10px;">
         </div>
         <div id="productList"></div>
       </div>
@@ -512,7 +533,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     // =========================================================================
-    // 1. GANTI KONFIGURASI FIREBASE ANDA DI SINI
+    // 1. KONFIGURASI FIREBASE ANDA
     // =========================================================================
     const firebaseConfig = {
         apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
@@ -528,11 +549,30 @@
     const dbCloud = getFirestore(app);
 
     // =========================================================================
-    // 2. DATABASE LOKAL INDEXEDDB (DEXIE) - TANPA STOK
+    // 2. DAFTAR VARIASI SATUAN & WARNA BACKGROUND
     // =========================================================================
-    const dbLocal = new Dexie("KasirRealtimeV2DB");
+    const VARIANT_UNITS = [
+      { key: "karton",  label: "Karton",  cls: "unit-karton" },
+      { key: "pcs",     label: "Pcs",     cls: "unit-pcs" },
+      { key: "renteng", label: "Renteng", cls: "unit-renteng" },
+      { key: "kg",      label: "Kg",      cls: "unit-kg" },
+      { key: "gram",    label: "Gram",    cls: "unit-gram" },
+      { key: "bal",     label: "Bal",     cls: "unit-bal" },
+      { key: "slop",    label: "Slop",    cls: "unit-slop" },
+      { key: "pak",     label: "Pak",     cls: "unit-pak" },
+      { key: "sak",     label: "Sak",     cls: "unit-sak" }
+    ];
+
+    function getUnitMeta(unitKey) {
+      return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
+    }
+
+    // =========================================================================
+    // 3. DATABASE LOKAL INDEXEDDB (DEXIE)
+    // =========================================================================
+    const dbLocal = new Dexie("KasirRealtimeV3DB");
     dbLocal.version(1).stores({
-      products: "id, name, *barcodes, priceEcer, priceKarton, buyPrice, note, updatedAt",
+      products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, total, paid, change, createdAt, updatedAt"
     });
 
@@ -545,14 +585,36 @@
     const formatRibuan = (num) => Number(num || 0).toLocaleString("id-ID");
     const parseRibuan = (str) => Number(String(str || "").replace(/\D/g, "")) || 0;
 
-    function parseBarcodeList(rawText) {
-      if (!rawText) return [];
-      return [...new Set(
-        String(rawText)
-          .split(/[\n,]+/)
-          .map(b => b.trim())
-          .filter(Boolean)
-      )];
+    function parseBarcodes(raw) {
+      if (Array.isArray(raw)) return [...new Set(raw.map(x => String(x).trim()).filter(Boolean))];
+      if (!raw) return [];
+      return [...new Set(String(raw).split(/[\n,]+/).map(x => x.trim()).filter(Boolean))];
+    }
+
+    function normalizeProduct(docId, data) {
+      let variants = Array.isArray(data.variants) ? data.variants : [];
+      // Kompatibilitas mundur jika ada data lama
+      if (variants.length === 0 && (data.priceEcer || data.priceKarton)) {
+        if (data.priceEcer) variants.push({ unit: "pcs", price: Number(data.priceEcer), barcodes: parseBarcodes(data.barcodes) });
+        if (data.priceKarton) variants.push({ unit: "karton", price: Number(data.priceKarton), barcodes: [] });
+      }
+      variants = variants.map(v => ({
+        unit: v.unit || "pcs",
+        price: Number(v.price || 0),
+        barcodes: parseBarcodes(v.barcodes)
+      }));
+
+      const allBarcodes = [...new Set(variants.flatMap(v => v.barcodes))];
+
+      return {
+        id: docId,
+        name: data.name || "",
+        variants,
+        allBarcodes,
+        buyPrice: Number(data.buyPrice || 0),
+        note: data.note || "",
+        updatedAt: Number(data.updatedAt || Date.now())
+      };
     }
 
     function showToast(msg) {
@@ -564,7 +626,7 @@
     }
 
     // =========================================================================
-    // 3. SINKRONISASI REALTIME PRODUK & TRANSAKSI
+    // 4. SINKRONISASI REALTIME PRODUK & TRANSAKSI
     // =========================================================================
     function startRealtimeSync() {
       if (unsubProducts) unsubProducts();
@@ -579,30 +641,23 @@
         const itemsToPut = [];
 
         snapshot.docChanges().forEach((change) => {
-          const data = change.doc.data();
-          const item = {
-            id: change.doc.id,
-            name: data.name || "",
-            barcodes: Array.isArray(data.barcodes) ? data.barcodes : [],
-            priceEcer: Number(data.priceEcer || 0),
-            priceKarton: Number(data.priceKarton || 0),
-            buyPrice: Number(data.buyPrice || 0),
-            note: data.note || "",
-            updatedAt: Number(data.updatedAt || Date.now())
-          };
+          const item = normalizeProduct(change.doc.id, change.doc.data());
 
           if (change.type === "added" || change.type === "modified") {
             itemsToPut.push(item);
             if (item.updatedAt > maxTime) maxTime = item.updatedAt;
 
-            // Update harga produk di keranjang aktif jika harga Ecer / Karton berubah
+            // Update harga & variasi di keranjang aktif secara realtime
             cart.forEach(c => {
               if (c.productId === item.id) {
                 c.name = item.name;
                 c.note = item.note;
-                c.priceEcer = item.priceEcer;
-                c.priceKarton = item.priceKarton;
-                c.price = getEffectivePrice(item, c.unitType);
+                c.variants = item.variants;
+                const matchedVar = item.variants.find(v => v.unit === c.unit) || item.variants[0];
+                if (matchedVar) {
+                  c.unit = matchedVar.unit;
+                  c.price = matchedVar.price;
+                }
               }
             });
           }
@@ -663,15 +718,8 @@
     }
 
     // =========================================================================
-    // 4. LOGIKA KERANJANG, ECERAN & KARTONAN
+    // 5. KASIR: SCAN BARCODE PER VARIASI, PENCARIAN & KERANJANG BERWARNA
     // =========================================================================
-    function getEffectivePrice(product, unitType) {
-      if (unitType === "karton" && Number(product.priceKarton) > 0) {
-        return Number(product.priceKarton);
-      }
-      return Number(product.priceEcer || 0);
-    }
-
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
 
@@ -681,10 +729,11 @@
         const code = searchInput.value.trim();
         if (!code) return;
 
-        // Cari berdasarkan multi-barcode terlebih dahulu
-        const exact = await dbLocal.products.where("barcodes").equals(code).first();
-        if (exact) {
-          addToCart(exact, "ecer");
+        const prod = await dbLocal.products.where("allBarcodes").equals(code).first();
+        if (prod) {
+          // Cari variasi spesifik yang punya barcode ini
+          const matchedVar = prod.variants.find(v => v.barcodes.includes(code)) || prod.variants[0];
+          addToCart(prod, matchedVar ? matchedVar.unit : "pcs");
           searchInput.value = "";
           searchResults.style.display = "none";
         } else {
@@ -706,7 +755,7 @@
           .filter(p =>
             p.name.toLowerCase().includes(kw) ||
             (p.note && p.note.toLowerCase().includes(kw)) ||
-            (Array.isArray(p.barcodes) && p.barcodes.some(b => b.toLowerCase().includes(kw)))
+            (Array.isArray(p.allBarcodes) && p.allBarcodes.some(b => b.toLowerCase().includes(kw)))
           )
           .limit(15)
           .toArray();
@@ -714,75 +763,74 @@
         if (matches.length === 0) {
           searchResults.innerHTML = `<div class="search-item" style="color:var(--muted)">Produk tidak ditemukan</div>`;
         } else {
-          searchResults.innerHTML = matches.map(p => `
-            <div class="search-item" onclick="selectProduct('${p.id}')">
-              <div>
-                <strong>${p.name}</strong>
-                ${p.note ? `<span class="badge-tag">${p.note}</span>` : ""}<br>
-                <small style="color:var(--muted)">
-                  🛒 Ecer: Rp ${formatRibuan(p.priceEcer)}
-                  ${p.priceKarton > 0 ? `| 📦 Karton: Rp ${formatRibuan(p.priceKarton)}` : ""}
-                </small>
+          searchResults.innerHTML = matches.map(p => {
+            const pills = (p.variants || []).map(v => {
+              const meta = getUnitMeta(v.unit);
+              return `<span class="var-pill ${meta.cls}">${meta.label}: Rp ${formatRibuan(v.price)}</span>`;
+            }).join(" ");
+            const firstPrice = p.variants[0]?.price || 0;
+            return `
+              <div class="search-item" onclick="selectProduct('${p.id}')">
+                <div>
+                  <strong>${p.name}</strong>
+                  ${p.note ? `<small style="color:var(--muted)">(${p.note})</small>` : ""}
+                  <div class="var-badges-wrap">${pills}</div>
+                </div>
+                <strong style="color:var(--primary)">Rp ${formatRibuan(firstPrice)}</strong>
               </div>
-              <strong style="color:var(--primary)">Rp ${formatRibuan(p.priceEcer)}</strong>
-            </div>
-          `).join("");
+            `;
+          }).join("");
         }
         searchResults.style.display = "block";
       }, 150);
     });
 
-    window.selectProduct = async (id) => {
+    window.selectProduct = async (id, unitKey = null) => {
       const prod = await dbLocal.products.get(id);
       if (prod) {
-        addToCart(prod, "ecer");
+        const chosenUnit = unitKey || prod.variants[0]?.unit || "pcs";
+        addToCart(prod, chosenUnit);
         searchInput.value = "";
         searchResults.style.display = "none";
         searchInput.focus();
       }
     };
 
-    function addToCart(product, unitType = "ecer") {
-      const price = getEffectivePrice(product, unitType);
-      const existing = cart.find(item => item.productId === product.id && item.unitType === unitType);
+    function addToCart(product, unitKey) {
+      const variant = product.variants.find(v => v.unit === unitKey) || product.variants[0] || { unit: "pcs", price: 0 };
+      const existing = cart.find(item => item.productId === product.id && item.unit === variant.unit);
 
       if (existing) {
         existing.qty += 1;
-        existing.price = price;
-        existing.priceEcer = Number(product.priceEcer || 0);
-        existing.priceKarton = Number(product.priceKarton || 0);
+        existing.price = Number(variant.price || 0);
+        existing.variants = product.variants;
       } else {
         cart.unshift({
-          uid: product.id + "_" + unitType + "_" + Date.now(),
+          uid: product.id + "_" + variant.unit + "_" + Date.now(),
           productId: product.id,
           name: product.name,
           note: product.note || "",
-          unitType,
-          price,
-          priceEcer: Number(product.priceEcer || 0),
-          priceKarton: Number(product.priceKarton || 0),
+          unit: variant.unit,
+          price: Number(variant.price || 0),
+          variants: product.variants,
           qty: 1
         });
       }
       renderCart();
     }
 
-    window.setCartUnit = async (uid, newUnit) => {
+    window.changeCartUnit = async (uid, newUnit) => {
       const item = cart.find(i => i.uid === uid);
       if (!item) return;
 
       const freshProd = await dbLocal.products.get(item.productId);
-      const priceEcer = freshProd ? Number(freshProd.priceEcer || 0) : item.priceEcer;
-      const priceKarton = freshProd ? Number(freshProd.priceKarton || 0) : item.priceKarton;
+      const vars = freshProd?.variants || item.variants || [];
+      const targetVar = vars.find(v => v.unit === newUnit);
+      if (!targetVar) return showToast("Variasi ini tidak tersedia untuk produk ini");
 
-      if (newUnit === "karton" && priceKarton <= 0) {
-        return showToast("Harga kartonan belum diatur untuk produk ini!");
-      }
-
-      item.unitType = newUnit;
-      item.priceEcer = priceEcer;
-      item.priceKarton = priceKarton;
-      item.price = newUnit === "karton" ? priceKarton : priceEcer;
+      item.unit = targetVar.unit;
+      item.price = Number(targetVar.price || 0);
+      item.variants = vars;
       renderCart();
     };
 
@@ -822,24 +870,29 @@
         listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang masih kosong</p>`;
       } else {
         listEl.innerHTML = cart.map(item => {
-          const isKarton = item.unitType === "karton";
+          const meta = getUnitMeta(item.unit);
+          const unitOptions = (item.variants || []).map(v => {
+            const uMeta = getUnitMeta(v.unit);
+            const selected = v.unit === item.unit ? "selected" : "";
+            return `<option value="${v.unit}" ${selected}>${uMeta.label} (Rp ${formatRibuan(v.price)})</option>`;
+          }).join("");
+
           return `
-            <div class="cart-item">
+            <div class="cart-item ${meta.cls}">
               <div class="cart-top">
                 <div>
-                  <div class="cart-title">${item.name}</div>
+                  <span class="var-pill ${meta.cls}">${meta.label}</span>
+                  <span class="cart-title" style="margin-left:6px;">${item.name}</span>
                   ${item.note ? `<div class="cart-note">Catatan: ${item.note}</div>` : ""}
                 </div>
                 <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
               </div>
               <div class="cart-bottom">
-                <div class="unit-toggle">
-                  <button class="unit-btn ${!isKarton ? "active-ecer" : ""}" onclick="setCartUnit('${item.uid}', 'ecer')">
-                    🛒 Ecer (${formatRibuan(item.priceEcer)})
-                  </button>
-                  <button class="unit-btn ${isKarton ? "active-karton" : ""}" onclick="setCartUnit('${item.uid}', 'karton')">
-                    📦 Karton ${item.priceKarton > 0 ? `(${formatRibuan(item.priceKarton)})` : "(Kosong)"}
-                  </button>
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                  <select onchange="changeCartUnit('${item.uid}', this.value)" style="width:auto; padding:5px 8px; font-size:0.8rem; font-weight:700;">
+                    ${unitOptions}
+                  </select>
+                  <small style="font-weight:700;">@ Rp ${formatRibuan(item.price)}</small>
                 </div>
                 <div class="qty-controls">
                   <button class="qty-btn" onclick="updateQty('${item.uid}', -1)">-</button>
@@ -879,7 +932,7 @@
     }
 
     // =========================================================================
-    // 5. SIMPAN TRANSAKSI, RIWAYAT & EDIT KE KERANJANG + UANG PEMBELI
+    // 6. SIMPAN TRANSAKSI, RIWAYAT & EDIT KE KERANJANG + UANG PEMBELI
     // =========================================================================
     window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
@@ -919,8 +972,8 @@
 
         let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\n--------------------------------\n`;
         cart.forEach(item => {
-          const labelUnit = item.unitType === "karton" ? "[KARTON]" : "[ECER]";
-          struk += `${item.name} ${labelUnit}\n`;
+          const uLabel = getUnitMeta(item.unit).label.toUpperCase();
+          struk += `${item.name} [${uLabel}]\n`;
           struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
         });
         struk += `--------------------------------\n`;
@@ -948,7 +1001,11 @@
       }
 
       listEl.innerHTML = all.slice(0, 50).map(trx => {
-        const ringkas = (trx.items || []).map(i => `${i.name} (${i.qty} ${i.unitType === "karton" ? "Ktn" : "Ecr"})`).join(", ");
+        const ringkas = (trx.items || []).map(i => {
+          const uLabel = getUnitMeta(i.unit).label;
+          return `${i.name} (${i.qty} ${uLabel})`;
+        }).join(", ");
+
         return `
           <div class="trx-row">
             <div>
@@ -966,7 +1023,6 @@
       }).join("");
     }
 
-    // Muat kembali transaksi ke keranjang belanja beserta uang pembeli
     window.editTransaction = async (trxId) => {
       const trx = await dbLocal.transactions.get(trxId);
       if (!trx) return showToast("Data transaksi tidak ditemukan");
@@ -976,10 +1032,9 @@
         productId: item.productId,
         name: item.name,
         note: item.note || "",
-        unitType: item.unitType || "ecer",
+        unit: item.unit || "pcs",
         price: Number(item.price || 0),
-        priceEcer: Number(item.priceEcer || item.price || 0),
-        priceKarton: Number(item.priceKarton || 0),
+        variants: item.variants || [{ unit: item.unit || "pcs", price: Number(item.price || 0), barcodes: [] }],
         qty: Number(item.qty || 1)
       }));
 
@@ -987,7 +1042,6 @@
       document.getElementById("editingTrxCode").innerText = trx.code;
       document.getElementById("editTrxBanner").classList.remove("hidden");
 
-      // Isi kembali uang pembeli
       const paidNum = Number(trx.paid || 0);
       inputBayar.value = paidNum > 0 ? formatRibuan(paidNum) : "";
 
@@ -997,38 +1051,89 @@
     };
 
     // =========================================================================
-    // 6. KELOLA PRODUK (MULTI-BARCODE OPSIONAL, HARGA BELI OPSIONAL, CATATAN)
+    // 7. KELOLA PRODUK: VARIASI SATUAN + BARCODE PER VARIASI + WARNA
     // =========================================================================
-    ["prodPriceEcer", "prodPriceKarton", "prodBuyPrice"].forEach(id => {
-      const el = document.getElementById(id);
-      el.addEventListener("input", () => {
-        const raw = parseRibuan(el.value);
-        el.value = raw > 0 ? formatRibuan(raw) : "";
+    const variantRowsContainer = document.getElementById("variantRowsContainer");
+
+    window.toggleExtraFields = () => {
+      document.getElementById("extraFieldsBox").classList.toggle("hidden");
+    };
+
+    window.addVariantRow = (unit = "pcs", price = "", barcodesText = "") => {
+      const rowId = "vrow_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      const optionsHtml = VARIANT_UNITS.map(u =>
+        `<option value="${u.key}" ${u.key === unit ? "selected" : ""}>${u.label}</option>`
+      ).join("");
+
+      const div = document.createElement("div");
+      div.className = "variant-row";
+      div.id = rowId;
+      div.innerHTML = `
+        <select class="v-unit" onchange="applyVariantRowColor(this)">${optionsHtml}</select>
+        <input type="text" class="v-price" inputmode="numeric" placeholder="Harga (Rp)" value="${price ? formatRibuan(price) : ""}">
+        <input type="text" class="v-barcodes" placeholder="Barcode variasi (opsional, pisah koma)" value="${barcodesText}">
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow('${rowId}')">✕</button>
+      `;
+
+      variantRowsContainer.appendChild(div);
+      const priceInput = div.querySelector(".v-price");
+      priceInput.addEventListener("input", () => {
+        const raw = parseRibuan(priceInput.value);
+        priceInput.value = raw > 0 ? formatRibuan(raw) : "";
       });
+
+      applyVariantRowColor(div.querySelector(".v-unit"));
+    };
+
+    window.applyVariantRowColor = (selectEl) => {
+      const row = selectEl.closest(".variant-row");
+      const meta = getUnitMeta(selectEl.value);
+      VARIANT_UNITS.forEach(u => row.classList.remove(u.cls));
+      row.classList.add(meta.cls);
+    };
+
+    window.removeVariantRow = (rowId) => {
+      if (variantRowsContainer.children.length <= 1) {
+        return showToast("Minimal harus ada 1 variasi satuan!");
+      }
+      document.getElementById(rowId)?.remove();
+    };
+
+    const buyPriceInput = document.getElementById("prodBuyPrice");
+    buyPriceInput.addEventListener("input", () => {
+      const raw = parseRibuan(buyPriceInput.value);
+      buyPriceInput.value = raw > 0 ? formatRibuan(raw) : "";
     });
 
     document.getElementById("productForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const existingId = document.getElementById("prodDocId").value.trim();
       const name = document.getElementById("prodName").value.trim();
-      const barcodes = parseBarcodeList(document.getElementById("prodBarcodes").value);
-      const priceEcer = parseRibuan(document.getElementById("prodPriceEcer").value);
-      const priceKarton = parseRibuan(document.getElementById("prodPriceKarton").value); // Opsional
-      const buyPrice = parseRibuan(document.getElementById("prodBuyPrice").value); // Opsional
+      const buyPrice = parseRibuan(buyPriceInput.value); // Opsional
       const note = document.getElementById("prodNote").value.trim(); // Opsional
 
-      if (!name || priceEcer <= 0) {
-        return showToast("Nama produk dan Harga Eceran wajib diisi!");
+      const variants = [];
+      variantRowsContainer.querySelectorAll(".variant-row").forEach(row => {
+        const unit = row.querySelector(".v-unit").value;
+        const price = parseRibuan(row.querySelector(".v-price").value);
+        const barcodes = parseBarcodes(row.querySelector(".v-barcodes").value);
+        if (price > 0) {
+          variants.push({ unit, price, barcodes });
+        }
+      });
+
+      if (!name || variants.length === 0) {
+        return showToast("Isi nama produk dan minimal 1 variasi dengan harga > 0!");
       }
 
-      const docId = existingId || (barcodes[0] ? "bc_" + barcodes[0] : "prod_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
+      const allBarcodes = [...new Set(variants.flatMap(v => v.barcodes))];
+      const docId = existingId || (allBarcodes[0] ? "bc_" + allBarcodes[0] : "prod_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
 
       const payload = {
         id: docId,
         name,
-        barcodes,
-        priceEcer,
-        priceKarton,
+        variants,
+        allBarcodes,
         buyPrice,
         note,
         updatedAt: Date.now()
@@ -1037,7 +1142,7 @@
       try {
         await setDoc(doc(dbCloud, "products", docId), payload, { merge: true });
         await dbLocal.products.put(payload);
-        showToast("Produk tersimpan & tersinkron realtime!");
+        showToast("Produk & variasi tersinkron realtime!");
         resetProductForm();
         renderProductList();
       } catch (err) {
@@ -1048,6 +1153,11 @@
     window.resetProductForm = () => {
       document.getElementById("productForm").reset();
       document.getElementById("prodDocId").value = "";
+      document.getElementById("productFormTitle").innerText = "Tambah Produk Baru";
+      // Saat tambah produk baru: sembunyikan harga beli & catatan
+      document.getElementById("extraFieldsBox").classList.add("hidden");
+      variantRowsContainer.innerHTML = "";
+      addVariantRow("pcs");
     };
 
     window.editProduct = async (id) => {
@@ -1055,11 +1165,19 @@
       if (!p) return;
       document.getElementById("prodDocId").value = p.id;
       document.getElementById("prodName").value = p.name || "";
-      document.getElementById("prodBarcodes").value = Array.isArray(p.barcodes) ? p.barcodes.join(", ") : "";
-      document.getElementById("prodPriceEcer").value = p.priceEcer ? formatRibuan(p.priceEcer) : "";
-      document.getElementById("prodPriceKarton").value = p.priceKarton ? formatRibuan(p.priceKarton) : "";
-      document.getElementById("prodBuyPrice").value = p.buyPrice ? formatRibuan(p.buyPrice) : "";
+      document.getElementById("productFormTitle").innerText = "Ubah Produk";
+
+      // Saat ubah produk: tampilkan harga beli & catatan agar bisa diedit jika perlu
+      document.getElementById("extraFieldsBox").classList.remove("hidden");
+      buyPriceInput.value = p.buyPrice ? formatRibuan(p.buyPrice) : "";
       document.getElementById("prodNote").value = p.note || "";
+
+      variantRowsContainer.innerHTML = "";
+      const listVar = Array.isArray(p.variants) && p.variants.length > 0 ? p.variants : [{ unit: "pcs", price: 0, barcodes: [] }];
+      listVar.forEach(v => {
+        addVariantRow(v.unit, v.price, (v.barcodes || []).join(", "));
+      });
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
@@ -1082,24 +1200,26 @@
         ? all.filter(p =>
             p.name.toLowerCase().includes(kw) ||
             (p.note && p.note.toLowerCase().includes(kw)) ||
-            (Array.isArray(p.barcodes) && p.barcodes.some(b => b.toLowerCase().includes(kw)))
+            (Array.isArray(p.allBarcodes) && p.allBarcodes.some(b => b.toLowerCase().includes(kw))) ||
+            (Array.isArray(p.variants) && p.variants.some(v => v.unit.toLowerCase().includes(kw)))
           )
         : all;
 
       const listEl = document.getElementById("productList");
       listEl.innerHTML = filtered.slice(0, 60).map(p => {
-        const bcText = Array.isArray(p.barcodes) && p.barcodes.length > 0 ? p.barcodes.join(", ") : "Tanpa Barcode";
+        const varBadges = (p.variants || []).map(v => {
+          const meta = getUnitMeta(v.unit);
+          const bcLabel = v.barcodes && v.barcodes.length > 0 ? ` [${v.barcodes.join(", ")}]` : "";
+          return `<span class="var-pill ${meta.cls}">${meta.label}: Rp ${formatRibuan(v.price)}${bcLabel}</span>`;
+        }).join("");
+
         return `
           <div class="product-row">
             <div>
               <strong>${p.name}</strong>
-              ${p.note ? `<span class="badge-tag">${p.note}</span>` : ""}<br>
-              <small style="color:var(--muted)">Barcode: ${bcText}</small><br>
-              <small>
-                🛒 Ecer: <b style="color:var(--primary)">Rp ${formatRibuan(p.priceEcer)}</b>
-                ${p.priceKarton > 0 ? `| 📦 Karton: <b style="color:var(--warning)">Rp ${formatRibuan(p.priceKarton)}</b>` : ""}
-                ${p.buyPrice > 0 ? `| 💰 Beli: <b>Rp ${formatRibuan(p.buyPrice)}</b>` : ""}
-              </small>
+              ${p.note ? `<small style="color:var(--muted)">• ${p.note}</small>` : ""}
+              ${p.buyPrice > 0 ? `<small style="color:var(--muted)">• Beli: Rp ${formatRibuan(p.buyPrice)}</small>` : ""}
+              <div class="var-badges-wrap">${varBadges}</div>
             </div>
             <div style="display:flex; gap:6px;">
               <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">Ubah</button>
@@ -1111,7 +1231,7 @@
     }
 
     // =========================================================================
-    // 7. NAVIGASI & PENGATURAN
+    // 8. NAVIGASI & PENGATURAN
     // =========================================================================
     window.switchTab = (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
@@ -1142,6 +1262,8 @@
       showToast("Menyinkronkan ulang data...");
     };
 
+    // Inisialisasi awal
+    resetProductForm();
     document.getElementById("storeNameInput").value = localStorage.getItem("storeName") || "";
     document.getElementById("storeAddrInput").value = localStorage.getItem("storeAddr") || "";
     startRealtimeSync();
