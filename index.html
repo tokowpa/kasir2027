@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kasir Realtime Firebase - Variasi Satuan</title>
+  <title>Kasir Realtime Firebase - Variasi & Hutang</title>
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <style>
     :root {
@@ -109,7 +109,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       background: linear-gradient(135deg, #1e293b, #0f172a);
-      color: #fff;
+      color: #ffffff;
       padding: 14px;
       border-radius: 14px;
       margin-bottom: 12px;
@@ -117,9 +117,10 @@
 
     .total-box label, .pay-box label {
       font-size: 0.75rem;
-      color: #94a3b8;
+      color: #cbd5e1;
       display: block;
       margin-bottom: 4px;
+      font-weight: 600;
     }
 
     .total-amount {
@@ -131,30 +132,56 @@
     .change-amount {
       font-size: 0.9rem;
       margin-top: 4px;
-      font-weight: 600;
+      font-weight: 700;
       color: #4ade80;
     }
 
     .pay-input {
       width: 100%;
-      padding: 10px;
+      padding: 10px 12px;
       border-radius: 8px;
-      border: 1px solid #334155;
-      background: #1e293b;
-      color: #fff;
-      font-size: 1.2rem;
-      font-weight: 700;
+      border: 1.5px solid #475569;
+      background: #0f172a;
+      color: #ffffff !important;
+      caret-color: #38bdf8;
+      font-size: 1.25rem;
+      font-weight: 800;
       text-align: right;
+    }
+
+    .pay-input::placeholder {
+      color: #64748b;
     }
 
     .pay-input:focus {
       outline: 2px solid #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    .buyer-row {
+      grid-column: span 2;
+      margin-top: 2px;
+    }
+
+    .buyer-input {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #ffffff !important;
+      caret-color: #38bdf8;
+      font-size: 0.9rem;
+    }
+
+    .buyer-input::placeholder {
+      color: #94a3b8;
     }
 
     .action-row {
       display: flex;
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 4px;
       grid-column: span 2;
     }
 
@@ -181,6 +208,7 @@
       outline: none;
       transition: border 0.2s;
       background: #fff;
+      color: var(--text);
     }
 
     input:focus, textarea:focus, select:focus {
@@ -217,6 +245,14 @@
 
     .search-wrapper {
       position: relative;
+    }
+
+    .search-loader {
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin-top: 6px;
+      display: none;
     }
 
     .search-results {
@@ -271,7 +307,6 @@
     .unit-pak    { background: #cffafe; color: #0e7490; border-color: #67e8f9; }
     .unit-sak    { background: #e7e5e4; color: #57534e; border-color: #d6d3d1; }
 
-    /* Baris Variasi pada Form Produk */
     .variant-builder {
       border: 1px dashed #cbd5e1;
       background: #f8fafc;
@@ -306,7 +341,6 @@
       border: 1px solid var(--border);
       margin-bottom: 8px;
       gap: 8px;
-      transition: background 0.2s;
     }
 
     .cart-top {
@@ -367,6 +401,24 @@
       margin-top: 5px;
     }
 
+    .badge-lunas {
+      background: #dcfce7;
+      color: #166534;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
+    .badge-hutang {
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+
     .toast {
       position: fixed;
       bottom: 18px;
@@ -416,19 +468,22 @@
           <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
         </div>
         <div class="pay-box">
-          <label>UANG PEMBELI (Rp)</label>
-          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0">
+          <label>UANG PEMBELI (Rp) — Kosong/Kurang = Hutang</label>
+          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+        </div>
+        <div class="buyer-row">
+          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama Pembeli (Opsional — disarankan untuk catatan hutang)" autocomplete="off">
         </div>
         <div class="action-row">
           <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
-          <button class="btn btn-success" style="flex:2" onclick="prosesBayar(false)">Simpan</button>
           <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak RawBT</button>
         </div>
       </div>
 
       <div class="card">
         <div class="search-wrapper">
-          <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk..." autocomplete="off" autofocus>
+          <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
+          <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
           <div id="searchResults" class="search-results"></div>
         </div>
       </div>
@@ -462,7 +517,6 @@
             <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
           </div>
 
-          <!-- Sistem Variasi: karton, pcs, renteng, kg, gram, bal, slop, pak, sak -->
           <div class="variant-builder">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <label class="field-label" style="margin:0;">Variasi Satuan, Harga & Barcode Masing-Masing</label>
@@ -471,7 +525,6 @@
             <div id="variantRowsContainer" style="display:grid; gap:8px;"></div>
           </div>
 
-          <!-- Disembunyikan saat tambah produk baru -->
           <div id="extraFieldsBox" class="hidden" style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px;">
             <div>
               <label class="field-label">Harga Beli (Opsional)</label>
@@ -491,10 +544,11 @@
       </div>
 
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
           <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
-          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:240px; padding:6px 10px;">
+          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:250px; padding:6px 10px;">
         </div>
+        <div id="prodSearchLoader" class="search-loader">⏳ Mencari produk...</div>
         <div id="productList"></div>
       </div>
     </div>
@@ -502,10 +556,11 @@
     <!-- ================= TAB 3: RIWAYAT TRANSAKSI ================= -->
     <div id="tab-riwayat" class="hidden">
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
           <strong>Riwayat Transaksi (<span id="totalTrxCount">0</span>)</strong>
-          <small style="color:var(--muted)">Klik Edit untuk muat ulang ke keranjang</small>
+          <input type="text" id="filterTrxInput" placeholder="Cari nama pembeli / no / barang..." style="max-width:260px; padding:7px 10px;">
         </div>
+        <div id="trxSearchLoader" class="search-loader">⏳ Mencari riwayat transaksi...</div>
         <div id="transactionList"></div>
       </div>
     </div>
@@ -570,15 +625,17 @@
     // =========================================================================
     // 3. DATABASE LOKAL INDEXEDDB (DEXIE)
     // =========================================================================
-    const dbLocal = new Dexie("KasirRealtimeV3DB");
+    const dbLocal = new Dexie("KasirRealtimeV4DB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
-      transactions: "id, code, total, paid, change, createdAt, updatedAt"
+      transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
     });
 
     let cart = [];
     let editingTrxId = null;
-    let searchTimeout = null;
+    let kasirSearchTimer = null;
+    let prodSearchTimer = null;
+    let trxSearchTimer = null;
     let unsubProducts = null;
     let unsubTransactions = null;
 
@@ -593,7 +650,6 @@
 
     function normalizeProduct(docId, data) {
       let variants = Array.isArray(data.variants) ? data.variants : [];
-      // Kompatibilitas mundur jika ada data lama
       if (variants.length === 0 && (data.priceEcer || data.priceKarton)) {
         if (data.priceEcer) variants.push({ unit: "pcs", price: Number(data.priceEcer), barcodes: parseBarcodes(data.barcodes) });
         if (data.priceKarton) variants.push({ unit: "karton", price: Number(data.priceKarton), barcodes: [] });
@@ -603,7 +659,6 @@
         price: Number(v.price || 0),
         barcodes: parseBarcodes(v.barcodes)
       }));
-
       const allBarcodes = [...new Set(variants.flatMap(v => v.barcodes))];
 
       return {
@@ -642,12 +697,10 @@
 
         snapshot.docChanges().forEach((change) => {
           const item = normalizeProduct(change.doc.id, change.doc.data());
-
           if (change.type === "added" || change.type === "modified") {
             itemsToPut.push(item);
             if (item.updatedAt > maxTime) maxTime = item.updatedAt;
 
-            // Update harga & variasi di keranjang aktif secara realtime
             cart.forEach(c => {
               if (c.productId === item.id) {
                 c.name = item.name;
@@ -661,7 +714,6 @@
               }
             });
           }
-
           if (change.type === "removed") {
             dbLocal.products.delete(change.doc.id);
           }
@@ -718,20 +770,22 @@
     }
 
     // =========================================================================
-    // 5. KASIR: SCAN BARCODE PER VARIASI, PENCARIAN & KERANJANG BERWARNA
+    // 5. KASIR: PENCARIAN JEDA 0,5 DETIK, KERANJANG & HAPUS ITEM
     // =========================================================================
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
+    const kasirLoader = document.getElementById("kasirSearchLoader");
 
     searchInput.addEventListener("keydown", async (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
+        clearTimeout(kasirSearchTimer);
+        kasirLoader.style.display = "none";
         const code = searchInput.value.trim();
         if (!code) return;
 
         const prod = await dbLocal.products.where("allBarcodes").equals(code).first();
         if (prod) {
-          // Cari variasi spesifik yang punya barcode ini
           const matchedVar = prod.variants.find(v => v.barcodes.includes(code)) || prod.variants[0];
           addToCart(prod, matchedVar ? matchedVar.unit : "pcs");
           searchInput.value = "";
@@ -742,15 +796,20 @@
       }
     });
 
+    // Jeda 500ms (0,5 detik) setelah berhenti mengetik
     searchInput.addEventListener("input", () => {
-      clearTimeout(searchTimeout);
+      clearTimeout(kasirSearchTimer);
       const kw = searchInput.value.trim().toLowerCase();
       if (!kw) {
+        kasirLoader.style.display = "none";
         searchResults.style.display = "none";
         return;
       }
 
-      searchTimeout = setTimeout(async () => {
+      kasirLoader.style.display = "block";
+      searchResults.style.display = "none";
+
+      kasirSearchTimer = setTimeout(async () => {
         const matches = await dbLocal.products
           .filter(p =>
             p.name.toLowerCase().includes(kw) ||
@@ -759,6 +818,8 @@
           )
           .limit(15)
           .toArray();
+
+        kasirLoader.style.display = "none";
 
         if (matches.length === 0) {
           searchResults.innerHTML = `<div class="search-item" style="color:var(--muted)">Produk tidak ditemukan</div>`;
@@ -782,7 +843,7 @@
           }).join("");
         }
         searchResults.style.display = "block";
-      }, 150);
+      }, 500);
     });
 
     window.selectProduct = async (id, unitKey = null) => {
@@ -842,11 +903,19 @@
       renderCart();
     };
 
+    // Hapus langsung item dari keranjang jika tidak jadi dibeli
+    window.removeCartItem = (uid) => {
+      cart = cart.filter(i => i.uid !== uid);
+      renderCart();
+      showToast("Item dihapus dari keranjang");
+    };
+
     window.clearCart = () => {
       cart = [];
       editingTrxId = null;
       document.getElementById("editTrxBanner").classList.add("hidden");
       document.getElementById("inputBayar").value = "";
+      document.getElementById("inputBuyerName").value = "";
       renderCart();
       searchInput.focus();
     };
@@ -885,7 +954,10 @@
                   <span class="cart-title" style="margin-left:6px;">${item.name}</span>
                   ${item.note ? `<div class="cart-note">Catatan: ${item.note}</div>` : ""}
                 </div>
-                <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <strong>Rp ${formatRibuan(item.price * item.qty)}</strong>
+                  <button class="btn btn-danger btn-sm" onclick="removeCartItem('${item.uid}')" title="Hapus item">🗑️</button>
+                </div>
               </div>
               <div class="cart-bottom">
                 <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
@@ -917,29 +989,36 @@
     function hitungKembalian() {
       const total = getCartTotal();
       const bayar = parseRibuan(inputBayar.value);
-      const kembali = bayar - total;
+      const selisih = bayar - total;
       const el = document.getElementById("displayChange");
-      if (bayar === 0) {
+
+      if (total === 0) {
         el.innerText = "Kembalian: Rp 0";
         el.style.color = "#4ade80";
-      } else if (kembali < 0) {
-        el.innerText = "Kurang: Rp " + formatRibuan(Math.abs(kembali));
-        el.style.color = "#f87171";
+      } else if (bayar < total) {
+        const hutang = total - bayar;
+        el.innerText = "Hutang: Rp " + formatRibuan(hutang);
+        el.style.color = "#fca5a5";
       } else {
-        el.innerText = "Kembalian: Rp " + formatRibuan(kembali);
+        el.innerText = "Kembalian: Rp " + formatRibuan(selisih);
         el.style.color = "#4ade80";
       }
     }
 
     // =========================================================================
-    // 6. SIMPAN TRANSAKSI, RIWAYAT & EDIT KE KERANJANG + UANG PEMBELI
+    // 6. TRANSAKSI & SISTEM HUTANG OTOMATIS
     // =========================================================================
     window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
+
       const total = getCartTotal();
-      const bayar = parseRibuan(inputBayar.value);
-      if (bayar < total) return showToast("Uang pembeli kurang atau belum diisi!");
-      const kembali = bayar - total;
+      const bayar = parseRibuan(inputBayar.value); // Boleh 0 atau kurang dari total -> masuk HUTANG
+      const buyerName = document.getElementById("inputBuyerName").value.trim() || "Tanpa Nama";
+
+      const isHutang = bayar < total;
+      const debt = isHutang ? (total - bayar) : 0;
+      const change = isHutang ? 0 : (bayar - total);
+      const status = isHutang ? "HUTANG" : "LUNAS";
 
       const now = Date.now();
       const trxId = editingTrxId || ("trx_" + now);
@@ -950,10 +1029,13 @@
       const trxData = {
         id: trxId,
         code,
+        buyerName,
+        status,
         items: cart.map(i => ({ ...i })),
         total,
         paid: bayar,
-        change: kembali,
+        debt,
+        change,
         createdAt: editingTrxId ? ((await dbLocal.transactions.get(trxId))?.createdAt || now) : now,
         updatedAt: now
       };
@@ -970,7 +1052,7 @@
         const alamatToko = localStorage.getItem("storeAddr") || "Terima Kasih Atas Kunjungan Anda";
         const waktu = new Date().toLocaleString("id-ID");
 
-        let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\n--------------------------------\n`;
+        let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\nPembeli: ${buyerName}\nStatus : ${status}\n--------------------------------\n`;
         cart.forEach(item => {
           const uLabel = getUnitMeta(item.unit).label.toUpperCase();
           struk += `${item.name} [${uLabel}]\n`;
@@ -979,28 +1061,61 @@
         struk += `--------------------------------\n`;
         struk += `TOTAL   : Rp ${formatRibuan(total)}\n`;
         struk += `BAYAR   : Rp ${formatRibuan(bayar)}\n`;
-        struk += `KEMBALI : Rp ${formatRibuan(kembali)}\n`;
+        if (isHutang) {
+          struk += `HUTANG  : Rp ${formatRibuan(debt)}\n`;
+        } else {
+          struk += `KEMBALI : Rp ${formatRibuan(change)}\n`;
+        }
         struk += `--------------------------------\nTerima Kasih\n\n\n`;
 
         window.location.href = "rawbt:" + encodeURIComponent(struk);
       }
 
-      showToast(editingTrxId ? "Transaksi berhasil diperbarui!" : "Transaksi tersimpan!");
+      showToast(isHutang ? `Tercatat sebagai HUTANG Rp ${formatRibuan(debt)}` : "Transaksi LUNAS tersimpan!");
       clearCart();
       renderTransactions();
     };
 
+    const filterTrxInput = document.getElementById("filterTrxInput");
+    const trxSearchLoader = document.getElementById("trxSearchLoader");
+
+    filterTrxInput.addEventListener("input", () => {
+      clearTimeout(trxSearchTimer);
+      trxSearchLoader.style.display = "block";
+      trxSearchTimer = setTimeout(async () => {
+        await renderTransactions();
+        trxSearchLoader.style.display = "none";
+      }, 500);
+    });
+
     async function renderTransactions() {
+      const kw = filterTrxInput.value.trim().toLowerCase();
       const all = await dbLocal.transactions.orderBy("updatedAt").reverse().toArray();
-      document.getElementById("totalTrxCount").innerText = all.length;
+
+      const filtered = kw
+        ? all.filter(trx => {
+            const buyerMatch = (trx.buyerName || "").toLowerCase().includes(kw);
+            const codeMatch = String(trx.code || "").toLowerCase().includes(kw);
+            const statusMatch = (trx.status || "").toLowerCase().includes(kw);
+            const itemMatch = (trx.items || []).some(i => (i.name || "").toLowerCase().includes(kw));
+            return buyerMatch || codeMatch || statusMatch || itemMatch;
+          })
+        : all;
+
+      document.getElementById("totalTrxCount").innerText = filtered.length;
       const listEl = document.getElementById("transactionList");
 
-      if (all.length === 0) {
-        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:16px;">Belum ada transaksi</p>`;
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:16px;">Tidak ada transaksi yang cocok</p>`;
         return;
       }
 
-      listEl.innerHTML = all.slice(0, 50).map(trx => {
+      listEl.innerHTML = filtered.slice(0, 60).map(trx => {
+        const isHutang = (trx.status === "HUTANG") || (Number(trx.debt || 0) > 0);
+        const statusBadge = isHutang
+          ? `<span class="badge-hutang">HUTANG Rp ${formatRibuan(trx.debt)}</span>`
+          : `<span class="badge-lunas">LUNAS</span>`;
+
         const ringkas = (trx.items || []).map(i => {
           const uLabel = getUnitMeta(i.unit).label;
           return `${i.name} (${i.qty} ${uLabel})`;
@@ -1009,12 +1124,15 @@
         return `
           <div class="trx-row">
             <div>
-              <strong>#${trx.code}</strong> • <small style="color:var(--muted)">${new Date(trx.createdAt || trx.updatedAt).toLocaleString("id-ID")}</small><br>
-              <small style="color:var(--muted)">${ringkas}</small><br>
+              <strong>#${trx.code}</strong> • <strong>${trx.buyerName || "Tanpa Nama"}</strong> ${statusBadge}<br>
+              <small style="color:var(--muted)">${new Date(trx.createdAt || trx.updatedAt).toLocaleString("id-ID")} • ${ringkas}</small><br>
               <small>
                 Total: <b style="color:var(--primary)">Rp ${formatRibuan(trx.total)}</b> |
                 Bayar: <b>Rp ${formatRibuan(trx.paid)}</b> |
-                Kembali: <b style="color:var(--success)">Rp ${formatRibuan(trx.change)}</b>
+                ${isHutang
+                  ? `Sisa Hutang: <b style="color:var(--danger)">Rp ${formatRibuan(trx.debt)}</b>`
+                  : `Kembali: <b style="color:var(--success)">Rp ${formatRibuan(trx.change)}</b>`
+                }
               </small>
             </div>
             <button class="btn btn-warning btn-sm" onclick="editTransaction('${trx.id}')">✏️ Edit</button>
@@ -1044,6 +1162,7 @@
 
       const paidNum = Number(trx.paid || 0);
       inputBayar.value = paidNum > 0 ? formatRibuan(paidNum) : "";
+      document.getElementById("inputBuyerName").value = trx.buyerName && trx.buyerName !== "Tanpa Nama" ? trx.buyerName : "";
 
       renderCart();
       switchTab("kasir");
@@ -1051,7 +1170,7 @@
     };
 
     // =========================================================================
-    // 7. KELOLA PRODUK: VARIASI SATUAN + BARCODE PER VARIASI + WARNA
+    // 7. KELOLA PRODUK: VARIASI SATUAN, HARGA BELI & CATATAN OPSIONAL
     // =========================================================================
     const variantRowsContainer = document.getElementById("variantRowsContainer");
 
@@ -1109,8 +1228,8 @@
       e.preventDefault();
       const existingId = document.getElementById("prodDocId").value.trim();
       const name = document.getElementById("prodName").value.trim();
-      const buyPrice = parseRibuan(buyPriceInput.value); // Opsional
-      const note = document.getElementById("prodNote").value.trim(); // Opsional
+      const buyPrice = parseRibuan(buyPriceInput.value);
+      const note = document.getElementById("prodNote").value.trim();
 
       const variants = [];
       variantRowsContainer.querySelectorAll(".variant-row").forEach(row => {
@@ -1154,7 +1273,6 @@
       document.getElementById("productForm").reset();
       document.getElementById("prodDocId").value = "";
       document.getElementById("productFormTitle").innerText = "Tambah Produk Baru";
-      // Saat tambah produk baru: sembunyikan harga beli & catatan
       document.getElementById("extraFieldsBox").classList.add("hidden");
       variantRowsContainer.innerHTML = "";
       addVariantRow("pcs");
@@ -1167,7 +1285,6 @@
       document.getElementById("prodName").value = p.name || "";
       document.getElementById("productFormTitle").innerText = "Ubah Produk";
 
-      // Saat ubah produk: tampilkan harga beli & catatan agar bisa diedit jika perlu
       document.getElementById("extraFieldsBox").classList.remove("hidden");
       buyPriceInput.value = p.buyPrice ? formatRibuan(p.buyPrice) : "";
       document.getElementById("prodNote").value = p.note || "";
@@ -1189,10 +1306,20 @@
       showToast("Produk dihapus");
     };
 
-    document.getElementById("filterProdInput").addEventListener("input", renderProductList);
+    const filterProdInput = document.getElementById("filterProdInput");
+    const prodSearchLoader = document.getElementById("prodSearchLoader");
+
+    filterProdInput.addEventListener("input", () => {
+      clearTimeout(prodSearchTimer);
+      prodSearchLoader.style.display = "block";
+      prodSearchTimer = setTimeout(async () => {
+        await renderProductList();
+        prodSearchLoader.style.display = "none";
+      }, 500);
+    });
 
     async function renderProductList() {
-      const kw = document.getElementById("filterProdInput").value.trim().toLowerCase();
+      const kw = filterProdInput.value.trim().toLowerCase();
       const all = await dbLocal.products.toArray();
       document.getElementById("totalProdCount").innerText = all.length;
 
@@ -1262,7 +1389,6 @@
       showToast("Menyinkronkan ulang data...");
     };
 
-    // Inisialisasi awal
     resetProductForm();
     document.getElementById("storeNameInput").value = localStorage.getItem("storeName") || "";
     document.getElementById("storeAddrInput").value = localStorage.getItem("storeAddr") || "";
