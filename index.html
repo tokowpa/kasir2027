@@ -35,6 +35,53 @@
       padding-bottom: 32px;
     }
 
+    /* Layar Login Firebase Auth */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 2000;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 390px;
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      display: grid;
+      gap: 12px;
+    }
+
+    .login-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #0f172a;
+      text-align: center;
+    }
+
+    .login-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -6px;
+    }
+
+    .login-error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: none;
+    }
+
     header {
       background: linear-gradient(135deg, #1e293b, #0f172a);
       color: #ffffff;
@@ -232,7 +279,7 @@
       font-weight: 700;
     }
 
-    input[type="text"], input[type="number"], textarea, select {
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], textarea, select {
       width: 100%;
       padding: 9px 11px;
       border: 1.5px solid var(--border);
@@ -267,6 +314,11 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .btn-primary { background: var(--primary); color: #fff; }
@@ -368,11 +420,11 @@
     .cart-item {
       display: flex;
       flex-direction: column;
-      padding: 7px 10px;
-      border-radius: 9px;
+      padding: 8px 10px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      margin-bottom: 6px;
-      gap: 5px;
+      margin-bottom: 7px;
+      gap: 6px;
     }
 
     .cart-item:last-child {
@@ -388,11 +440,11 @@
 
     .cart-title {
       font-weight: 800;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
     }
 
     .cart-note {
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--muted);
       font-style: italic;
       margin-left: 6px;
@@ -412,26 +464,40 @@
       justify-self: start;
     }
 
+    /* Tombol Qty Diperbesar & Di Tengah */
     .qty-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       justify-self: center;
-      background: rgba(255, 255, 255, 0.85);
-      padding: 2px 6px;
-      border-radius: 8px;
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.92);
+      padding: 4px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .qty-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: #fff;
-      font-weight: 800;
-      font-size: 0.9rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 1.2rem;
+      line-height: 1;
       cursor: pointer;
+    }
+
+    .qty-btn:active {
+      background: #e2e8f0;
+    }
+
+    .qty-value {
+      min-width: 28px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 900;
     }
 
     .cart-delete-right {
@@ -454,6 +520,17 @@
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
       gap: 8px;
+    }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
     }
 
     .var-badges-wrap {
@@ -502,162 +579,216 @@
 </head>
 <body>
 
-  <header>
-    <div class="header-checkout">
-      <div class="hc-total-wrap">
-        <span class="hc-label">Total Belanja</span>
-        <div class="total-amount" id="displayTotal">Rp 0</div>
-        <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+  <!-- ================= LAYAR LOGIN EMAIL & SANDI ================= -->
+  <div id="loginOverlay" class="login-overlay">
+    <form id="loginForm" class="login-card">
+      <div class="login-title">Login Aplikasi Kasir</div>
+      <div class="login-sub">Masuk menggunakan Email & Sandi Firebase</div>
+      <div id="loginError" class="login-error"></div>
+      <div>
+        <label class="field-label">Email</label>
+        <input type="email" id="loginEmail" placeholder="kasir@toko.com" required autocomplete="email">
+      </div>
+      <div>
+        <label class="field-label">Sandi</label>
+        <input type="password" id="loginPassword" placeholder="Masukkan sandi" required autocomplete="current-password">
+      </div>
+      <button type="submit" id="loginBtn" class="btn btn-primary" style="width:100%; padding:11px;">Masuk</button>
+    </form>
+  </div>
+
+  <!-- ================= APLIKASI UTAMA ================= -->
+  <div id="mainApp" class="hidden">
+    <header>
+      <div class="header-checkout">
+        <div class="hc-total-wrap">
+          <span class="hc-label">Total Belanja</span>
+          <div class="total-amount" id="displayTotal">Rp 0</div>
+          <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+        </div>
+
+        <div class="hc-field">
+          <span class="hc-label">Uang Pembeli (Rp)</span>
+          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+        </div>
+
+        <div class="hc-field">
+          <span class="hc-label">Nama Pembeli (Opsional)</span>
+          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama pembeli / hutang" autocomplete="off">
+        </div>
       </div>
 
-      <div class="hc-field">
-        <span class="hc-label">Uang Pembeli (Rp)</span>
-        <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('kasir')">Kasir</button>
+        <button class="tab-btn" onclick="switchTab('produk')">Kelola Produk</button>
+        <button class="tab-btn" onclick="switchTab('riwayat')">Riwayat</button>
+        <button class="tab-btn" onclick="switchTab('pengaturan')">Pengaturan</button>
       </div>
+    </header>
 
-      <div class="hc-field">
-        <span class="hc-label">Nama Pembeli (Opsional)</span>
-        <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama pembeli / hutang" autocomplete="off">
-      </div>
-    </div>
+    <div class="container">
+      <!-- ================= TAB 1: KASIR ================= -->
+      <div id="tab-kasir">
+        <div id="editTrxBanner" class="edit-banner hidden">
+          <span>✏️ Sedang mengedit transaksi #<strong id="editingTrxCode"></strong></span>
+          <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal Edit</button>
+        </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('kasir')">Kasir</button>
-      <button class="tab-btn" onclick="switchTab('produk')">Kelola Produk</button>
-      <button class="tab-btn" onclick="switchTab('riwayat')">Riwayat</button>
-      <button class="tab-btn" onclick="switchTab('pengaturan')">Pengaturan</button>
-    </div>
-  </header>
-
-  <div class="container">
-    <!-- ================= TAB 1: KASIR ================= -->
-    <div id="tab-kasir">
-      <div id="editTrxBanner" class="edit-banner hidden">
-        <span>✏️ Sedang mengedit transaksi #<strong id="editingTrxCode"></strong></span>
-        <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal Edit</button>
-      </div>
-
-      <div class="kasir-grid">
-        <div class="kasir-left">
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <strong style="font-size:0.92rem;">Keranjang Belanja (<span id="cartCount">0</span>)</strong>
-              <small style="color:var(--muted); font-size:0.74rem;">Item baru di paling atas</small>
+        <div class="kasir-grid">
+          <div class="kasir-left">
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-size:0.92rem;">Keranjang Belanja (<span id="cartCount">0</span>)</strong>
+                <small style="color:var(--muted); font-size:0.74rem;">Item baru di paling atas • Min qty 1</small>
+              </div>
+              <div id="cartList">
+                <p style="text-align:center; color:var(--muted); padding:24px 0;">Keranjang masih kosong</p>
+              </div>
             </div>
-            <div id="cartList">
-              <p style="text-align:center; color:var(--muted); padding:24px 0;">Keranjang masih kosong</p>
+          </div>
+
+          <div class="kasir-right">
+            <div class="card right-actions-card">
+              <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
+              <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak Nota RawBT</button>
+            </div>
+
+            <div class="card">
+              <label class="field-label">Cari / Scan Barcode Produk</label>
+              <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
+                <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
+                <div id="searchResults" class="search-results"></div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="kasir-right">
-          <div class="card right-actions-card">
-            <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
-            <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak Nota RawBT</button>
+      <!-- ================= TAB 2: KELOLA PRODUK ================= -->
+      <div id="tab-produk" class="hidden">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 id="productFormTitle" style="font-size:1rem;">Tambah Produk Baru</h3>
+            <button type="button" id="toggleExtraBtn" class="btn btn-outline btn-sm" onclick="toggleExtraFields()">
+              + Harga Beli & Catatan
+            </button>
           </div>
 
-          <div class="card">
-            <label class="field-label">Cari / Scan Barcode Produk</label>
-            <div class="search-wrapper">
-              <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
-              <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
-              <div id="searchResults" class="search-results"></div>
+          <form id="productForm" style="display:grid; gap:10px;">
+            <input type="hidden" id="prodDocId">
+
+            <div>
+              <label class="field-label">Nama Produk (Wajib)</label>
+              <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
             </div>
+
+            <div class="variant-builder">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label class="field-label" style="margin:0;">Variasi Satuan, Harga & Barcode Masing-Masing</label>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">+ Tambah Variasi</button>
+              </div>
+              <div id="variantRowsContainer" style="display:grid; gap:8px;"></div>
+            </div>
+
+            <div id="extraFieldsBox" class="hidden" style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px;">
+              <div>
+                <label class="field-label">Harga Beli (Opsional)</label>
+                <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="0">
+              </div>
+              <div>
+                <label class="field-label">Catatan (Opsional)</label>
+                <input type="text" id="prodNote" placeholder="Catatan tambahan produk...">
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <button type="submit" class="btn btn-primary" style="flex:1">Simpan & Sinkronkan Realtime</button>
+              <button type="button" class="btn btn-outline" onclick="resetProductForm()">Bersihkan</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
+            <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
+            <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:250px; padding:6px 10px;">
+          </div>
+          <div id="prodSearchLoader" class="search-loader">⏳ Mencari produk...</div>
+          <div id="productList"></div>
+        </div>
+      </div>
+
+      <!-- ================= TAB 3: RIWAYAT TRANSAKSI (50 PER HALAMAN) ================= -->
+      <div id="tab-riwayat" class="hidden">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
+            <strong>Riwayat Transaksi (<span id="totalTrxCount">0</span>)</strong>
+            <input type="text" id="filterTrxInput" placeholder="Cari nama pembeli / no / barang..." style="max-width:260px; padding:7px 10px;">
+          </div>
+          <div id="trxSearchLoader" class="search-loader">⏳ Mencari riwayat transaksi...</div>
+          <div id="transactionList"></div>
+          <div id="trxPaginationBar" class="pagination-bar hidden">
+            <button id="prevPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(-1)">◀ Sebelumnya</button>
+            <span id="pageInfoText" style="font-size:0.82rem; font-weight:700; color:var(--muted);">Halaman 1 dari 1</span>
+            <button id="nextPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(1)">Berikutnya ▶</button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ================= TAB 2: KELOLA PRODUK ================= -->
-    <div id="tab-produk" class="hidden">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <h3 id="productFormTitle" style="font-size:1rem;">Tambah Produk Baru</h3>
-          <button type="button" id="toggleExtraBtn" class="btn btn-outline btn-sm" onclick="toggleExtraFields()">
-            + Harga Beli & Catatan
+      <!-- ================= TAB 4: PENGATURAN ================= -->
+      <div id="tab-pengaturan" class="hidden">
+        <div class="card" style="display:grid; gap:10px;">
+          <h3 style="font-size:1rem;">Identitas Toko & Cetak Struk</h3>
+          <div>
+            <label class="field-label">Nama Toko</label>
+            <input type="text" id="storeNameInput" placeholder="Nama Toko (Untuk Struk)">
+          </div>
+          <div>
+            <label class="field-label">Alamat / No HP Toko</label>
+            <input type="text" id="storeAddrInput" placeholder="Alamat / No HP Toko">
+          </div>
+          <div>
+            <label class="field-label">Ukuran Kertas Cetak Print (RawBT)</label>
+            <select id="paperSizeSelect">
+              <option value="80">80mm (Lebar / Printer Besar)</option>
+              <option value="45">45mm (Kecil / Mini)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="saveStoreSettings()">Simpan Pengaturan</button>
+
+          <hr style="border:none; border-top:1px solid var(--border); margin:6px 0;">
+
+          <button class="btn btn-danger" onclick="deleteHistoryExceptDebt()">
+            🗑️ Hapus Semua Riwayat Kecuali Hutang
+          </button>
+
+          <button class="btn btn-outline" onclick="forceFullResync()">
+            Sinkron Ulang Semua Data dari Cloud
+          </button>
+
+          <button class="btn btn-warning" onclick="logoutUser()">
+            🚪 Keluar Akun (<span id="loggedInEmail">-</span>)
           </button>
         </div>
-
-        <form id="productForm" style="display:grid; gap:10px;">
-          <input type="hidden" id="prodDocId">
-
-          <div>
-            <label class="field-label">Nama Produk (Wajib)</label>
-            <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
-          </div>
-
-          <div class="variant-builder">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <label class="field-label" style="margin:0;">Variasi Satuan, Harga & Barcode Masing-Masing</label>
-              <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">+ Tambah Variasi</button>
-            </div>
-            <div id="variantRowsContainer" style="display:grid; gap:8px;"></div>
-          </div>
-
-          <div id="extraFieldsBox" class="hidden" style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px;">
-            <div>
-              <label class="field-label">Harga Beli (Opsional)</label>
-              <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="0">
-            </div>
-            <div>
-              <label class="field-label">Catatan (Opsional)</label>
-              <input type="text" id="prodNote" placeholder="Catatan tambahan produk...">
-            </div>
-          </div>
-
-          <div style="display:flex; gap:8px;">
-            <button type="submit" class="btn btn-primary" style="flex:1">Simpan & Sinkronkan Realtime</button>
-            <button type="button" class="btn btn-outline" onclick="resetProductForm()">Bersihkan</button>
-          </div>
-        </form>
-      </div>
-
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
-          <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
-          <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:250px; padding:6px 10px;">
-        </div>
-        <div id="prodSearchLoader" class="search-loader">⏳ Mencari produk...</div>
-        <div id="productList"></div>
-      </div>
-    </div>
-
-    <!-- ================= TAB 3: RIWAYAT TRANSAKSI ================= -->
-    <div id="tab-riwayat" class="hidden">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
-          <strong>Riwayat Transaksi (<span id="totalTrxCount">0</span>)</strong>
-          <input type="text" id="filterTrxInput" placeholder="Cari nama pembeli / no / barang..." style="max-width:260px; padding:7px 10px;">
-        </div>
-        <div id="trxSearchLoader" class="search-loader">⏳ Mencari riwayat transaksi...</div>
-        <div id="transactionList"></div>
-      </div>
-    </div>
-
-    <!-- ================= TAB 4: PENGATURAN ================= -->
-    <div id="tab-pengaturan" class="hidden">
-      <div class="card" style="display:grid; gap:10px;">
-        <h3 style="font-size:1rem;">Identitas Toko & Struk</h3>
-        <input type="text" id="storeNameInput" placeholder="Nama Toko (Untuk Struk)">
-        <input type="text" id="storeAddrInput" placeholder="Alamat / No HP Toko">
-        <button class="btn btn-primary" onclick="saveStoreSettings()">Simpan Pengaturan</button>
-        <hr style="border:none; border-top:1px solid var(--border); margin:6px 0;">
-        <button class="btn btn-outline" onclick="forceFullResync()">Sinkron Ulang Semua Data dari Cloud</button>
       </div>
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
-  <!-- ================= SCRIPT FIREBASE & LOGIKA KASIR ================= -->
+  <!-- ================= SCRIPT FIREBASE AUTH, FIRESTORE & LOGIKA KASIR ================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { 
       getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, where 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
+      apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
   authDomain: "wpastore-1d2c3.firebaseapp.com",
   databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wpastore-1d2c3",
@@ -667,10 +798,61 @@
 };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const dbCloud = getFirestore(app);
 
     // =========================================================================
-    // SUARA NOTIFIKASI BAWAAAN BROWSER (TANPA INTERNET / SITUS LUAR, RINGAN & KERAS)
+    // AUTENTIKASI LOGIN EMAIL & SANDI
+    // =========================================================================
+    const loginOverlay = document.getElementById("loginOverlay");
+    const mainApp = document.getElementById("mainApp");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const loginBtn = document.getElementById("loginBtn");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.style.display = "none";
+      loginBtn.disabled = true;
+      loginBtn.innerText = "Memproses...";
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const pass = document.getElementById("loginPassword").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        loginError.innerText = "Login gagal: periksa email dan sandi Anda.";
+        loginError.style.display = "block";
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.innerText = "Masuk";
+      }
+    });
+
+    window.logoutUser = async () => {
+      if (!confirm("Keluar dari akun kasir?")) return;
+      stopRealtimeSync();
+      await signOut(auth);
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginOverlay.classList.add("hidden");
+        mainApp.classList.remove("hidden");
+        document.getElementById("loggedInEmail").innerText = user.email || "Akun";
+        startRealtimeSync();
+        renderTransactions();
+        document.getElementById("searchInput").focus();
+      } else {
+        stopRealtimeSync();
+        mainApp.classList.add("hidden");
+        loginOverlay.classList.remove("hidden");
+      }
+    });
+
+    // =========================================================================
+    // SUARA NOTIFIKASI BAWAAAN BROWSER (TANPA SITUS LUAR, RINGAN & KERAS)
     // =========================================================================
     let audioCtx = null;
 
@@ -698,7 +880,6 @@
       osc.type = type;
       osc.frequency.setValueAtTime(freq, now);
 
-      // Amplifikasi kuat namun terkontrol agar keras & jernih tanpa pecah
       gain.gain.setValueAtTime(0.001, now);
       gain.gain.exponentialRampToValueAtTime(peakGain, now + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
@@ -716,18 +897,15 @@
     }
 
     function playScanSuccessSound() {
-      // Nada ganda naik tegas (berhasil scan)
       playTone(1320, 0, 0.08, "square", 0.85);
       playTone(1980, 0.085, 0.13, "square", 0.9);
     }
 
     function playScanNotFoundSound() {
-      // Nada peringatan rendah berulang (produk tidak ditemukan)
       playTone(320, 0, 0.14, "sawtooth", 0.95);
       playTone(220, 0.15, 0.22, "sawtooth", 0.95);
     }
 
-    // Aktifkan AudioContext pada interaksi pertama pengguna
     document.addEventListener("pointerdown", () => getAudioCtx(), { once: true });
     document.addEventListener("keydown", () => getAudioCtx(), { once: true });
 
@@ -750,7 +928,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV7DB");
+    const dbLocal = new Dexie("KasirRealtimeV8DB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -758,6 +936,8 @@
 
     let cart = [];
     let editingTrxId = null;
+    let currentTrxPage = 1;
+    const TRX_PER_PAGE = 50;
     let kasirSearchTimer = null;
     let prodSearchTimer = null;
     let trxSearchTimer = null;
@@ -805,9 +985,13 @@
       t._timer = setTimeout(() => { t.style.display = "none"; }, 2500);
     }
 
+    function stopRealtimeSync() {
+      if (unsubProducts) { unsubProducts(); unsubProducts = null; }
+      if (unsubTransactions) { unsubTransactions(); unsubTransactions = null; }
+    }
+
     function startRealtimeSync() {
-      if (unsubProducts) unsubProducts();
-      if (unsubTransactions) unsubTransactions();
+      stopRealtimeSync();
 
       const lastProdSync = Number(localStorage.getItem("lastProdSync")) || 0;
       const qProd = query(collection(dbCloud, "products"), where("updatedAt", ">", lastProdSync));
@@ -1006,11 +1190,17 @@
       renderCart();
     };
 
+    // Minimal qty 1: jika qty 1 dan tekan -, tidak dihapus
     window.updateQty = (uid, delta) => {
       const idx = cart.findIndex(i => i.uid === uid);
       if (idx === -1) return;
-      cart[idx].qty += delta;
-      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      const nextQty = cart[idx].qty + delta;
+      if (nextQty < 1) {
+        cart[idx].qty = 1;
+        showToast("Minimal jumlah 1. Gunakan tombol hapus jika ingin membatalkan.");
+      } else {
+        cart[idx].qty = nextQty;
+      }
       renderCart();
     };
 
@@ -1064,18 +1254,18 @@
                   <span class="cart-title" style="margin-left:5px;">${item.name}</span>
                   ${item.note ? `<span class="cart-note">• ${item.note}</span>` : ""}
                 </div>
-                <strong style="font-size:0.9rem;">Rp ${formatRibuan(item.price * item.qty)}</strong>
+                <strong style="font-size:0.92rem;">Rp ${formatRibuan(item.price * item.qty)}</strong>
               </div>
               <div class="cart-bottom">
                 <div class="cart-unit-left">
-                  <select onchange="changeCartUnit('${item.uid}', this.value)" style="width:auto; padding:3px 7px; font-size:0.76rem; font-weight:700;">
+                  <select onchange="changeCartUnit('${item.uid}', this.value)" style="width:auto; padding:4px 8px; font-size:0.78rem; font-weight:700;">
                     ${unitOptions}
                   </select>
                 </div>
 
                 <div class="qty-controls">
                   <button class="qty-btn" onclick="updateQty('${item.uid}', -1)">-</button>
-                  <strong style="min-width:20px; text-align:center; font-size:0.86rem;">${item.qty}</strong>
+                  <span class="qty-value">${item.qty}</span>
                   <button class="qty-btn" onclick="updateQty('${item.uid}', 1)">+</button>
                 </div>
 
@@ -1114,6 +1304,27 @@
         el.innerText = "Kembalian: Rp " + formatRibuan(selisih);
         el.style.color = "#4ade80";
       }
+    }
+
+    function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
+      const paperSize = localStorage.getItem("paperSize") || "80";
+      const line = paperSize === "45" ? "------------------------" : "--------------------------------";
+      let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\nPembeli: ${buyerName}\nStatus : ${status}\n${line}\n`;
+      cart.forEach(item => {
+        const uLabel = getUnitMeta(item.unit).label.toUpperCase();
+        struk += `${item.name} [${uLabel}]\n`;
+        struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
+      });
+      struk += `${line}\n`;
+      struk += `TOTAL   : Rp ${formatRibuan(total)}\n`;
+      struk += `BAYAR   : Rp ${formatRibuan(bayar)}\n`;
+      if (status === "HUTANG") {
+        struk += `HUTANG  : Rp ${formatRibuan(debt)}\n`;
+      } else {
+        struk += `KEMBALI : Rp ${formatRibuan(change)}\n`;
+      }
+      struk += `${line}\nTerima Kasih\n\n\n`;
+      return struk;
     }
 
     window.prosesBayar = async (cetakStruk) => {
@@ -1159,31 +1370,19 @@
         const namaToko = localStorage.getItem("storeName") || "TOKO KASIR";
         const alamatToko = localStorage.getItem("storeAddr") || "Terima Kasih Atas Kunjungan Anda";
         const waktu = new Date().toLocaleString("id-ID");
-
-        let struk = `${namaToko}\n${alamatToko}\nNo: #${code} | ${waktu}\nPembeli: ${buyerName}\nStatus : ${status}\n--------------------------------\n`;
-        cart.forEach(item => {
-          const uLabel = getUnitMeta(item.unit).label.toUpperCase();
-          struk += `${item.name} [${uLabel}]\n`;
-          struk += `${item.qty} x ${formatRibuan(item.price)} = ${formatRibuan(item.qty * item.price)}\n`;
-        });
-        struk += `--------------------------------\n`;
-        struk += `TOTAL   : Rp ${formatRibuan(total)}\n`;
-        struk += `BAYAR   : Rp ${formatRibuan(bayar)}\n`;
-        if (isHutang) {
-          struk += `HUTANG  : Rp ${formatRibuan(debt)}\n`;
-        } else {
-          struk += `KEMBALI : Rp ${formatRibuan(change)}\n`;
-        }
-        struk += `--------------------------------\nTerima Kasih\n\n\n`;
-
+        const struk = buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change);
         window.location.href = "rawbt:" + encodeURIComponent(struk);
       }
 
       showToast(isHutang ? `Tercatat sebagai HUTANG Rp ${formatRibuan(debt)}` : "Transaksi LUNAS tersimpan!");
       clearCart();
+      currentTrxPage = 1;
       renderTransactions();
     };
 
+    // =========================================================================
+    // RIWAYAT TRANSAKSI (50 PER HALAMAN + PENCARIAN NAMA PEMBELI)
+    // =========================================================================
     const filterTrxInput = document.getElementById("filterTrxInput");
     const trxSearchLoader = document.getElementById("trxSearchLoader");
 
@@ -1191,10 +1390,17 @@
       clearTimeout(trxSearchTimer);
       trxSearchLoader.style.display = "block";
       trxSearchTimer = setTimeout(async () => {
+        currentTrxPage = 1;
         await renderTransactions();
         trxSearchLoader.style.display = "none";
       }, 500);
     });
+
+    window.changeTrxPage = (delta) => {
+      currentTrxPage = Math.max(1, currentTrxPage + delta);
+      renderTransactions();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
 
     async function renderTransactions() {
       const kw = filterTrxInput.value.trim().toLowerCase();
@@ -1210,15 +1416,25 @@
           })
         : all;
 
-      document.getElementById("totalTrxCount").innerText = filtered.length;
-      const listEl = document.getElementById("transactionList");
+      const totalFiltered = filtered.length;
+      const totalPages = Math.max(1, Math.ceil(totalFiltered / TRX_PER_PAGE));
+      if (currentTrxPage > totalPages) currentTrxPage = totalPages;
 
-      if (filtered.length === 0) {
+      document.getElementById("totalTrxCount").innerText = totalFiltered;
+
+      const startIdx = (currentTrxPage - 1) * TRX_PER_PAGE;
+      const pageItems = filtered.slice(startIdx, startIdx + TRX_PER_PAGE);
+
+      const listEl = document.getElementById("transactionList");
+      const paginationBar = document.getElementById("trxPaginationBar");
+
+      if (totalFiltered === 0) {
         listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:16px;">Tidak ada transaksi yang cocok</p>`;
+        paginationBar.classList.add("hidden");
         return;
       }
 
-      listEl.innerHTML = filtered.slice(0, 60).map(trx => {
+      listEl.innerHTML = pageItems.map(trx => {
         const isHutang = (trx.status === "HUTANG") || (Number(trx.debt || 0) > 0);
         const statusBadge = isHutang
           ? `<span class="badge-hutang">HUTANG Rp ${formatRibuan(trx.debt)}</span>`
@@ -1247,6 +1463,11 @@
           </div>
         `;
       }).join("");
+
+      paginationBar.classList.remove("hidden");
+      document.getElementById("pageInfoText").innerText = `Halaman ${currentTrxPage} dari ${totalPages} (${startIdx + 1}-${Math.min(startIdx + TRX_PER_PAGE, totalFiltered)} dari ${totalFiltered})`;
+      document.getElementById("prevPageBtn").disabled = currentTrxPage <= 1;
+      document.getElementById("nextPageBtn").disabled = currentTrxPage >= totalPages;
     }
 
     window.editTransaction = async (trxId) => {
@@ -1261,7 +1482,7 @@
         unit: item.unit || "pcs",
         price: Number(item.price || 0),
         variants: item.variants || [{ unit: item.unit || "pcs", price: Number(item.price || 0), barcodes: [] }],
-        qty: Number(item.qty || 1)
+        qty: Math.max(1, Number(item.qty || 1))
       }));
 
       editingTrxId = trx.id;
@@ -1278,16 +1499,14 @@
     };
 
     // =========================================================================
-    // KELOLA PRODUK: CEGAH ENTER / BARCODE SCANNER LANGSUNG SUBMIT FORM
+    // KELOLA PRODUK
     // =========================================================================
     const productForm = document.getElementById("productForm");
     const variantRowsContainer = document.getElementById("variantRowsContainer");
 
-    // Saat scan barcode atau tekan Enter di input mana pun dalam form produk, jangan langsung simpan!
     productForm.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && e.target.tagName === "INPUT") {
         e.preventDefault();
-        // Pindahkan fokus ke kolom berikutnya di baris variasi agar mudah diisi
         const row = e.target.closest(".variant-row");
         if (row) {
           const inputs = [...row.querySelectorAll("input")];
@@ -1483,6 +1702,9 @@
       }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
     }
 
+    // =========================================================================
+    // NAVIGASI & PENGATURAN (UKURAN PRINT 45mm/80mm + HAPUS RIWAYAT KECUALI HUTANG)
+    // =========================================================================
     window.switchTab = (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
@@ -1499,7 +1721,34 @@
     window.saveStoreSettings = () => {
       localStorage.setItem("storeName", document.getElementById("storeNameInput").value.trim());
       localStorage.setItem("storeAddr", document.getElementById("storeAddrInput").value.trim());
-      showToast("Pengaturan toko disimpan!");
+      localStorage.setItem("paperSize", document.getElementById("paperSizeSelect").value);
+      showToast("Pengaturan toko & ukuran cetak disimpan!");
+    };
+
+    window.deleteHistoryExceptDebt = async () => {
+      const all = await dbLocal.transactions.toArray();
+      const nonDebt = all.filter(trx => !((trx.status === "HUTANG") || (Number(trx.debt || 0) > 0)));
+
+      if (nonDebt.length === 0) {
+        return showToast("Tidak ada riwayat lunas untuk dihapus (semua berstatus HUTANG)");
+      }
+
+      if (!confirm(`Hapus ${nonDebt.length} riwayat transaksi LUNAS? Transaksi berstatus HUTANG tidak akan dihapus.`)) {
+        return;
+      }
+
+      for (const trx of nonDebt) {
+        await dbLocal.transactions.delete(trx.id);
+        try {
+          await deleteDoc(doc(dbCloud, "transactions", trx.id));
+        } catch (e) {
+          console.warn("Gagal hapus cloud untuk ID:", trx.id, e);
+        }
+      }
+
+      currentTrxPage = 1;
+      renderTransactions();
+      showToast(`${nonDebt.length} riwayat dihapus, data HUTANG tetap aman!`);
     };
 
     window.forceFullResync = async () => {
@@ -1515,8 +1764,7 @@
     resetProductForm();
     document.getElementById("storeNameInput").value = localStorage.getItem("storeName") || "";
     document.getElementById("storeAddrInput").value = localStorage.getItem("storeAddr") || "";
-    startRealtimeSync();
-    renderTransactions();
+    document.getElementById("paperSizeSelect").value = localStorage.getItem("paperSize") || "80";
   </script>
 </body>
 </html>
