@@ -35,7 +35,6 @@
       padding-bottom: 32px;
     }
 
-    /* Header Sejajar Kesamping: Checkout + Tabs */
     header {
       background: linear-gradient(135deg, #1e293b, #0f172a);
       color: #ffffff;
@@ -169,7 +168,6 @@
       padding: 0 14px;
     }
 
-    /* Layout Menu Kasir Mode Desktop: Kiri Keranjang, Kanan Aksi + Pencarian */
     .kasir-grid {
       display: grid;
       grid-template-columns: 1.4fr 1fr;
@@ -290,7 +288,6 @@
       display: none;
     }
 
-    /* Hasil Pencarian Lebih Banyak Terlihat Tanpa Scroll */
     .search-results {
       margin-top: 8px;
       background: var(--surface);
@@ -320,7 +317,6 @@
       background: #f1f5f9;
     }
 
-    /* Warna Background Tiap Variasi */
     .var-pill {
       display: inline-flex;
       align-items: center;
@@ -369,7 +365,6 @@
       }
     }
 
-    /* Item Keranjang Ringkas Agar Muat Banyak di Layar */
     .cart-item {
       display: flex;
       flex-direction: column;
@@ -507,7 +502,6 @@
 </head>
 <body>
 
-  <!-- HEADER SEJAJAR: TOTAL BELANJA, UANG PEMBELI, NAMA PEMBELI & MENU TAB -->
   <header>
     <div class="header-checkout">
       <div class="hc-total-wrap">
@@ -544,7 +538,6 @@
       </div>
 
       <div class="kasir-grid">
-        <!-- KIRI: KERANJANG BELANJA -->
         <div class="kasir-left">
           <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -557,7 +550,6 @@
           </div>
         </div>
 
-        <!-- KANAN: TOMBOL RESET, CETAK NOTA & KOLOM PENCARIAN -->
         <div class="kasir-right">
           <div class="card right-actions-card">
             <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
@@ -677,6 +669,71 @@
     const app = initializeApp(firebaseConfig);
     const dbCloud = getFirestore(app);
 
+    // =========================================================================
+    // SUARA NOTIFIKASI BAWAAAN BROWSER (TANPA INTERNET / SITUS LUAR, RINGAN & KERAS)
+    // =========================================================================
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!audioCtx) {
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, startOffset, duration, type = "square", peakGain = 0.85) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+
+      const now = ctx.currentTime + startOffset;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const compressor = ctx.createDynamicsCompressor();
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+
+      // Amplifikasi kuat namun terkontrol agar keras & jernih tanpa pecah
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(peakGain, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      compressor.threshold.setValueAtTime(-6, now);
+      compressor.knee.setValueAtTime(12, now);
+      compressor.ratio.setValueAtTime(6, now);
+
+      osc.connect(gain);
+      gain.connect(compressor);
+      compressor.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function playScanSuccessSound() {
+      // Nada ganda naik tegas (berhasil scan)
+      playTone(1320, 0, 0.08, "square", 0.85);
+      playTone(1980, 0.085, 0.13, "square", 0.9);
+    }
+
+    function playScanNotFoundSound() {
+      // Nada peringatan rendah berulang (produk tidak ditemukan)
+      playTone(320, 0, 0.14, "sawtooth", 0.95);
+      playTone(220, 0.15, 0.22, "sawtooth", 0.95);
+    }
+
+    // Aktifkan AudioContext pada interaksi pertama pengguna
+    document.addEventListener("pointerdown", () => getAudioCtx(), { once: true });
+    document.addEventListener("keydown", () => getAudioCtx(), { once: true });
+
+    // =========================================================================
+    // DAFTAR VARIASI SATUAN & WARNA BACKGROUND
+    // =========================================================================
     const VARIANT_UNITS = [
       { key: "karton",  label: "Karton",  cls: "unit-karton" },
       { key: "pcs",     label: "Pcs",     cls: "unit-pcs" },
@@ -693,7 +750,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV6DB");
+    const dbLocal = new Dexie("KasirRealtimeV7DB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -835,10 +892,12 @@
         if (prod) {
           const matchedVar = prod.variants.find(v => v.barcodes.includes(code)) || prod.variants[0];
           addToCart(prod, matchedVar ? matchedVar.unit : "pcs");
+          playScanSuccessSound();
           searchInput.value = "";
           searchResults.style.display = "none";
         } else {
-          showToast("Barcode tidak ditemukan!");
+          playScanNotFoundSound();
+          showToast("Produk / barcode tidak ditemukan!");
         }
       }
     });
@@ -867,7 +926,8 @@
         kasirLoader.style.display = "none";
 
         if (matches.length === 0) {
-          searchResults.innerHTML = `<div class="search-item" style="color:var(--muted)">Produk tidak ditemukan</div>`;
+          playScanNotFoundSound();
+          searchResults.innerHTML = `<div class="search-item" style="color:var(--danger); font-weight:700;">Produk tidak ditemukan</div>`;
         } else {
           searchResults.innerHTML = matches.map(p => {
             const pills = (p.variants || []).map(v => {
@@ -894,13 +954,13 @@
       if (prod) {
         const chosenUnit = unitKey || prod.variants[0]?.unit || "pcs";
         addToCart(prod, chosenUnit);
+        playScanSuccessSound();
         searchInput.value = "";
         searchResults.style.display = "none";
         searchInput.focus();
       }
     };
 
-    // Produk yang baru dipilih/di-scan selalu dipindahkan ke urutan paling atas keranjang
     function addToCart(product, unitKey) {
       const variant = product.variants.find(v => v.unit === unitKey) || product.variants[0] || { unit: "pcs", price: 0 };
       const existingIdx = cart.findIndex(item => item.productId === product.id && item.unit === variant.unit);
@@ -940,9 +1000,9 @@
       item.price = Number(targetVar.price || 0);
       item.variants = vars;
 
-      // Pindahkan ke paling atas saat diubah
       cart.splice(idx, 1);
       cart.unshift(item);
+      playScanSuccessSound();
       renderCart();
     };
 
@@ -1217,7 +1277,27 @@
       showToast(`Transaksi #${trx.code} dimuat ke keranjang beserta uang bayar`);
     };
 
+    // =========================================================================
+    // KELOLA PRODUK: CEGAH ENTER / BARCODE SCANNER LANGSUNG SUBMIT FORM
+    // =========================================================================
+    const productForm = document.getElementById("productForm");
     const variantRowsContainer = document.getElementById("variantRowsContainer");
+
+    // Saat scan barcode atau tekan Enter di input mana pun dalam form produk, jangan langsung simpan!
+    productForm.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.tagName === "INPUT") {
+        e.preventDefault();
+        // Pindahkan fokus ke kolom berikutnya di baris variasi agar mudah diisi
+        const row = e.target.closest(".variant-row");
+        if (row) {
+          const inputs = [...row.querySelectorAll("input")];
+          const idx = inputs.indexOf(e.target);
+          if (idx !== -1 && idx + 1 < inputs.length) {
+            inputs[idx + 1].focus();
+          }
+        }
+      }
+    });
 
     window.toggleExtraFields = () => {
       document.getElementById("extraFieldsBox").classList.toggle("hidden");
@@ -1235,7 +1315,7 @@
       div.innerHTML = `
         <select class="v-unit" onchange="applyVariantRowColor(this)">${optionsHtml}</select>
         <input type="text" class="v-price" inputmode="numeric" placeholder="Harga (Rp)" value="${price ? formatRibuan(price) : ""}">
-        <input type="text" class="v-barcodes" placeholder="Barcode variasi (opsional, pisah koma)" value="${barcodesText}">
+        <input type="text" class="v-barcodes" placeholder="Scan / ketik barcode variasi (opsional)" value="${barcodesText}">
         <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow('${rowId}')">✕</button>
       `;
 
@@ -1269,7 +1349,7 @@
       buyPriceInput.value = raw > 0 ? formatRibuan(raw) : "";
     });
 
-    document.getElementById("productForm").addEventListener("submit", async (e) => {
+    productForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const existingId = document.getElementById("prodDocId").value.trim();
       const name = document.getElementById("prodName").value.trim();
@@ -1306,6 +1386,7 @@
       try {
         await setDoc(doc(dbCloud, "products", docId), payload, { merge: true });
         await dbLocal.products.put(payload);
+        playScanSuccessSound();
         showToast("Produk & variasi tersinkron realtime!");
         resetProductForm();
         renderProductList();
@@ -1315,7 +1396,7 @@
     });
 
     window.resetProductForm = () => {
-      document.getElementById("productForm").reset();
+      productForm.reset();
       document.getElementById("prodDocId").value = "";
       document.getElementById("productFormTitle").innerText = "Tambah Produk Baru";
       document.getElementById("extraFieldsBox").classList.add("hidden");
