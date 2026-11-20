@@ -1469,7 +1469,7 @@
 
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
       const paperSize = String(localStorage.getItem("paperSize") || "80");
-      const width = paperSize === "45" ? 34 : 48;
+      const width = paperSize === "45" ? 30 : 48;
       const line = "-".repeat(width);
 
       let struk = CMD_INIT + CMD_BOLD_ON;
