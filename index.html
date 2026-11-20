@@ -1454,43 +1454,67 @@
       }
     }
 
+    // Perintah ESC/POS standar untuk thermal printer via RawBT
+const ESC = "\x1b";
+const GS = "\x1d";
+
+const CMD_INIT = ESC + "@";               // Reset printer ke pengaturan awal
+const CMD_BOLD_ON = ESC + "E" + "\x01";    // Huruf tebal ON
+const CMD_BOLD_OFF = ESC + "E" + "\x00";   // Huruf tebal OFF
+const CMD_DOUBLE_ON = GS + "!" + "\x30";   // Lebar ganda (2x lebar) & tinggi ganda (2x tinggi)
+const CMD_WIDE_ON = GS + "!" + "\x10";     // Lebar ganda saja (2x lebar, tinggi normal)
+const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
+
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
-      const paperSize = localStorage.getItem("paperSize") || "80";
-      const width = paperSize === "45" ? 26 : 36;
-      const line = "-".repeat(width);
+  const paperSize = localStorage.getItem("paperSize") || "80";
+  // Karena huruf tebal + lebar ganda memakan ruang lebih banyak, sesuaikan lebar garis
+  const width = paperSize === "45" ? 24 : 34;
+  const line = "-".repeat(width);
 
-      let struk = "";
-      struk += centerText(namaToko.toUpperCase(), width) + "\n";
-      if (alamatToko) {
-        struk += centerText(alamatToko, width) + "\n";
-      }
-      struk += `${line}\n`;
-      struk += `No     : #${code}\n`;
-      struk += `Waktu  : ${waktu}\n`;
-      struk += `Pembeli: ${buyerName}\n`;
-      struk += `Status : ${status}\n`;
-      struk += `${line}\n`;
+  let struk = "";
+  struk += CMD_INIT;
+  struk += CMD_BOLD_ON; // Aktifkan huruf tebal untuk seluruh nota
 
-      cart.forEach(item => {
-        const uLabel = getUnitMeta(item.unit).label;
-        const subtotalStr = "Rp " + formatRibuan(item.qty * item.price);
-        struk += `${item.name} (${uLabel})\n`;
-        const leftQtyPrice = `${item.qty} x ${formatRibuan(item.price)}`;
-        struk += alignRightLine(leftQtyPrice, subtotalStr, width) + "\n";
-      });
+  // Nama toko melebar (lebar 2x, tinggi normal) + tetap di tengah
+  // Karena lebar huruf 2x, bagi lebar baris dengan 2 saat menengahkan
+  const wideWidth = Math.max(10, Math.floor(width / 2));
+  struk += CMD_WIDE_ON;
+  struk += centerText(namaToko.toUpperCase(), wideWidth) + "\n";
+  struk += CMD_SIZE_NORMAL; // Kembali ke lebar normal (tetap tebal karena CMD_BOLD_ON aktif)
 
-      struk += `${line}\n`;
-      struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
-      struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
-      if (status === "HUTANG") {
-        struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
-      } else {
-        struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
-      }
-      struk += `${line}\n`;
-      struk += centerText("Terima Kasih", width) + "\n\n\n";
-      return struk;
-    }
+  if (alamatToko) {
+    struk += centerText(alamatToko, width) + "\n";
+  }
+  struk += `${line}\n`;
+  struk += `No     : #${code}\n`;
+  struk += `Waktu  : ${waktu}\n`;
+  struk += `Pembeli: ${buyerName}\n`;
+  struk += `Status : ${status}\n`;
+  struk += `${line}\n`;
+
+  cart.forEach(item => {
+    const uLabel = getUnitMeta(item.unit).label;
+    const subtotalStr = "Rp " + formatRibuan(item.qty * item.price);
+    struk += `${item.name} (${uLabel})\n`;
+    const leftQtyPrice = `${item.qty} x ${formatRibuan(item.price)}`;
+    struk += alignRightLine(leftQtyPrice, subtotalStr, width) + "\n";
+  });
+
+  struk += `${line}\n`;
+  struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
+  struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
+  if (status === "HUTANG") {
+    struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
+  } else {
+    struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
+  }
+  struk += `${line}\n`;
+  struk += centerText("Terima Kasih", width) + "\n";
+
+  struk += CMD_BOLD_OFF;
+  struk += "\n\n\n";
+  return struk;
+}
 
     window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
