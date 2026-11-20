@@ -107,7 +107,7 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
 
     .header-checkout {
@@ -211,7 +211,29 @@
       font-weight: 700;
     }
 
-    /* Menu Tombol Garis Tiga */
+    /* Jarak agak jauh dari Nama Pembeli agar mudah dilihat */
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .pay-input, .buyer-input, .hc-suggest-wrap {
+        width: 100%;
+        max-width: 100%;
+      }
+      .header-actions-group {
+        margin-left: 0;
+        margin-top: 6px;
+        width: 100%;
+      }
+      .header-actions-group .btn {
+        flex: 1;
+      }
+    }
+
     .menu-wrapper {
       position: relative;
     }
@@ -284,7 +306,6 @@
       padding: 0 14px;
     }
 
-    /* Kasir: Keranjang Kiri, Pencarian Kanan */
     .kasir-layout {
       display: grid;
       grid-template-columns: 1.35fr 1fr;
@@ -298,15 +319,6 @@
 
     .kasir-right-col {
       order: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .kasir-action-row {
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 8px;
     }
 
     @media (max-width: 768px) {
@@ -318,10 +330,6 @@
       }
       .kasir-right-col {
         order: 1;
-      }
-      .pay-input, .buyer-input, .hc-suggest-wrap {
-        width: 100%;
-        max-width: 100%;
       }
     }
 
@@ -377,7 +385,7 @@
 
     .btn {
       border: none;
-      padding: 9px 13px;
+      padding: 9px 14px;
       border-radius: 14px;
       font-weight: 800;
       font-size: 0.84rem;
@@ -492,7 +500,6 @@
     .unit-pak    { background: #cffafe; color: #0e7490; }
     .unit-sak    { background: #fef3c7; color: #a16207; }
 
-    /* Item Keranjang Diperkecil Agar Muat Banyak */
     .cart-item {
       display: flex;
       flex-direction: column;
@@ -714,6 +721,12 @@
           <span class="hc-label">Nama Pembeli</span>
           <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Opsional" autocomplete="off">
         </div>
+
+        <!-- Tombol Reset & Cetak Nota di Samping Kanan Nama Pembeli dengan Jarak -->
+        <div class="header-actions-group">
+          <button type="button" class="btn btn-danger" onclick="clearCart()">Reset</button>
+          <button type="button" class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
+        </div>
       </div>
 
       <!-- Tombol Garis Tiga -->
@@ -749,7 +762,7 @@
             </div>
           </div>
 
-          <!-- Pencarian + Tombol di Kanan -->
+          <!-- Pencarian di Kanan -->
           <div class="kasir-right-col">
             <div class="card">
               <label class="field-label">Cari / Barcode Produk</label>
@@ -758,11 +771,6 @@
                 <div id="kasirSearchLoader" class="search-loader">Mencari...</div>
                 <div id="searchResults" class="search-results"></div>
               </div>
-            </div>
-
-            <div class="card kasir-action-row">
-              <button class="btn btn-danger" onclick="clearCart()">Reset</button>
-              <button class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
             </div>
           </div>
         </div>
@@ -997,7 +1005,6 @@
     document.addEventListener("pointerdown", () => getAudioCtx(), { once: true });
     document.addEventListener("keydown", () => getAudioCtx(), { once: true });
 
-    // Menu garis tiga buka/tutup
     window.toggleNavMenu = (e) => {
       e.stopPropagation();
       document.getElementById("navDropdown").classList.toggle("open");
@@ -1026,7 +1033,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV13ClayDB");
+    const dbLocal = new Dexie("KasirRealtimeV14ClayDB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
