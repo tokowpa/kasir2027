@@ -1464,6 +1464,8 @@ const CMD_BOLD_OFF = ESC + "E" + "\x00";   // Huruf tebal OFF
 const CMD_DOUBLE_ON = GS + "!" + "\x30";   // Lebar ganda (2x lebar) & tinggi ganda (2x tinggi)
 const CMD_WIDE_ON = GS + "!" + "\x10";     // Lebar ganda saja (2x lebar, tinggi normal)
 const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
+const CMD_CUT_PARTIAL = GS + "V" + "\x01"; // Potong sebagian (sisakan sedikit kait kertas - paling umum)
+const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
 
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
   const paperSize = localStorage.getItem("paperSize") || "80";
@@ -1550,11 +1552,9 @@ const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
       };
 
       await dbLocal.transactions.put(trxData);
-      try {
-        await setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true });
-      } catch (e) {
-        console.warn("Simpan lokal sukses, sinkron cloud menyusul:", e);
-      }
+      setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true }).catch((e) => {
+        console.warn("Sinkron cloud tertunda (offline):", e);
+      });
 
       if (cetakStruk) {
         const namaToko = localStorage.getItem("storeName") || "TOKO KASIR";
