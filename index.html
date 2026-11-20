@@ -7,7 +7,6 @@
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <style>
     :root {
-      /* Palet Neomorphism Hangat & Nyaman di Mata */
       --bg: #e6ecf2;
       --surface: #e6ecf2;
       --surface-elevated: #ecf1f6;
@@ -22,7 +21,6 @@
       --muted: #526071;
       --border: rgba(148, 163, 184, 0.28);
 
-      /* Bayangan Neomorphism */
       --neu-out: 7px 7px 15px rgba(163, 177, 198, 0.72), -7px -7px 15px rgba(255, 255, 255, 0.88);
       --neu-out-sm: 4px 4px 9px rgba(163, 177, 198, 0.68), -4px -4px 9px rgba(255, 255, 255, 0.86);
       --neu-in: inset 5px 5px 10px rgba(163, 177, 198, 0.65), inset -5px -5px 10px rgba(255, 255, 255, 0.85);
@@ -42,7 +40,6 @@
       padding-bottom: 36px;
     }
 
-    /* Layar Login Firebase Auth Neomorphism */
     .login-overlay {
       position: fixed;
       inset: 0;
@@ -56,33 +53,25 @@
 
     .login-card {
       width: 100%;
-      max-width: 390px;
+      max-width: 380px;
       background: var(--surface);
       border-radius: 22px;
-      padding: 24px;
+      padding: 22px;
       box-shadow: var(--neu-out);
       display: grid;
-      gap: 13px;
+      gap: 12px;
     }
 
     .login-title {
-      font-size: 1.22rem;
+      font-size: 1.18rem;
       font-weight: 900;
-      color: var(--text);
       text-align: center;
-    }
-
-    .login-sub {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-align: center;
-      margin-top: -6px;
     }
 
     .login-error {
       background: #fde8e8;
       color: var(--danger);
-      padding: 9px 12px;
+      padding: 8px 12px;
       border-radius: 12px;
       font-size: 0.8rem;
       font-weight: 700;
@@ -90,11 +79,9 @@
       display: none;
     }
 
-    /* Header Neomorphism Sejajar */
     header {
       background: var(--surface);
-      color: var(--text);
-      padding: 12px 16px;
+      padding: 10px 16px;
       box-shadow: var(--neu-out-sm);
       position: sticky;
       top: 0;
@@ -103,7 +90,7 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
 
     .header-checkout {
@@ -117,15 +104,15 @@
     .hc-total-wrap {
       display: flex;
       flex-direction: column;
-      min-width: 152px;
-      padding: 7px 12px;
+      min-width: 148px;
+      padding: 6px 12px;
       border-radius: 14px;
       background: var(--surface-elevated);
       box-shadow: var(--neu-in-sm);
     }
 
     .hc-label {
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       color: var(--muted);
       font-weight: 800;
       text-transform: uppercase;
@@ -133,14 +120,14 @@
     }
 
     .total-amount {
-      font-size: 1.42rem;
+      font-size: 1.38rem;
       font-weight: 900;
       color: #0f172a;
       line-height: 1.15;
     }
 
     .change-amount {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       color: var(--success);
     }
@@ -148,43 +135,34 @@
     .hc-field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .pay-input {
-      width: 152px;
-      padding: 8px 11px;
+      width: 145px;
+      padding: 7px 10px;
       border-radius: 12px;
       border: none;
       background: var(--bg);
       box-shadow: var(--neu-in-sm);
       color: #0f172a !important;
       caret-color: #0f172a;
-      font-size: 1.04rem;
+      font-size: 1rem;
       font-weight: 900;
-      text-align: center;
+      text-align: right;
     }
 
-    .pay-input::placeholder {
-      color: #8b9bb0;
-    }
-
-    .pay-input:focus {
-      outline: 2px solid rgba(2, 132, 199, 0.45);
-    }
-
-    /* Rekomendasi Uang Pembeli di Antara Uang Pembeli & Nama Pembeli */
     .hc-suggest-wrap {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      max-width: 255px;
+      gap: 3px;
+      max-width: 250px;
     }
 
     .suggest-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 4px;
     }
 
     .suggest-btn {
@@ -194,14 +172,9 @@
       color: #0f172a;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 5px 8px;
+      padding: 4px 8px;
       border-radius: 9px;
       cursor: pointer;
-      transition: all 0.14s ease;
-    }
-
-    .suggest-btn:hover {
-      color: #000000;
     }
 
     .suggest-btn:active {
@@ -209,33 +182,24 @@
     }
 
     .buyer-input {
-      width: 178px;
-      padding: 8px 11px;
+      width: 175px;
+      padding: 8px 10px;
       border-radius: 12px;
       border: none;
       background: var(--bg);
       box-shadow: var(--neu-in-sm);
       color: var(--text) !important;
       caret-color: var(--primary);
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       font-weight: 700;
-    }
-
-    .buyer-input::placeholder {
-      color: #8b9bb0;
-      font-weight: 500;
-    }
-
-    .buyer-input:focus {
-      outline: 2px solid rgba(2, 132, 199, 0.45);
     }
 
     .tabs {
       display: flex;
-      gap: 6px;
+      gap: 5px;
       background: var(--bg);
       box-shadow: var(--neu-in-sm);
-      padding: 5px;
+      padding: 4px;
       border-radius: 14px;
       flex-wrap: wrap;
     }
@@ -249,7 +213,6 @@
       font-size: 0.82rem;
       color: var(--muted);
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .tab-btn.active {
@@ -259,38 +222,25 @@
     }
 
     .container {
-      max-width: 1260px;
-      margin: 16px auto;
+      max-width: 1180px;
+      margin: 14px auto;
       padding: 0 14px;
     }
 
-    .kasir-grid {
+    /* Baris Atas Kasir: Pencarian + Reset + Cetak Nota */
+    .kasir-top-bar {
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 16px;
-      align-items: start;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
     }
 
-    .kasir-left {
-      order: 1;
-    }
-
-    .kasir-right {
-      order: 2;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    @media (max-width: 860px) {
-      .kasir-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 720px) {
+      .kasir-top-bar {
+        grid-template-columns: 1fr 1fr;
       }
-      .kasir-left {
-        order: 2;
-      }
-      .kasir-right {
-        order: 1;
+      .kasir-search-box {
+        grid-column: span 2;
       }
       .pay-input, .buyer-input, .hc-suggest-wrap {
         width: 100%;
@@ -301,24 +251,15 @@
     .card {
       background: var(--surface);
       border-radius: 20px;
-      padding: 14px;
+      padding: 13px;
       box-shadow: var(--neu-out);
       margin-bottom: 14px;
-    }
-
-    .kasir-grid .card {
-      margin-bottom: 0;
-    }
-
-    .right-actions-card {
-      display: flex;
-      gap: 10px;
     }
 
     .edit-banner {
       background: #fef3c7;
       color: #92400e;
-      padding: 9px 14px;
+      padding: 8px 14px;
       border-radius: 14px;
       margin-bottom: 12px;
       box-shadow: var(--neu-out-sm);
@@ -336,7 +277,6 @@
       border-radius: 12px;
       font-size: 0.9rem;
       outline: none;
-      transition: box-shadow 0.2s;
       background: var(--bg);
       box-shadow: var(--neu-in-sm);
       color: var(--text);
@@ -348,18 +288,18 @@
 
     label.field-label {
       display: block;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 800;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .btn {
       border: none;
-      padding: 10px 14px;
+      padding: 9px 14px;
       border-radius: 12px;
       font-weight: 800;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -368,7 +308,6 @@
       background: var(--surface);
       color: var(--text);
       box-shadow: var(--neu-out-sm);
-      transition: all 0.14s ease;
     }
 
     .btn:active:not(:disabled) {
@@ -383,11 +322,6 @@
 
     .btn-primary {
       background: linear-gradient(145deg, #0ea5e9, #0284c7);
-      color: #ffffff;
-    }
-
-    .btn-success {
-      background: linear-gradient(145deg, #16a34a, #15803d);
       color: #ffffff;
     }
 
@@ -417,26 +351,26 @@
     }
 
     .search-loader {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       color: var(--primary-dark);
       font-weight: 800;
-      margin-top: 6px;
+      margin-top: 5px;
       display: none;
     }
 
     .search-results {
-      margin-top: 10px;
+      margin-top: 8px;
       background: var(--surface);
       border-radius: 14px;
       box-shadow: var(--neu-in);
-      max-height: 480px;
+      max-height: 440px;
       overflow-y: auto;
       padding: 4px 8px;
       display: none;
     }
 
     .search-item {
-      padding: 8px 8px;
+      padding: 7px 8px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -455,7 +389,6 @@
       background: rgba(255, 255, 255, 0.45);
     }
 
-    /* Pill Satuan Lembut */
     .var-pill {
       display: inline-flex;
       align-items: center;
@@ -478,42 +411,58 @@
     .unit-pak    { background: #cffafe; color: #155e75; }
     .unit-sak    { background: #e7e5e4; color: #44403c; }
 
+    /* Form Tambah Produk Ringkas */
+    .prod-top-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    @media (max-width: 600px) {
+      .prod-top-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .variant-builder {
       background: var(--bg);
       box-shadow: var(--neu-in);
       border-radius: 16px;
-      padding: 12px;
+      padding: 10px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .variant-row {
       display: grid;
-      grid-template-columns: 120px 1fr 1.2fr auto;
-      gap: 8px;
+      grid-template-columns: 115px 1fr 1.25fr auto;
+      gap: 6px;
       align-items: center;
-      padding: 9px;
-      border-radius: 14px;
+      padding: 7px;
+      border-radius: 12px;
       background: var(--surface);
       box-shadow: var(--neu-out-sm);
     }
 
     @media (max-width: 600px) {
       .variant-row {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr auto;
+      }
+      .variant-row .v-barcodes {
+        grid-column: span 3;
       }
     }
 
-    /* Item Keranjang Neomorphism */
     .cart-item {
       display: flex;
       flex-direction: column;
-      padding: 9px 12px;
-      border-radius: 15px;
+      padding: 8px 12px;
+      border-radius: 14px;
       background: var(--surface);
       box-shadow: var(--neu-out-sm);
-      margin-bottom: 10px;
-      gap: 7px;
+      margin-bottom: 9px;
+      gap: 6px;
     }
 
     .cart-item:last-child {
@@ -532,13 +481,6 @@
       font-size: 0.9rem;
     }
 
-    .cart-note {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-style: italic;
-      margin-left: 6px;
-    }
-
     .cart-bottom {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -547,13 +489,9 @@
     }
 
     .cart-unit-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
       justify-self: start;
     }
 
-    /* Tombol Qty Besar bergaya Neomorphism */
     .qty-controls {
       display: flex;
       align-items: center;
@@ -561,7 +499,7 @@
       justify-self: center;
       background: var(--bg);
       box-shadow: var(--neu-in-sm);
-      padding: 4px 8px;
+      padding: 3px 8px;
       border-radius: 12px;
     }
 
@@ -584,7 +522,7 @@
     }
 
     .qty-value {
-      min-width: 28px;
+      min-width: 26px;
       text-align: center;
       font-size: 1rem;
       font-weight: 900;
@@ -607,7 +545,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 11px 4px;
+      padding: 10px 4px;
       border-bottom: 1px solid var(--border);
       gap: 8px;
     }
@@ -623,7 +561,7 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
-      padding-top: 12px;
+      padding-top: 10px;
       border-top: 1px solid var(--border);
     }
 
@@ -673,21 +611,20 @@
 </head>
 <body>
 
-  <!-- ================= LAYAR LOGIN EMAIL & SANDI ================= -->
+  <!-- ================= LOGIN ================= -->
   <div id="loginOverlay" class="login-overlay">
     <form id="loginForm" class="login-card">
-      <div class="login-title">Login Aplikasi Kasir</div>
-      <div class="login-sub">Masuk menggunakan Email & Sandi Firebase</div>
+      <div class="login-title">Masuk Kasir</div>
       <div id="loginError" class="login-error"></div>
       <div>
         <label class="field-label">Email</label>
-        <input type="email" id="loginEmail" placeholder="kasir@toko.com" required autocomplete="email">
+        <input type="email" id="loginEmail" required autocomplete="email">
       </div>
       <div>
         <label class="field-label">Sandi</label>
-        <input type="password" id="loginPassword" placeholder="Masukkan sandi" required autocomplete="current-password">
+        <input type="password" id="loginPassword" required autocomplete="current-password">
       </div>
-      <button type="submit" id="loginBtn" class="btn btn-primary" style="width:100%; padding:11px;">Masuk</button>
+      <button type="submit" id="loginBtn" class="btn btn-primary" style="width:100%;">Masuk</button>
     </form>
   </div>
 
@@ -702,27 +639,24 @@
         </div>
 
         <div class="hc-field">
-          <span class="hc-label">Uang Pembeli (Rp)</span>
+          <span class="hc-label">Uang Pembeli</span>
           <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
         </div>
 
-        <!-- REKOMENDASI UANG PEMBELI DI ANTARA UANG PEMBELI & NAMA PEMBELI -->
         <div class="hc-suggest-wrap">
           <span class="hc-label">Rekomendasi Uang</span>
-          <div id="suggestMoneyButtons" class="suggest-chips">
-            <span style="font-size:0.72rem; color:var(--muted);">-</span>
-          </div>
+          <div id="suggestMoneyButtons" class="suggest-chips">-</div>
         </div>
 
         <div class="hc-field">
-          <span class="hc-label">Nama Pembeli (Opsional)</span>
-          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Nama pembeli / hutang" autocomplete="off">
+          <span class="hc-label">Nama Pembeli</span>
+          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Opsional" autocomplete="off">
         </div>
       </div>
 
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('kasir')">Kasir</button>
-        <button class="tab-btn" onclick="switchTab('produk')">Kelola Produk</button>
+        <button class="tab-btn" onclick="switchTab('produk')">Produk</button>
         <button class="tab-btn" onclick="switchTab('riwayat')">Riwayat</button>
         <button class="tab-btn" onclick="switchTab('pengaturan')">Pengaturan</button>
       </div>
@@ -732,36 +666,30 @@
       <!-- ================= TAB 1: KASIR ================= -->
       <div id="tab-kasir">
         <div id="editTrxBanner" class="edit-banner hidden">
-          <span>✏️ Sedang mengedit transaksi #<strong id="editingTrxCode"></strong></span>
-          <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal Edit</button>
+          <span>Edit #<strong id="editingTrxCode"></strong></span>
+          <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal</button>
         </div>
 
-        <div class="kasir-grid">
-          <div class="kasir-left">
-            <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <strong style="font-size:0.92rem;">Keranjang Belanja (<span id="cartCount">0</span>)</strong>
-              </div>
-              <div id="cartList">
-                <p style="text-align:center; color:var(--muted); padding:24px 0;">Keranjang masih kosong</p>
-              </div>
+        <!-- Baris Atas: Pencarian + Reset + Cetak Nota -->
+        <div class="card">
+          <div class="kasir-top-bar">
+            <div class="kasir-search-box search-wrapper">
+              <input type="text" id="searchInput" placeholder="Scan barcode atau ketik nama produk..." autocomplete="off" autofocus>
+              <div id="kasirSearchLoader" class="search-loader">Mencari...</div>
+              <div id="searchResults" class="search-results"></div>
             </div>
+            <button class="btn btn-danger" onclick="clearCart()">Reset</button>
+            <button class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
           </div>
+        </div>
 
-          <div class="kasir-right">
-            <div class="card right-actions-card">
-              <button class="btn btn-danger" style="flex:1" onclick="clearCart()">Reset</button>
-              <button class="btn btn-primary" style="flex:2" onclick="prosesBayar(true)">Cetak Nota RawBT</button>
-            </div>
-
-            <div class="card">
-              <label class="field-label">Cari / Scan Barcode Produk</label>
-              <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Scan barcode variasi / ketik nama produk (jeda 0,5 detik)..." autocomplete="off" autofocus>
-                <div id="kasirSearchLoader" class="search-loader">⏳ Memuat hasil pencarian...</div>
-                <div id="searchResults" class="search-results"></div>
-              </div>
-            </div>
+        <!-- Keranjang Belanja -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:0.92rem;">Keranjang (<span id="cartCount">0</span>)</strong>
+          </div>
+          <div id="cartList">
+            <p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang kosong</p>
           </div>
         </div>
       </div>
@@ -770,69 +698,69 @@
       <div id="tab-produk" class="hidden">
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h3 id="productFormTitle" style="font-size:1rem;">Tambah Produk Baru</h3>
+            <strong id="productFormTitle" style="font-size:0.96rem;">Tambah Produk</strong>
             <button type="button" id="toggleExtraBtn" class="btn btn-outline btn-sm" onclick="toggleExtraFields()">
-              + Harga Beli & Catatan
+              + Detail
             </button>
           </div>
 
           <form id="productForm" style="display:grid; gap:10px;">
             <input type="hidden" id="prodDocId">
 
-            <div>
-              <label class="field-label">Nama Produk (Wajib)</label>
-              <input type="text" id="prodName" placeholder="Contoh: Indomie Goreng" required>
+            <div class="prod-top-grid">
+              <div>
+                <label class="field-label">Nama Produk</label>
+                <input type="text" id="prodName" placeholder="Nama produk" required>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">+ Variasi</button>
             </div>
 
             <div class="variant-builder">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <label class="field-label" style="margin:0;">Variasi Satuan, Harga & Barcode Masing-Masing</label>
-                <button type="button" class="btn btn-primary btn-sm" onclick="addVariantRow()">+ Tambah Variasi</button>
-              </div>
-              <div id="variantRowsContainer" style="display:grid; gap:8px;"></div>
+              <div id="variantRowsContainer" style="display:grid; gap:7px;"></div>
             </div>
 
             <div id="extraFieldsBox" class="hidden" style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px;">
               <div>
-                <label class="field-label">Harga Beli (Opsional)</label>
+                <label class="field-label">Harga Beli</label>
                 <input type="text" id="prodBuyPrice" inputmode="numeric" placeholder="0">
               </div>
               <div>
-                <label class="field-label">Catatan (Opsional)</label>
-                <input type="text" id="prodNote" placeholder="Catatan tambahan produk...">
+                <label class="field-label">Catatan</label>
+                <input type="text" id="prodNote" placeholder="Opsional">
               </div>
             </div>
 
             <div style="display:flex; gap:8px;">
-              <button type="submit" class="btn btn-primary" style="flex:1">Simpan & Sinkronkan Realtime</button>
-              <button type="button" class="btn btn-outline" onclick="resetProductForm()">Bersihkan</button>
+              <button type="submit" class="btn btn-primary" style="flex:1">Simpan</button>
+              <button type="button" class="btn btn-outline" onclick="resetProductForm()">Batal</button>
             </div>
           </form>
         </div>
 
+        <!-- Daftar Produk Sembunyi Sebelum Dicari -->
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px;">
-            <strong>Daftar Produk (<span id="totalProdCount">0</span>)</strong>
-            <input type="text" id="filterProdInput" placeholder="Cari nama / barcode / variasi..." style="max-width:250px; padding:6px 10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <strong>Cari Produk (<span id="totalProdCount">0</span>)</strong>
+            <input type="text" id="filterProdInput" placeholder="Ketik untuk mencari produk..." style="max-width:260px; padding:7px 11px;">
           </div>
-          <div id="prodSearchLoader" class="search-loader">⏳ Mencari produk...</div>
+          <div id="prodSearchLoader" class="search-loader">Mencari...</div>
           <div id="productList"></div>
         </div>
       </div>
 
-      <!-- ================= TAB 3: RIWAYAT TRANSAKSI (50 PER HALAMAN) ================= -->
+      <!-- ================= TAB 3: RIWAYAT TRANSAKSI ================= -->
       <div id="tab-riwayat" class="hidden">
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
-            <strong>Riwayat Transaksi (<span id="totalTrxCount">0</span>)</strong>
-            <input type="text" id="filterTrxInput" placeholder="Cari nama pembeli / no / barang..." style="max-width:260px; padding:7px 10px;">
+            <strong>Riwayat (<span id="totalTrxCount">0</span>)</strong>
+            <input type="text" id="filterTrxInput" placeholder="Cari nama / no / barang..." style="max-width:260px; padding:7px 11px;">
           </div>
-          <div id="trxSearchLoader" class="search-loader">⏳ Mencari riwayat transaksi...</div>
+          <div id="trxSearchLoader" class="search-loader">Mencari...</div>
           <div id="transactionList"></div>
           <div id="trxPaginationBar" class="pagination-bar hidden">
-            <button id="prevPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(-1)">◀ Sebelumnya</button>
-            <span id="pageInfoText" style="font-size:0.82rem; font-weight:700; color:var(--muted);">Halaman 1 dari 1</span>
-            <button id="nextPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(1)">Berikutnya ▶</button>
+            <button id="prevPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(-1)">Sebelumnya</button>
+            <span id="pageInfoText" style="font-size:0.8rem; font-weight:700; color:var(--muted);"></span>
+            <button id="nextPageBtn" class="btn btn-outline btn-sm" onclick="changeTrxPage(1)">Berikutnya</button>
           </div>
         </div>
       </div>
@@ -840,36 +768,34 @@
       <!-- ================= TAB 4: PENGATURAN ================= -->
       <div id="tab-pengaturan" class="hidden">
         <div class="card" style="display:grid; gap:10px;">
-          <h3 style="font-size:1rem;">Identitas Toko & Cetak Struk</h3>
+          <strong style="font-size:0.96rem;">Pengaturan Toko & Cetak</strong>
           <div>
             <label class="field-label">Nama Toko</label>
-            <input type="text" id="storeNameInput" placeholder="Nama Toko (Untuk Struk)">
+            <input type="text" id="storeNameInput" placeholder="Nama toko">
           </div>
           <div>
-            <label class="field-label">Alamat / No HP Toko</label>
-            <input type="text" id="storeAddrInput" placeholder="Alamat / No HP Toko">
+            <label class="field-label">Alamat / No HP</label>
+            <input type="text" id="storeAddrInput" placeholder="Alamat atau nomor HP">
           </div>
           <div>
-            <label class="field-label">Ukuran Kertas Cetak Print (RawBT)</label>
+            <label class="field-label">Ukuran Kertas</label>
             <select id="paperSizeSelect">
-              <option value="80">80mm (Lebar / Printer Besar)</option>
-              <option value="45">45mm (Kecil / Mini)</option>
+              <option value="80">80mm</option>
+              <option value="45">45mm</option>
             </select>
           </div>
           <button class="btn btn-primary" onclick="saveStoreSettings()">Simpan Pengaturan</button>
 
-          <hr style="border:none; border-top:1px solid var(--border); margin:6px 0;">
+          <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
 
           <button class="btn btn-danger" onclick="deleteHistoryExceptDebt()">
-            🗑️ Hapus Semua Riwayat Kecuali Hutang
+            Hapus Semua Riwayat Kecuali Hutang
           </button>
-
           <button class="btn btn-outline" onclick="forceFullResync()">
-            Sinkron Ulang Semua Data dari Cloud
+            Sinkron Ulang Cloud
           </button>
-
           <button class="btn btn-warning" onclick="logoutUser()">
-            🚪 Keluar Akun (<span id="loggedInEmail">-</span>)
+            Keluar (<span id="loggedInEmail">-</span>)
           </button>
         </div>
       </div>
@@ -878,7 +804,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <!-- ================= SCRIPT FIREBASE AUTH, FIRESTORE & LOGIKA KASIR ================= -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { 
@@ -903,7 +828,7 @@
     const dbCloud = getFirestore(app);
 
     // =========================================================================
-    // AUTENTIKASI LOGIN EMAIL & SANDI
+    // AUTH
     // =========================================================================
     const loginOverlay = document.getElementById("loginOverlay");
     const mainApp = document.getElementById("mainApp");
@@ -915,15 +840,16 @@
       e.preventDefault();
       loginError.style.display = "none";
       loginBtn.disabled = true;
-      loginBtn.innerText = "Memproses...";
-
-      const email = document.getElementById("loginEmail").value.trim();
-      const pass = document.getElementById("loginPassword").value;
+      loginBtn.innerText = "Masuk...";
 
       try {
-        await signInWithEmailAndPassword(auth, email, pass);
+        await signInWithEmailAndPassword(
+          auth,
+          document.getElementById("loginEmail").value.trim(),
+          document.getElementById("loginPassword").value
+        );
       } catch (err) {
-        loginError.innerText = "Login gagal: periksa email dan sandi Anda.";
+        loginError.innerText = "Email atau sandi salah.";
         loginError.style.display = "block";
       } finally {
         loginBtn.disabled = false;
@@ -932,7 +858,7 @@
     });
 
     window.logoutUser = async () => {
-      if (!confirm("Keluar dari akun kasir?")) return;
+      if (!confirm("Keluar dari akun?")) return;
       stopRealtimeSync();
       await signOut(auth);
     };
@@ -953,45 +879,39 @@
     });
 
     // =========================================================================
-    // SUARA NOTIFIKASI BAWAAAN BROWSER (TANPA SITUS LUAR, RINGAN & KERAS)
+    // SUARA NOTIFIKASI BAWAAN
     // =========================================================================
     let audioCtx = null;
 
     function getAudioCtx() {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return null;
-      if (!audioCtx) {
-        audioCtx = new AudioContextClass();
-      }
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume().catch(() => {});
-      }
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
       return audioCtx;
     }
 
     function playTone(freq, startOffset, duration, type = "square", peakGain = 0.85) {
       const ctx = getAudioCtx();
       if (!ctx) return;
-
       const now = ctx.currentTime + startOffset;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      const compressor = ctx.createDynamicsCompressor();
+      const comp = ctx.createDynamicsCompressor();
 
       osc.type = type;
       osc.frequency.setValueAtTime(freq, now);
-
       gain.gain.setValueAtTime(0.001, now);
       gain.gain.exponentialRampToValueAtTime(peakGain, now + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-      compressor.threshold.setValueAtTime(-6, now);
-      compressor.knee.setValueAtTime(12, now);
-      compressor.ratio.setValueAtTime(6, now);
+      comp.threshold.setValueAtTime(-6, now);
+      comp.knee.setValueAtTime(12, now);
+      comp.ratio.setValueAtTime(6, now);
 
       osc.connect(gain);
-      gain.connect(compressor);
-      compressor.connect(ctx.destination);
+      gain.connect(comp);
+      comp.connect(ctx.destination);
 
       osc.start(now);
       osc.stop(now + duration + 0.02);
@@ -1011,7 +931,7 @@
     document.addEventListener("keydown", () => getAudioCtx(), { once: true });
 
     // =========================================================================
-    // DAFTAR VARIASI SATUAN & WARNA BACKGROUND
+    // VARIASI & DATABASE LOKAL
     // =========================================================================
     const VARIANT_UNITS = [
       { key: "karton",  label: "Karton",  cls: "unit-karton" },
@@ -1029,7 +949,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV10NeuDB");
+    const dbLocal = new Dexie("KasirRealtimeV11NeuDB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -1057,15 +977,16 @@
     function centerText(text, width) {
       const str = String(text || "");
       if (str.length >= width) return str;
-      const leftPad = Math.floor((width - str.length) / 2);
-      return " ".repeat(leftPad) + str;
+      return " ".repeat(Math.floor((width - str.length) / 2)) + str;
     }
 
     function alignRightLine(leftLabel, rightValue, width) {
       const l = String(leftLabel || "");
       const r = String(rightValue || "");
-      const spaceCount = Math.max(1, width - l.length - r.length);
-      return l + " ".repeat(spaceCount) + r;
+      if (l.length + r.length + 1 > width) {
+        return l.slice(0, Math.max(1, width - r.length - 1)) + " " + r;
+      }
+      return l + " ".repeat(width - l.length - r.length) + r;
     }
 
     function parseBarcodes(raw) {
@@ -1103,7 +1024,7 @@
       t.innerText = msg;
       t.style.display = "block";
       clearTimeout(t._timer);
-      t._timer = setTimeout(() => { t.style.display = "none"; }, 2500);
+      t._timer = setTimeout(() => { t.style.display = "none"; }, 2200);
     }
 
     function stopRealtimeSync() {
@@ -1149,10 +1070,12 @@
           await dbLocal.products.bulkPut(itemsToPut);
           localStorage.setItem("lastProdSync", maxTime);
           renderCart();
-          renderProductList();
-          if (lastProdSync > 0) showToast(`${itemsToPut.length} produk tersinkronisasi!`);
+          if (document.getElementById("filterProdInput").value.trim()) {
+            renderProductList();
+          }
+          if (lastProdSync > 0) showToast(`${itemsToPut.length} produk tersinkron`);
         }
-      }, () => showToast("Mode offline: memakai data lokal"));
+      }, () => showToast("Mode offline"));
 
       const lastTrxSync = Number(localStorage.getItem("lastTrxSync")) || 0;
       const qTrx = query(collection(dbCloud, "transactions"), where("updatedAt", ">", lastTrxSync));
@@ -1162,8 +1085,7 @@
         const trxToPut = [];
 
         snapshot.docChanges().forEach((change) => {
-          const data = change.doc.data();
-          const trx = { id: change.doc.id, ...data };
+          const trx = { id: change.doc.id, ...change.doc.data() };
           if (change.type === "added" || change.type === "modified") {
             trxToPut.push(trx);
             if ((trx.updatedAt || 0) > maxTrxTime) maxTrxTime = trx.updatedAt;
@@ -1181,6 +1103,9 @@
       }, () => {});
     }
 
+    // =========================================================================
+    // KASIR & KERANJANG
+    // =========================================================================
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
     const kasirLoader = document.getElementById("kasirSearchLoader");
@@ -1202,7 +1127,7 @@
           searchResults.style.display = "none";
         } else {
           playScanNotFoundSound();
-          showToast("Produk / barcode tidak ditemukan!");
+          showToast("Barcode tidak ditemukan");
         }
       }
     });
@@ -1232,7 +1157,7 @@
 
         if (matches.length === 0) {
           playScanNotFoundSound();
-          searchResults.innerHTML = `<div class="search-item" style="color:var(--danger); font-weight:800;">Produk tidak ditemukan</div>`;
+          searchResults.innerHTML = `<div class="search-item" style="color:var(--danger); font-weight:800;">Tidak ditemukan</div>`;
         } else {
           searchResults.innerHTML = matches.map(p => {
             const pills = (p.variants || []).map(v => {
@@ -1243,7 +1168,6 @@
               <div class="search-item" onclick="selectProduct('${p.id}')">
                 <div>
                   <strong>${p.name}</strong>
-                  ${p.note ? `<small style="color:var(--muted)">(${p.note})</small>` : ""}
                   <div class="var-badges-wrap">${pills}</div>
                 </div>
               </div>
@@ -1257,8 +1181,7 @@
     window.selectProduct = async (id, unitKey = null) => {
       const prod = await dbLocal.products.get(id);
       if (prod) {
-        const chosenUnit = unitKey || prod.variants[0]?.unit || "pcs";
-        addToCart(prod, chosenUnit);
+        addToCart(prod, unitKey || prod.variants[0]?.unit || "pcs");
         playScanSuccessSound();
         searchInput.value = "";
         searchResults.style.display = "none";
@@ -1299,7 +1222,7 @@
       const freshProd = await dbLocal.products.get(item.productId);
       const vars = freshProd?.variants || item.variants || [];
       const targetVar = vars.find(v => v.unit === newUnit);
-      if (!targetVar) return showToast("Variasi ini tidak tersedia untuk produk ini");
+      if (!targetVar) return showToast("Variasi tidak tersedia");
 
       item.unit = targetVar.unit;
       item.price = Number(targetVar.price || 0);
@@ -1317,7 +1240,7 @@
       const nextQty = cart[idx].qty + delta;
       if (nextQty < 1) {
         cart[idx].qty = 1;
-        showToast("Minimal jumlah 1. Gunakan tombol hapus jika ingin membatalkan.");
+        showToast("Minimal 1");
       } else {
         cart[idx].qty = nextQty;
       }
@@ -1327,7 +1250,6 @@
     window.removeCartItem = (uid) => {
       cart = cart.filter(i => i.uid !== uid);
       renderCart();
-      showToast("Item dihapus dari keranjang");
     };
 
     window.clearCart = () => {
@@ -1342,7 +1264,6 @@
 
     window.cancelEditTransaction = () => {
       clearCart();
-      showToast("Edit transaksi dibatalkan");
     };
 
     function getCartTotal() {
@@ -1352,13 +1273,12 @@
     function renderMoneySuggestions(total) {
       const container = document.getElementById("suggestMoneyButtons");
       if (!total || total <= 0) {
-        container.innerHTML = `<span style="font-size:0.72rem; color:var(--muted);">-</span>`;
+        container.innerHTML = "-";
         return;
       }
 
       const candidates = new Set([total]);
-      const steps = [5000, 10000, 20000, 50000, 100000];
-      steps.forEach(step => {
+      [5000, 10000, 20000, 50000, 100000].forEach(step => {
         const roundedUp = Math.ceil(total / step) * step;
         if (roundedUp >= total) candidates.add(roundedUp);
       });
@@ -1384,7 +1304,7 @@
       renderMoneySuggestions(total);
 
       if (cart.length === 0) {
-        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:24px 0;">Keranjang masih kosong</p>`;
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:20px 0;">Keranjang kosong</p>`;
       } else {
         listEl.innerHTML = cart.map(item => {
           const meta = getUnitMeta(item.unit);
@@ -1400,9 +1320,8 @@
                 <div>
                   <span class="var-pill ${meta.cls}">${meta.label}</span>
                   <span class="cart-title" style="margin-left:5px;">${item.name}</span>
-                  ${item.note ? `<span class="cart-note">• ${item.note}</span>` : ""}
                 </div>
-                <strong style="font-size:0.92rem; color:var(--primary-dark);">Rp ${formatRibuan(item.price * item.qty)}</strong>
+                <strong style="font-size:0.92rem; color:#0f172a;">Rp ${formatRibuan(item.price * item.qty)}</strong>
               </div>
               <div class="cart-bottom">
                 <div class="cart-unit-left">
@@ -1418,7 +1337,7 @@
                 </div>
 
                 <div class="cart-delete-right">
-                  <button class="btn btn-danger btn-sm" onclick="removeCartItem('${item.uid}')" title="Hapus item">🗑️</button>
+                  <button class="btn btn-danger btn-sm" onclick="removeCartItem('${item.uid}')">Hapus</button>
                 </div>
               </div>
             </div>
@@ -1445,8 +1364,7 @@
         el.innerText = "Kembalian: Rp 0";
         el.style.color = "var(--success)";
       } else if (bayar < total) {
-        const hutang = total - bayar;
-        el.innerText = "Hutang: Rp " + formatRibuan(hutang);
+        el.innerText = "Hutang: Rp " + formatRibuan(total - bayar);
         el.style.color = "var(--danger)";
       } else {
         el.innerText = "Kembalian: Rp " + formatRibuan(selisih);
@@ -1454,72 +1372,58 @@
       }
     }
 
-    // Perintah ESC/POS standar untuk thermal printer via RawBT
-const ESC = "\x1b";
-const GS = "\x1d";
-
-const CMD_INIT = ESC + "@";               // Reset printer ke pengaturan awal
-const CMD_BOLD_ON = ESC + "E" + "\x01";    // Huruf tebal ON
-const CMD_BOLD_OFF = ESC + "E" + "\x00";   // Huruf tebal OFF
-const CMD_DOUBLE_ON = GS + "!" + "\x30";   // Lebar ganda (2x lebar) & tinggi ganda (2x tinggi)
-const CMD_WIDE_ON = GS + "!" + "\x10";     // Lebar ganda saja (2x lebar, tinggi normal)
-const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
-const CMD_CUT_PARTIAL = GS + "V" + "\x01"; // Potong sebagian (sisakan sedikit kait kertas - paling umum)
-const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
+    // =========================================================================
+    // CETAK NOTA ESC/POS
+    // =========================================================================
+    const ESC = "\x1b";
+    const GS = "\x1d";
+    const CMD_INIT = ESC + "@";
+    const CMD_BOLD_ON = ESC + "E" + "\x01";
+    const CMD_BOLD_OFF = ESC + "E" + "\x00";
+    const CMD_WIDE_ON = GS + "!" + "\x10";
+    const CMD_SIZE_NORMAL = GS + "!" + "\x00";
+    const CMD_CUT_PARTIAL = GS + "V" + "\x01";
 
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
-  const paperSize = localStorage.getItem("paperSize") || "80";
-  // Karena huruf tebal + lebar ganda memakan ruang lebih banyak, sesuaikan lebar garis
-  const width = paperSize === "45" ? 28 : 42;
-  const line = "-".repeat(width);
+      const paperSize = String(localStorage.getItem("paperSize") || "80");
+      const width = paperSize === "45" ? 28 : 42;
+      const line = "-".repeat(width);
 
-  let struk = "";
-  struk += CMD_INIT;
-  struk += CMD_BOLD_ON; // Aktifkan huruf tebal untuk seluruh nota
+      let struk = CMD_INIT + CMD_BOLD_ON;
+      const wideWidth = Math.max(8, Math.floor(width / 2));
+      struk += CMD_WIDE_ON + centerText(namaToko.toUpperCase(), wideWidth) + "\n" + CMD_SIZE_NORMAL;
+      if (alamatToko) struk += centerText(alamatToko, width) + "\n";
 
+      struk += `${line}\n`;
+      struk += `No     : #${code}\n`;
+      struk += `Waktu  : ${waktu}\n`;
+      struk += `Pembeli: ${buyerName}\n`;
+      struk += `Status : ${status}\n`;
+      struk += `${line}\n`;
 
-  const wideWidth = Math.max(10, Math.floor(width / 2));
-  struk += CMD_WIDE_ON;
-  struk += centerText(namaToko.toUpperCase(), wideWidth) + "\n";
-  struk += CMD_SIZE_NORMAL; // Kembali ke lebar normal (tetap tebal karena CMD_BOLD_ON aktif)
+      cart.forEach(item => {
+        const uLabel = getUnitMeta(item.unit).label;
+        const subtotalStr = "Rp " + formatRibuan(item.qty * item.price);
+        struk += `${item.name} (${uLabel})\n`;
+        struk += alignRightLine(`${item.qty} x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
+      });
 
-  if (alamatToko) {
-    struk += centerText(alamatToko, width) + "\n";
-  }
-  struk += `${line}\n`;
-  struk += `No     : #${code}\n`;
-  struk += `Waktu  : ${waktu}\n`;
-  struk += `Pembeli: ${buyerName}\n`;
-  struk += `Status : ${status}\n`;
-  struk += `${line}\n`;
-
-  cart.forEach(item => {
-    const uLabel = getUnitMeta(item.unit).label;
-    const subtotalStr = formatRibuan(item.qty * item.price);
-    struk += `${item.name} (${uLabel})\n`;
-    const leftQtyPrice = `${item.qty} x ${formatRibuan(item.price)}`;
-    struk += alignRightLine(leftQtyPrice, subtotalStr, width) + "\n";
-  });
-
-  struk += `${line}\n`;
-  struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
-  struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
-  if (status === "HUTANG") {
-    struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
-  } else {
-    struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
-  }
-  struk += `${line}\n`;
-  struk += centerText("Terima Kasih", width) + "\n";
-
-  struk += CMD_BOLD_OFF;
-  struk += "\n\n\n";
-  struk += CMD_CUT_PARTIAL;
-  return struk;
-}
+      struk += `${line}\n`;
+      struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
+      struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
+      if (status === "HUTANG") {
+        struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
+      } else {
+        struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
+      }
+      struk += `${line}\n`;
+      struk += centerText("Terima Kasih", width) + "\n";
+      struk += CMD_BOLD_OFF + "\n\n\n" + CMD_CUT_PARTIAL;
+      return struk;
+    }
 
     window.prosesBayar = async (cetakStruk) => {
-      if (cart.length === 0) return showToast("Keranjang masih kosong!");
+      if (cart.length === 0) return showToast("Keranjang kosong");
 
       const total = getCartTotal();
       const bayar = parseRibuan(inputBayar.value);
@@ -1551,24 +1455,24 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       };
 
       await dbLocal.transactions.put(trxData);
-      setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true }).catch((e) => {
-        console.warn("Sinkron cloud tertunda (offline):", e);
-      });
+      setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true }).catch(() => {});
 
       if (cetakStruk) {
-        const namaToko = localStorage.getItem("storeName") || "TOKO KASIR";
+        const namaToko = localStorage.getItem("storeName") || "TOKO";
         const alamatToko = localStorage.getItem("storeAddr") || "";
-        const waktu = formatDateTimeNoSeconds(now);
-        const struk = buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change);
+        const struk = buildReceiptText(code, formatDateTimeNoSeconds(now), namaToko, alamatToko, buyerName, status, total, bayar, debt, change);
         window.location.href = "rawbt:" + encodeURIComponent(struk);
       }
 
-      showToast(isHutang ? `Tercatat sebagai HUTANG Rp ${formatRibuan(debt)}` : "Transaksi LUNAS tersimpan!");
+      showToast(status === "HUTANG" ? `Hutang Rp ${formatRibuan(debt)}` : "Tersimpan");
       clearCart();
       currentTrxPage = 1;
       renderTransactions();
     };
 
+    // =========================================================================
+    // RIWAYAT (50 PER HALAMAN)
+    // =========================================================================
     const filterTrxInput = document.getElementById("filterTrxInput");
     const trxSearchLoader = document.getElementById("trxSearchLoader");
 
@@ -1593,13 +1497,12 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       const all = await dbLocal.transactions.orderBy("updatedAt").reverse().toArray();
 
       const filtered = kw
-        ? all.filter(trx => {
-            const buyerMatch = (trx.buyerName || "").toLowerCase().includes(kw);
-            const codeMatch = String(trx.code || "").toLowerCase().includes(kw);
-            const statusMatch = (trx.status || "").toLowerCase().includes(kw);
-            const itemMatch = (trx.items || []).some(i => (i.name || "").toLowerCase().includes(kw));
-            return buyerMatch || codeMatch || statusMatch || itemMatch;
-          })
+        ? all.filter(trx =>
+            (trx.buyerName || "").toLowerCase().includes(kw) ||
+            String(trx.code || "").toLowerCase().includes(kw) ||
+            (trx.status || "").toLowerCase().includes(kw) ||
+            (trx.items || []).some(i => (i.name || "").toLowerCase().includes(kw))
+          )
         : all;
 
       const totalFiltered = filtered.length;
@@ -1610,12 +1513,11 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
 
       const startIdx = (currentTrxPage - 1) * TRX_PER_PAGE;
       const pageItems = filtered.slice(startIdx, startIdx + TRX_PER_PAGE);
-
       const listEl = document.getElementById("transactionList");
       const paginationBar = document.getElementById("trxPaginationBar");
 
       if (totalFiltered === 0) {
-        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:16px;">Tidak ada transaksi yang cocok</p>`;
+        listEl.innerHTML = `<p style="text-align:center; color:var(--muted); padding:14px;">Belum ada transaksi</p>`;
         paginationBar.classList.add("hidden");
         return;
       }
@@ -1626,10 +1528,7 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
           ? `<span class="badge-hutang">HUTANG Rp ${formatRibuan(trx.debt)}</span>`
           : `<span class="badge-lunas">LUNAS</span>`;
 
-        const ringkas = (trx.items || []).map(i => {
-          const uLabel = getUnitMeta(i.unit).label;
-          return `${i.name} (${i.qty} ${uLabel})`;
-        }).join(", ");
+        const ringkas = (trx.items || []).map(i => `${i.name} (${i.qty} ${getUnitMeta(i.unit).label})`).join(", ");
 
         return `
           <div class="trx-row">
@@ -1637,28 +1536,28 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
               <strong>#${trx.code}</strong> • <strong>${trx.buyerName || "Tanpa Nama"}</strong> ${statusBadge}<br>
               <small style="color:var(--muted)">${formatDateTimeNoSeconds(trx.createdAt || trx.updatedAt)} • ${ringkas}</small><br>
               <small>
-                Total: <b style="color:var(--primary-dark)">Rp ${formatRibuan(trx.total)}</b> |
+                Total: <b>Rp ${formatRibuan(trx.total)}</b> |
                 Bayar: <b>Rp ${formatRibuan(trx.paid)}</b> |
                 ${isHutang
-                  ? `Sisa Hutang: <b style="color:var(--danger)">Rp ${formatRibuan(trx.debt)}</b>`
+                  ? `Hutang: <b style="color:var(--danger)">Rp ${formatRibuan(trx.debt)}</b>`
                   : `Kembali: <b style="color:var(--success)">Rp ${formatRibuan(trx.change)}</b>`
                 }
               </small>
             </div>
-            <button class="btn btn-warning btn-sm" onclick="editTransaction('${trx.id}')">✏️ Edit</button>
+            <button class="btn btn-warning btn-sm" onclick="editTransaction('${trx.id}')">Edit</button>
           </div>
         `;
       }).join("");
 
       paginationBar.classList.remove("hidden");
-      document.getElementById("pageInfoText").innerText = `Halaman ${currentTrxPage} dari ${totalPages} (${startIdx + 1}-${Math.min(startIdx + TRX_PER_PAGE, totalFiltered)} dari ${totalFiltered})`;
+      document.getElementById("pageInfoText").innerText = `Hal ${currentTrxPage}/${totalPages}`;
       document.getElementById("prevPageBtn").disabled = currentTrxPage <= 1;
       document.getElementById("nextPageBtn").disabled = currentTrxPage >= totalPages;
     }
 
     window.editTransaction = async (trxId) => {
       const trx = await dbLocal.transactions.get(trxId);
-      if (!trx) return showToast("Data transaksi tidak ditemukan");
+      if (!trx) return;
 
       cart = (trx.items || []).map((item, idx) => ({
         uid: item.uid || (item.productId + "_" + idx + "_" + Date.now()),
@@ -1681,9 +1580,11 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
 
       renderCart();
       switchTab("kasir");
-      showToast(`Transaksi #${trx.code} dimuat ke keranjang beserta uang bayar`);
     };
 
+    // =========================================================================
+    // KELOLA PRODUK (DAFTAR DISEMBUNYIKAN SAMPAI DICARI)
+    // =========================================================================
     const productForm = document.getElementById("productForm");
     const variantRowsContainer = document.getElementById("variantRowsContainer");
 
@@ -1694,9 +1595,7 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
         if (row) {
           const inputs = [...row.querySelectorAll("input")];
           const idx = inputs.indexOf(e.target);
-          if (idx !== -1 && idx + 1 < inputs.length) {
-            inputs[idx + 1].focus();
-          }
+          if (idx !== -1 && idx + 1 < inputs.length) inputs[idx + 1].focus();
         }
       }
     });
@@ -1716,8 +1615,8 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       div.id = rowId;
       div.innerHTML = `
         <select class="v-unit">${optionsHtml}</select>
-        <input type="text" class="v-price" inputmode="numeric" placeholder="Harga (Rp)" value="${price ? formatRibuan(price) : ""}">
-        <input type="text" class="v-barcodes" placeholder="Scan / ketik barcode variasi (opsional)" value="${barcodesText}">
+        <input type="text" class="v-price" inputmode="numeric" placeholder="Harga" value="${price ? formatRibuan(price) : ""}">
+        <input type="text" class="v-barcodes" placeholder="Barcode (opsional)" value="${barcodesText}">
         <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow('${rowId}')">✕</button>
       `;
 
@@ -1730,9 +1629,7 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
     };
 
     window.removeVariantRow = (rowId) => {
-      if (variantRowsContainer.children.length <= 1) {
-        return showToast("Minimal harus ada 1 variasi satuan!");
-      }
+      if (variantRowsContainer.children.length <= 1) return showToast("Minimal 1 variasi");
       document.getElementById(rowId)?.remove();
     };
 
@@ -1754,44 +1651,34 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
         const unit = row.querySelector(".v-unit").value;
         const price = parseRibuan(row.querySelector(".v-price").value);
         const barcodes = parseBarcodes(row.querySelector(".v-barcodes").value);
-        if (price > 0) {
-          variants.push({ unit, price, barcodes });
-        }
+        if (price > 0) variants.push({ unit, price, barcodes });
       });
 
-      if (!name || variants.length === 0) {
-        return showToast("Isi nama produk dan minimal 1 variasi dengan harga > 0!");
-      }
+      if (!name || variants.length === 0) return showToast("Lengkapi nama & harga variasi");
 
       const allBarcodes = [...new Set(variants.flatMap(v => v.barcodes))];
       const docId = existingId || (allBarcodes[0] ? "bc_" + allBarcodes[0] : "prod_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6));
 
-      const payload = {
-        id: docId,
-        name,
-        variants,
-        allBarcodes,
-        buyPrice,
-        note,
-        updatedAt: Date.now()
-      };
+      const payload = { id: docId, name, variants, allBarcodes, buyPrice, note, updatedAt: Date.now() };
 
       try {
         await setDoc(doc(dbCloud, "products", docId), payload, { merge: true });
         await dbLocal.products.put(payload);
         playScanSuccessSound();
-        showToast("Produk & variasi tersinkron realtime!");
+        showToast("Tersimpan");
         resetProductForm();
-        renderProductList();
+        if (document.getElementById("filterProdInput").value.trim()) {
+          renderProductList();
+        }
       } catch (err) {
-        alert("Gagal menyimpan ke Firebase:\n" + err.message);
+        alert("Gagal menyimpan:\n" + err.message);
       }
     });
 
     window.resetProductForm = () => {
       productForm.reset();
       document.getElementById("prodDocId").value = "";
-      document.getElementById("productFormTitle").innerText = "Tambah Produk Baru";
+      document.getElementById("productFormTitle").innerText = "Tambah Produk";
       document.getElementById("extraFieldsBox").classList.add("hidden");
       variantRowsContainer.innerHTML = "";
       addVariantRow("pcs");
@@ -1803,26 +1690,22 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       document.getElementById("prodDocId").value = p.id;
       document.getElementById("prodName").value = p.name || "";
       document.getElementById("productFormTitle").innerText = "Ubah Produk";
-
       document.getElementById("extraFieldsBox").classList.remove("hidden");
       buyPriceInput.value = p.buyPrice ? formatRibuan(p.buyPrice) : "";
       document.getElementById("prodNote").value = p.note || "";
 
       variantRowsContainer.innerHTML = "";
       const listVar = Array.isArray(p.variants) && p.variants.length > 0 ? p.variants : [{ unit: "pcs", price: 0, barcodes: [] }];
-      listVar.forEach(v => {
-        addVariantRow(v.unit, v.price, (v.barcodes || []).join(", "));
-      });
-
+      listVar.forEach(v => addVariantRow(v.unit, v.price, (v.barcodes || []).join(", ")));
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     window.deleteProduct = async (id) => {
-      if (!confirm("Hapus produk ini dari semua perangkat?")) return;
+      if (!confirm("Hapus produk ini?")) return;
       await deleteDoc(doc(dbCloud, "products", id));
       await dbLocal.products.delete(id);
       renderProductList();
-      showToast("Produk dihapus");
+      showToast("Dihapus");
     };
 
     const filterProdInput = document.getElementById("filterProdInput");
@@ -1830,6 +1713,12 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
 
     filterProdInput.addEventListener("input", () => {
       clearTimeout(prodSearchTimer);
+      const kw = filterProdInput.value.trim().toLowerCase();
+      if (!kw) {
+        prodSearchLoader.style.display = "none";
+        document.getElementById("productList").innerHTML = "";
+        return;
+      }
       prodSearchLoader.style.display = "block";
       prodSearchTimer = setTimeout(async () => {
         await renderProductList();
@@ -1842,16 +1731,19 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       const all = await dbLocal.products.toArray();
       document.getElementById("totalProdCount").innerText = all.length;
 
-      const filtered = kw
-        ? all.filter(p =>
-            p.name.toLowerCase().includes(kw) ||
-            (p.note && p.note.toLowerCase().includes(kw)) ||
-            (Array.isArray(p.allBarcodes) && p.allBarcodes.some(b => b.toLowerCase().includes(kw))) ||
-            (Array.isArray(p.variants) && p.variants.some(v => v.unit.toLowerCase().includes(kw)))
-          )
-        : all;
-
       const listEl = document.getElementById("productList");
+      if (!kw) {
+        listEl.innerHTML = "";
+        return;
+      }
+
+      const filtered = all.filter(p =>
+        p.name.toLowerCase().includes(kw) ||
+        (p.note && p.note.toLowerCase().includes(kw)) ||
+        (Array.isArray(p.allBarcodes) && p.allBarcodes.some(b => b.toLowerCase().includes(kw))) ||
+        (Array.isArray(p.variants) && p.variants.some(v => v.unit.toLowerCase().includes(kw)))
+      );
+
       listEl.innerHTML = filtered.slice(0, 60).map(p => {
         const varBadges = (p.variants || []).map(v => {
           const meta = getUnitMeta(v.unit);
@@ -1863,8 +1755,6 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
           <div class="product-row">
             <div>
               <strong>${p.name}</strong>
-              ${p.note ? `<small style="color:var(--muted)">• ${p.note}</small>` : ""}
-              ${p.buyPrice > 0 ? `<small style="color:var(--muted)">• Beli: Rp ${formatRibuan(p.buyPrice)}</small>` : ""}
               <div class="var-badges-wrap">${varBadges}</div>
             </div>
             <div style="display:flex; gap:6px;">
@@ -1873,10 +1763,13 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
             </div>
           </div>
         `;
-      }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
+      }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Tidak ada hasil</p>`;
     }
 
-    window.switchTab = (tabName) => {
+    // =========================================================================
+    // NAVIGASI & PENGATURAN
+    // =========================================================================
+    window.switchTab = async (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
       });
@@ -1884,7 +1777,12 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       document.querySelectorAll(".tab-btn").forEach((btn, i) => {
         btn.classList.toggle("active", names[i] === tabName);
       });
-      if (tabName === "produk") renderProductList();
+      if (tabName === "produk") {
+        document.getElementById("totalProdCount").innerText = await dbLocal.products.count();
+        if (!filterProdInput.value.trim()) {
+          document.getElementById("productList").innerHTML = "";
+        }
+      }
       if (tabName === "riwayat") renderTransactions();
       if (tabName === "kasir") searchInput.focus();
     };
@@ -1893,43 +1791,33 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
       localStorage.setItem("storeName", document.getElementById("storeNameInput").value.trim());
       localStorage.setItem("storeAddr", document.getElementById("storeAddrInput").value.trim());
       localStorage.setItem("paperSize", document.getElementById("paperSizeSelect").value);
-      showToast("Pengaturan toko & ukuran cetak disimpan!");
+      showToast("Pengaturan disimpan");
     };
 
     window.deleteHistoryExceptDebt = async () => {
       const all = await dbLocal.transactions.toArray();
       const nonDebt = all.filter(trx => !((trx.status === "HUTANG") || (Number(trx.debt || 0) > 0)));
-
-      if (nonDebt.length === 0) {
-        return showToast("Tidak ada riwayat lunas untuk dihapus (semua berstatus HUTANG)");
-      }
-
-      if (!confirm(`Hapus ${nonDebt.length} riwayat transaksi LUNAS? Transaksi berstatus HUTANG tidak akan dihapus.`)) {
-        return;
-      }
+      if (nonDebt.length === 0) return showToast("Tidak ada riwayat lunas");
+      if (!confirm(`Hapus ${nonDebt.length} riwayat lunas? Hutang tidak akan dihapus.`)) return;
 
       for (const trx of nonDebt) {
         await dbLocal.transactions.delete(trx.id);
-        try {
-          await deleteDoc(doc(dbCloud, "transactions", trx.id));
-        } catch (e) {
-          console.warn("Gagal hapus cloud untuk ID:", trx.id, e);
-        }
+        deleteDoc(doc(dbCloud, "transactions", trx.id)).catch(() => {});
       }
 
       currentTrxPage = 1;
       renderTransactions();
-      showToast(`${nonDebt.length} riwayat dihapus, data HUTANG tetap aman!`);
+      showToast(`${nonDebt.length} riwayat dihapus`);
     };
 
     window.forceFullResync = async () => {
-      if (!confirm("Unduh ulang seluruh data produk & riwayat dari Firebase?")) return;
+      if (!confirm("Sinkron ulang semua data dari cloud?")) return;
       localStorage.setItem("lastProdSync", "0");
       localStorage.setItem("lastTrxSync", "0");
       await dbLocal.products.clear();
       await dbLocal.transactions.clear();
       startRealtimeSync();
-      showToast("Menyinkronkan ulang data...");
+      showToast("Menyinkronkan...");
     };
 
     resetProductForm();
