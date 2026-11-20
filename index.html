@@ -1487,8 +1487,8 @@
         const uLabel = getUnitMeta(item.unit).label;
         const subtotalStr = formatRibuan(item.qty * item.price);
         struk += `${item.name} (${uLabel})\n`;
-        const indent = "   ";
-        struk += alignRightLine(`${item.qty}x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
+        const indent = "      ";
+        struk += alignRightLine(`${indent}${item.qty}x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
       });
 
       struk += `${line}\n`;
