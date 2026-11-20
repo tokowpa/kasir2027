@@ -1470,15 +1470,14 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
   const paperSize = localStorage.getItem("paperSize") || "80";
   // Karena huruf tebal + lebar ganda memakan ruang lebih banyak, sesuaikan lebar garis
-  const width = paperSize === "45" ? 24 : 34;
+  const width = paperSize === "45" ? 28 : 42;
   const line = "-".repeat(width);
 
   let struk = "";
   struk += CMD_INIT;
   struk += CMD_BOLD_ON; // Aktifkan huruf tebal untuk seluruh nota
 
-  // Nama toko melebar (lebar 2x, tinggi normal) + tetap di tengah
-  // Karena lebar huruf 2x, bagi lebar baris dengan 2 saat menengahkan
+
   const wideWidth = Math.max(10, Math.floor(width / 2));
   struk += CMD_WIDE_ON;
   struk += centerText(namaToko.toUpperCase(), wideWidth) + "\n";
@@ -1496,7 +1495,7 @@ const CMD_CUT_FULL    = GS + "V" + "\x00"; // Potong penuh (lepas total)
 
   cart.forEach(item => {
     const uLabel = getUnitMeta(item.unit).label;
-    const subtotalStr = "Rp " + formatRibuan(item.qty * item.price);
+    const subtotalStr = formatRibuan(item.qty * item.price);
     struk += `${item.name} (${uLabel})\n`;
     const leftQtyPrice = `${item.qty} x ${formatRibuan(item.price)}`;
     struk += alignRightLine(leftQtyPrice, subtotalStr, width) + "\n";
