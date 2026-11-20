@@ -7,19 +7,26 @@
   <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
   <style>
     :root {
-      --bg: #eef2f6;
-      --surface: #ffffff;
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bright-blue: #00b4ff;
-      --input-blue: #38bdf8;
-      --success: #16a34a;
-      --warning: #d97706;
-      --danger: #dc2626;
+      /* Palet Neomorphism Hangat & Nyaman di Mata */
+      --bg: #e6ecf2;
+      --surface: #e6ecf2;
+      --surface-elevated: #ecf1f6;
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --bright-blue: #0284c7;
+      --input-blue: #0369a1;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
       --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --muted: #526071;
+      --border: rgba(148, 163, 184, 0.28);
+
+      /* Bayangan Neomorphism */
+      --neu-out: 7px 7px 15px rgba(163, 177, 198, 0.72), -7px -7px 15px rgba(255, 255, 255, 0.88);
+      --neu-out-sm: 4px 4px 9px rgba(163, 177, 198, 0.68), -4px -4px 9px rgba(255, 255, 255, 0.86);
+      --neu-in: inset 5px 5px 10px rgba(163, 177, 198, 0.65), inset -5px -5px 10px rgba(255, 255, 255, 0.85);
+      --neu-in-sm: inset 3px 3px 6px rgba(163, 177, 198, 0.62), inset -3px -3px 6px rgba(255, 255, 255, 0.82);
     }
 
     * {
@@ -32,14 +39,14 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding-bottom: 32px;
+      padding-bottom: 36px;
     }
 
-    /* Layar Login Firebase Auth */
+    /* Layar Login Firebase Auth Neomorphism */
     .login-overlay {
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: var(--bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,17 +58,17 @@
       width: 100%;
       max-width: 390px;
       background: var(--surface);
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--neu-out);
       display: grid;
-      gap: 12px;
+      gap: 13px;
     }
 
     .login-title {
-      font-size: 1.2rem;
+      font-size: 1.22rem;
       font-weight: 900;
-      color: #0f172a;
+      color: var(--text);
       text-align: center;
     }
 
@@ -73,20 +80,22 @@
     }
 
     .login-error {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 8px 10px;
-      border-radius: 8px;
+      background: #fde8e8;
+      color: var(--danger);
+      padding: 9px 12px;
+      border-radius: 12px;
       font-size: 0.8rem;
       font-weight: 700;
+      box-shadow: var(--neu-in-sm);
       display: none;
     }
 
+    /* Header Neomorphism Sejajar */
     header {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      color: #ffffff;
-      padding: 10px 16px;
-      box-shadow: var(--shadow);
+      background: var(--surface);
+      color: var(--text);
+      padding: 12px 16px;
+      box-shadow: var(--neu-out-sm);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -108,119 +117,126 @@
     .hc-total-wrap {
       display: flex;
       flex-direction: column;
-      min-width: 145px;
+      min-width: 152px;
+      padding: 7px 12px;
+      border-radius: 14px;
+      background: var(--surface-elevated);
+      box-shadow: var(--neu-in-sm);
     }
 
     .hc-label {
       font-size: 0.68rem;
-      color: #cbd5e1;
-      font-weight: 700;
+      color: var(--muted);
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
 
     .total-amount {
-      font-size: 1.45rem;
+      font-size: 1.42rem;
       font-weight: 900;
-      color: var(--bright-blue);
+      color: var(--primary-dark);
       line-height: 1.15;
-      text-shadow: 0 0 12px rgba(0, 180, 255, 0.25);
     }
 
     .change-amount {
       font-size: 0.78rem;
-      font-weight: 700;
-      color: #4ade80;
+      font-weight: 800;
+      color: var(--success);
     }
 
     .hc-field {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
 
     .pay-input {
-      width: 148px;
-      padding: 7px 10px;
-      border-radius: 8px;
-      border: 1.5px solid #38bdf8;
-      background: #0f172a;
-      color: var(--input-blue) !important;
-      caret-color: var(--bright-blue);
-      font-size: 1.02rem;
-      font-weight: 800;
+      width: 152px;
+      padding: 8px 11px;
+      border-radius: 12px;
+      border: none;
+      background: var(--bg);
+      box-shadow: var(--neu-in-sm);
+      color: var(--primary-dark) !important;
+      caret-color: var(--primary);
+      font-size: 1.04rem;
+      font-weight: 900;
       text-align: right;
     }
 
     .pay-input::placeholder {
-      color: #64748b;
+      color: #8b9bb0;
     }
 
     .pay-input:focus {
-      outline: 2px solid var(--bright-blue);
-      border-color: var(--bright-blue);
+      outline: 2px solid rgba(2, 132, 199, 0.45);
     }
 
     /* Rekomendasi Uang Pembeli di Antara Uang Pembeli & Nama Pembeli */
     .hc-suggest-wrap {
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      max-width: 245px;
+      gap: 4px;
+      max-width: 255px;
     }
 
     .suggest-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
+      gap: 5px;
     }
 
     .suggest-btn {
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      background: rgba(15, 23, 42, 0.85);
-      color: #7dd3fc;
+      border: none;
+      background: var(--surface);
+      box-shadow: var(--neu-out-sm);
+      color: var(--primary-dark);
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 4px 7px;
-      border-radius: 6px;
+      padding: 5px 8px;
+      border-radius: 9px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.14s ease;
     }
 
     .suggest-btn:hover {
-      background: var(--bright-blue);
-      color: #0f172a;
-      border-color: var(--bright-blue);
+      color: var(--primary);
+    }
+
+    .suggest-btn:active {
+      box-shadow: var(--neu-in-sm);
     }
 
     .buyer-input {
-      width: 175px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1.5px solid #475569;
-      background: #1e293b;
-      color: var(--input-blue) !important;
-      caret-color: var(--bright-blue);
+      width: 178px;
+      padding: 8px 11px;
+      border-radius: 12px;
+      border: none;
+      background: var(--bg);
+      box-shadow: var(--neu-in-sm);
+      color: var(--text) !important;
+      caret-color: var(--primary);
       font-size: 0.88rem;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .buyer-input::placeholder {
-      color: #94a3b8;
-      font-weight: 400;
+      color: #8b9bb0;
+      font-weight: 500;
     }
 
     .buyer-input:focus {
-      outline: none;
-      border-color: var(--bright-blue);
+      outline: 2px solid rgba(2, 132, 199, 0.45);
     }
 
     .tabs {
       display: flex;
-      gap: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 4px;
-      border-radius: 10px;
+      gap: 6px;
+      background: var(--bg);
+      box-shadow: var(--neu-in-sm);
+      padding: 5px;
+      border-radius: 14px;
       flex-wrap: wrap;
     }
 
@@ -228,29 +244,30 @@
       border: none;
       background: transparent;
       padding: 7px 12px;
-      border-radius: 8px;
-      font-weight: 700;
+      border-radius: 10px;
+      font-weight: 800;
       font-size: 0.82rem;
-      color: #cbd5e1;
+      color: var(--muted);
       cursor: pointer;
+      transition: all 0.15s ease;
     }
 
     .tab-btn.active {
       background: var(--surface);
-      color: var(--primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      color: var(--primary-dark);
+      box-shadow: var(--neu-out-sm);
     }
 
     .container {
       max-width: 1260px;
-      margin: 14px auto;
+      margin: 16px auto;
       padding: 0 14px;
     }
 
     .kasir-grid {
       display: grid;
       grid-template-columns: 1.4fr 1fr;
-      gap: 14px;
+      gap: 16px;
       align-items: start;
     }
 
@@ -262,7 +279,7 @@
       order: 2;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     @media (max-width: 860px) {
@@ -283,10 +300,10 @@
 
     .card {
       background: var(--surface);
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: var(--shadow);
-      margin-bottom: 12px;
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: var(--neu-out);
+      margin-bottom: 14px;
     }
 
     .kasir-grid .card {
@@ -295,71 +312,105 @@
 
     .right-actions-card {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
 
     .edit-banner {
       background: #fef3c7;
-      border: 1px solid #f59e0b;
       color: #92400e;
-      padding: 8px 12px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 9px 14px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--neu-out-sm);
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.84rem;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     input[type="text"], input[type="number"], input[type="email"], input[type="password"], textarea, select {
       width: 100%;
-      padding: 9px 11px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 12px;
       font-size: 0.9rem;
       outline: none;
-      transition: border 0.2s;
-      background: #fff;
+      transition: box-shadow 0.2s;
+      background: var(--bg);
+      box-shadow: var(--neu-in-sm);
       color: var(--text);
     }
 
     input:focus, textarea:focus, select:focus {
-      border-color: var(--primary);
+      box-shadow: var(--neu-in), 0 0 0 2px rgba(2, 132, 199, 0.25);
     }
 
     label.field-label {
       display: block;
       font-size: 0.76rem;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--muted);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .btn {
       border: none;
-      padding: 9px 13px;
-      border-radius: 10px;
-      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 800;
       font-size: 0.86rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--neu-out-sm);
+      transition: all 0.14s ease;
+    }
+
+    .btn:active:not(:disabled) {
+      box-shadow: var(--neu-in-sm);
     }
 
     .btn:disabled {
-      opacity: 0.45;
+      opacity: 0.48;
       cursor: not-allowed;
+      box-shadow: var(--neu-in-sm);
     }
 
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-warning { background: var(--warning); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-outline { background: #f1f5f9; color: var(--text); }
-    .btn-sm { padding: 5px 9px; font-size: 0.76rem; border-radius: 7px; }
+    .btn-primary {
+      background: linear-gradient(145deg, #0ea5e9, #0284c7);
+      color: #ffffff;
+    }
+
+    .btn-success {
+      background: linear-gradient(145deg, #16a34a, #15803d);
+      color: #ffffff;
+    }
+
+    .btn-warning {
+      background: linear-gradient(145deg, #d97706, #b45309);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background: linear-gradient(145deg, #dc2626, #b91c1c);
+      color: #ffffff;
+    }
+
+    .btn-outline {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      border-radius: 9px;
+    }
 
     .search-wrapper {
       position: relative;
@@ -367,24 +418,25 @@
 
     .search-loader {
       font-size: 0.76rem;
-      color: var(--primary);
-      font-weight: 700;
-      margin-top: 5px;
+      color: var(--primary-dark);
+      font-weight: 800;
+      margin-top: 6px;
       display: none;
     }
 
     .search-results {
-      margin-top: 8px;
+      margin-top: 10px;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 14px;
+      box-shadow: var(--neu-in);
       max-height: 480px;
       overflow-y: auto;
+      padding: 4px 8px;
       display: none;
     }
 
     .search-item {
-      padding: 7px 10px;
+      padding: 8px 8px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -392,6 +444,7 @@
       cursor: pointer;
       gap: 8px;
       font-size: 0.86rem;
+      border-radius: 10px;
     }
 
     .search-item:last-child {
@@ -399,49 +452,50 @@
     }
 
     .search-item:hover {
-      background: #f1f5f9;
+      background: rgba(255, 255, 255, 0.45);
     }
 
+    /* Pill Satuan Lembut */
     .var-pill {
       display: inline-flex;
       align-items: center;
       gap: 3px;
       font-size: 0.68rem;
       font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.08);
+      padding: 2px 7px;
+      border-radius: 7px;
       text-transform: uppercase;
+      box-shadow: 2px 2px 5px rgba(163, 177, 198, 0.45), -2px -2px 5px rgba(255, 255, 255, 0.75);
     }
 
-    .unit-karton { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
-    .unit-pcs    { background: #dcfce7; color: #15803d; border-color: #86efac; }
-    .unit-renteng{ background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
-    .unit-kg     { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
-    .unit-gram   { background: #ccfbf1; color: #0f766e; border-color: #5eead4; }
-    .unit-bal    { background: #e0e7ff; color: #4338ca; border-color: #a5b4fc; }
-    .unit-slop   { background: #ffe4e6; color: #be123c; border-color: #fda4af; }
-    .unit-pak    { background: #cffafe; color: #0e7490; border-color: #67e8f9; }
-    .unit-sak    { background: #e7e5e4; color: #57534e; border-color: #d6d3d1; }
+    .unit-karton { background: #dbeafe; color: #1e40af; }
+    .unit-pcs    { background: #dcfce7; color: #166534; }
+    .unit-renteng{ background: #f3e8ff; color: #6b21a8; }
+    .unit-kg     { background: #fef3c7; color: #92400e; }
+    .unit-gram   { background: #ccfbf1; color: #115e59; }
+    .unit-bal    { background: #e0e7ff; color: #3730a3; }
+    .unit-slop   { background: #ffe4e6; color: #9f1239; }
+    .unit-pak    { background: #cffafe; color: #155e75; }
+    .unit-sak    { background: #e7e5e4; color: #44403c; }
 
     .variant-builder {
-      border: 1px dashed #cbd5e1;
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 10px;
+      background: var(--bg);
+      box-shadow: var(--neu-in);
+      border-radius: 16px;
+      padding: 12px;
       display: grid;
-      gap: 8px;
+      gap: 10px;
     }
 
     .variant-row {
       display: grid;
       grid-template-columns: 120px 1fr 1.2fr auto;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #fff;
+      padding: 9px;
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--neu-out-sm);
     }
 
     @media (max-width: 600px) {
@@ -450,14 +504,16 @@
       }
     }
 
+    /* Item Keranjang Neomorphism */
     .cart-item {
       display: flex;
       flex-direction: column;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      margin-bottom: 7px;
-      gap: 6px;
+      padding: 9px 12px;
+      border-radius: 15px;
+      background: var(--surface);
+      box-shadow: var(--neu-out-sm);
+      margin-bottom: 10px;
+      gap: 7px;
     }
 
     .cart-item:last-child {
@@ -497,24 +553,26 @@
       justify-self: start;
     }
 
+    /* Tombol Qty Besar bergaya Neomorphism */
     .qty-controls {
       display: flex;
       align-items: center;
       gap: 8px;
       justify-self: center;
-      background: rgba(255, 255, 255, 0.92);
+      background: var(--bg);
+      box-shadow: var(--neu-in-sm);
       padding: 4px 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 12px;
     }
 
     .qty-btn {
       width: 36px;
       height: 36px;
-      border-radius: 8px;
-      border: 1.5px solid #cbd5e1;
-      background: #ffffff;
-      color: #0f172a;
+      border-radius: 10px;
+      border: none;
+      background: var(--surface);
+      box-shadow: var(--neu-out-sm);
+      color: var(--text);
       font-weight: 900;
       font-size: 1.2rem;
       line-height: 1;
@@ -522,7 +580,7 @@
     }
 
     .qty-btn:active {
-      background: #e2e8f0;
+      box-shadow: var(--neu-in-sm);
     }
 
     .qty-value {
@@ -549,9 +607,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
+      padding: 11px 4px;
       border-bottom: 1px solid var(--border);
       gap: 8px;
+    }
+
+    .product-row:last-child, .trx-row:last-child {
+      border-bottom: none;
     }
 
     .pagination-bar {
@@ -561,15 +623,15 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 12px;
-      padding-top: 10px;
+      padding-top: 12px;
       border-top: 1px solid var(--border);
     }
 
     .var-badges-wrap {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 3px;
+      gap: 5px;
+      margin-top: 4px;
     }
 
     .badge-lunas {
@@ -577,7 +639,7 @@
       color: #166534;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 2px 9px;
       border-radius: 99px;
     }
 
@@ -586,7 +648,7 @@
       color: #991b1b;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 2px 9px;
       border-radius: 99px;
     }
 
@@ -595,13 +657,13 @@
       bottom: 18px;
       left: 50%;
       transform: translateX(-50%);
-      background: #0f172a;
-      color: #fff;
-      padding: 10px 18px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--neu-out);
+      padding: 10px 20px;
       border-radius: 99px;
       font-size: 0.85rem;
-      font-weight: 600;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      font-weight: 800;
       z-index: 999;
       display: none;
     }
@@ -648,7 +710,7 @@
         <div class="hc-suggest-wrap">
           <span class="hc-label">Rekomendasi Uang</span>
           <div id="suggestMoneyButtons" class="suggest-chips">
-            <span style="font-size:0.72rem; color:#94a3b8;">-</span>
+            <span style="font-size:0.72rem; color:var(--muted);">-</span>
           </div>
         </div>
 
@@ -677,7 +739,7 @@
         <div class="kasir-grid">
           <div class="kasir-left">
             <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <strong style="font-size:0.92rem;">Keranjang Belanja (<span id="cartCount">0</span>)</strong>
                 <small style="color:var(--muted); font-size:0.74rem;">Item baru di paling atas • Min qty 1</small>
               </div>
@@ -828,7 +890,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
+      apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
   authDomain: "wpastore-1d2c3.firebaseapp.com",
   databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "wpastore-1d2c3",
@@ -968,7 +1030,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV9DB");
+    const dbLocal = new Dexie("KasirRealtimeV10NeuDB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -987,14 +1049,12 @@
     const formatRibuan = (num) => Number(num || 0).toLocaleString("id-ID");
     const parseRibuan = (str) => Number(String(str || "").replace(/\D/g, "")) || 0;
 
-    // Format tanggal, jam, dan menit saja (tanpa detik/milidetik)
     function formatDateTimeNoSeconds(ts) {
       const d = new Date(ts || Date.now());
       const pad = (n) => String(n).padStart(2, "0");
       return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
-    // Perataan teks untuk struk thermal 45mm / 80mm
     function centerText(text, width) {
       const str = String(text || "");
       if (str.length >= width) return str;
@@ -1173,7 +1233,7 @@
 
         if (matches.length === 0) {
           playScanNotFoundSound();
-          searchResults.innerHTML = `<div class="search-item" style="color:var(--danger); font-weight:700;">Produk tidak ditemukan</div>`;
+          searchResults.innerHTML = `<div class="search-item" style="color:var(--danger); font-weight:800;">Produk tidak ditemukan</div>`;
         } else {
           searchResults.innerHTML = matches.map(p => {
             const pills = (p.variants || []).map(v => {
@@ -1290,13 +1350,10 @@
       return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     }
 
-    // =========================================================================
-    // REKOMENDASI UANG PEMBELI OTOMATIS
-    // =========================================================================
     function renderMoneySuggestions(total) {
       const container = document.getElementById("suggestMoneyButtons");
       if (!total || total <= 0) {
-        container.innerHTML = `<span style="font-size:0.72rem; color:#94a3b8;">-</span>`;
+        container.innerHTML = `<span style="font-size:0.72rem; color:var(--muted);">-</span>`;
         return;
       }
 
@@ -1339,14 +1396,14 @@
           }).join("");
 
           return `
-            <div class="cart-item ${meta.cls}">
+            <div class="cart-item">
               <div class="cart-top">
                 <div>
                   <span class="var-pill ${meta.cls}">${meta.label}</span>
                   <span class="cart-title" style="margin-left:5px;">${item.name}</span>
                   ${item.note ? `<span class="cart-note">• ${item.note}</span>` : ""}
                 </div>
-                <strong style="font-size:0.92rem;">Rp ${formatRibuan(item.price * item.qty)}</strong>
+                <strong style="font-size:0.92rem; color:var(--primary-dark);">Rp ${formatRibuan(item.price * item.qty)}</strong>
               </div>
               <div class="cart-bottom">
                 <div class="cart-unit-left">
@@ -1387,20 +1444,17 @@
 
       if (total === 0) {
         el.innerText = "Kembalian: Rp 0";
-        el.style.color = "#4ade80";
+        el.style.color = "var(--success)";
       } else if (bayar < total) {
         const hutang = total - bayar;
         el.innerText = "Hutang: Rp " + formatRibuan(hutang);
-        el.style.color = "#fca5a5";
+        el.style.color = "var(--danger)";
       } else {
         el.innerText = "Kembalian: Rp " + formatRibuan(selisih);
-        el.style.color = "#4ade80";
+        el.style.color = "var(--success)";
       }
     }
 
-    // =========================================================================
-    // CETAK NOTA RAPI: NAMA TOKO DI TENGAH, SUBTOTAL RATA KANAN, WAKTU TANPA DETIK
-    // =========================================================================
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
       const paperSize = localStorage.getItem("paperSize") || "80";
       const width = paperSize === "45" ? 26 : 36;
@@ -1492,9 +1546,6 @@
       renderTransactions();
     };
 
-    // =========================================================================
-    // RIWAYAT TRANSAKSI (50 PER HALAMAN + WAKTU TANPA DETIK)
-    // =========================================================================
     const filterTrxInput = document.getElementById("filterTrxInput");
     const trxSearchLoader = document.getElementById("trxSearchLoader");
 
@@ -1563,7 +1614,7 @@
               <strong>#${trx.code}</strong> • <strong>${trx.buyerName || "Tanpa Nama"}</strong> ${statusBadge}<br>
               <small style="color:var(--muted)">${formatDateTimeNoSeconds(trx.createdAt || trx.updatedAt)} • ${ringkas}</small><br>
               <small>
-                Total: <b style="color:var(--primary)">Rp ${formatRibuan(trx.total)}</b> |
+                Total: <b style="color:var(--primary-dark)">Rp ${formatRibuan(trx.total)}</b> |
                 Bayar: <b>Rp ${formatRibuan(trx.paid)}</b> |
                 ${isHutang
                   ? `Sisa Hutang: <b style="color:var(--danger)">Rp ${formatRibuan(trx.debt)}</b>`
@@ -1610,9 +1661,6 @@
       showToast(`Transaksi #${trx.code} dimuat ke keranjang beserta uang bayar`);
     };
 
-    // =========================================================================
-    // KELOLA PRODUK
-    // =========================================================================
     const productForm = document.getElementById("productForm");
     const variantRowsContainer = document.getElementById("variantRowsContainer");
 
@@ -1644,7 +1692,7 @@
       div.className = "variant-row";
       div.id = rowId;
       div.innerHTML = `
-        <select class="v-unit" onchange="applyVariantRowColor(this)">${optionsHtml}</select>
+        <select class="v-unit">${optionsHtml}</select>
         <input type="text" class="v-price" inputmode="numeric" placeholder="Harga (Rp)" value="${price ? formatRibuan(price) : ""}">
         <input type="text" class="v-barcodes" placeholder="Scan / ketik barcode variasi (opsional)" value="${barcodesText}">
         <button type="button" class="btn btn-danger btn-sm" onclick="removeVariantRow('${rowId}')">✕</button>
@@ -1656,15 +1704,6 @@
         const raw = parseRibuan(priceInput.value);
         priceInput.value = raw > 0 ? formatRibuan(raw) : "";
       });
-
-      applyVariantRowColor(div.querySelector(".v-unit"));
-    };
-
-    window.applyVariantRowColor = (selectEl) => {
-      const row = selectEl.closest(".variant-row");
-      const meta = getUnitMeta(selectEl.value);
-      VARIANT_UNITS.forEach(u => row.classList.remove(u.cls));
-      row.classList.add(meta.cls);
     };
 
     window.removeVariantRow = (rowId) => {
@@ -1814,9 +1853,6 @@
       }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Belum ada produk</p>`;
     }
 
-    // =========================================================================
-    // NAVIGASI & PENGATURAN
-    // =========================================================================
     window.switchTab = (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
