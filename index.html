@@ -1465,26 +1465,47 @@ const CMD_DOUBLE_ON = GS + "!" + "\x30";   // Lebar ganda (2x lebar) & tinggi ga
 const CMD_WIDE_ON = GS + "!" + "\x10";     // Lebar ganda saja (2x lebar, tinggi normal)
 const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
 
-    function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
-  const paperSize = localStorage.getItem("paperSize") || "80";
-  // Karena huruf tebal + lebar ganda memakan ruang lebih banyak, sesuaikan lebar garis
-  const width = paperSize === "45" ? 24 : 34;
+    function getReceiptCharWidth(paperSize) {
+  // Lebar karakter aman untuk font tebal (bold) pada printer thermal
+  // Ubah angka ini jika printer Anda muat lebih banyak/sedikit karakter per baris
+  return paperSize === "45" ? 28 : 42;
+}
+
+function alignRightLine(leftLabel, rightValue, width) {
+  const l = String(leftLabel || "");
+  const r = String(rightValue || "");
+
+  // Jika gabungan teks sudah melebihi lebar baris, potong label kiri agar kanan tetap di tepi
+  if (l.length + r.length + 1 > width) {
+    const maxLeft = Math.max(1, width - r.length - 1);
+    const trimmedLeft = l.slice(0, maxLeft);
+    return trimmedLeft + " " + r;
+  }
+
+  const spaceCount = width - l.length - r.length;
+  return l + " ".repeat(spaceCount) + r;
+}
+
+function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
+  // Baca ukuran kertas terbaru langsung dari localStorage
+  const paperSize = String(localStorage.getItem("paperSize") || "80");
+  const width = getReceiptCharWidth(paperSize);
   const line = "-".repeat(width);
 
   let struk = "";
   struk += CMD_INIT;
-  struk += CMD_BOLD_ON; // Aktifkan huruf tebal untuk seluruh nota
+  struk += CMD_BOLD_ON;
 
-  // Nama toko melebar (lebar 2x, tinggi normal) + tetap di tengah
-  // Karena lebar huruf 2x, bagi lebar baris dengan 2 saat menengahkan
-  const wideWidth = Math.max(10, Math.floor(width / 2));
+  // Nama toko melebar (2x lebar) dan tetap di tengah
+  const wideWidth = Math.max(8, Math.floor(width / 2));
   struk += CMD_WIDE_ON;
   struk += centerText(namaToko.toUpperCase(), wideWidth) + "\n";
-  struk += CMD_SIZE_NORMAL; // Kembali ke lebar normal (tetap tebal karena CMD_BOLD_ON aktif)
+  struk += CMD_SIZE_NORMAL;
 
   if (alamatToko) {
     struk += centerText(alamatToko, width) + "\n";
   }
+
   struk += `${line}\n`;
   struk += `No     : #${code}\n`;
   struk += `Waktu  : ${waktu}\n`;
@@ -1513,9 +1534,9 @@ const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
 
   struk += CMD_BOLD_OFF;
   struk += "\n\n\n";
+  const CMD_CUT_PARTIAL = GS + "V" + "\x01";
   return struk;
 }
-
     window.prosesBayar = async (cetakStruk) => {
       if (cart.length === 0) return showToast("Keranjang masih kosong!");
 
