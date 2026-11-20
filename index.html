@@ -1469,7 +1469,7 @@
 
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
       const paperSize = String(localStorage.getItem("paperSize") || "80");
-      const width = paperSize === "45" ? 30 : 48;
+      const width = paperSize === "45" ? 32 : 48;
       const line = "-".repeat(width);
 
       let struk = CMD_INIT + CMD_BOLD_ON;
@@ -1487,7 +1487,8 @@
         const uLabel = getUnitMeta(item.unit).label;
         const subtotalStr = formatRibuan(item.qty * item.price);
         struk += `${item.name} (${uLabel})\n`;
-        struk +=    alignRightLine(`${item.qty} x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
+        const indent = "  ";
+        struk += alignRightLine(`${item.qty}x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
       });
 
       struk += `${line}\n`;
