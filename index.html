@@ -1549,11 +1549,9 @@ const CMD_SIZE_NORMAL = GS + "!" + "\x00"; // Ukuran huruf normal
       };
 
       await dbLocal.transactions.put(trxData);
-      try {
-        await setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true });
-      } catch (e) {
-        console.warn("Simpan lokal sukses, sinkron cloud menyusul:", e);
-      }
+      setDoc(doc(dbCloud, "transactions", trxId), trxData, { merge: true }).catch((e) => {
+        console.warn("Sinkron cloud tertunda (offline):", e);
+      });
 
       if (cetakStruk) {
         const namaToko = localStorage.getItem("storeName") || "TOKO KASIR";
