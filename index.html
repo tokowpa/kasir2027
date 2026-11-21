@@ -36,6 +36,12 @@
       padding-bottom: 24px;
       line-height: 1.35;
     }
+    
+    .btn-cetak-besar {
+	  padding: 12px 20px; 
+ 	 min-width: 130px; 
+ 	 font-size: 0.92rem;
+	}
 
     .login-overlay {
       position: fixed;
@@ -773,9 +779,9 @@
           </div>
 
           <div class="checkout-actions-group">
-            <button type="button" class="btn btn-danger" onclick="clearCart()">Reset</button>
-            <button type="button" class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
-          </div>
+			  <button type="button" class="btn btn-danger" onclick="clearCart()">Reset</button>
+			  <button type="button" class="btn btn-primary btn-cetak-besar" onclick="prosesBayar(true)">Cetak Nota</button>
+		</div>
         </div>
 
         <div class="kasir-layout">
