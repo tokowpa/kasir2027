@@ -427,7 +427,7 @@
     
     .btn-cetak-besar {
  	 min-width: 135px !important;
- 	 min-height: 72px !important;
+ 	 min-height: 60px !important;
  	 padding: 18px 20px !important;
  	 font-size: 0.95rem !important;
 	}
@@ -1510,7 +1510,7 @@
 
     function buildReceiptText(code, waktu, namaToko, alamatToko, buyerName, status, total, bayar, debt, change) {
       const paperSize = String(localStorage.getItem("paperSize") || "80");
-      const width = paperSize === "45" ? 28 : 42;
+      const width = paperSize === "45" ? 32 : 48;
       const line = "-".repeat(width);
 
       let struk = CMD_INIT + CMD_BOLD_ON;
@@ -1522,28 +1522,27 @@
       struk += `No     : #${code}\n`;
       struk += `Waktu  : ${waktu}\n`;
       struk += `Pembeli: ${buyerName}\n`;
-      struk += `Status : ${status}\n`;
       struk += `${line}\n`;
 
       cart.forEach(item => {
         const uLabel = getUnitMeta(item.unit).label;
         const subtotalStr = formatRibuan(item.qty * item.price);
         struk += `${item.name} (${uLabel})\n`;
-        const indent = "      ";
+        const indent = "    ";
         struk += alignRightLine(`${indent}${item.qty}x ${formatRibuan(item.price)}`, subtotalStr, width) + "\n";
       });
 
       struk += `${line}\n`;
-      struk += alignRightLine("TOTAL", "Rp " + formatRibuan(total), width) + "\n";
-      struk += alignRightLine("BAYAR", "Rp " + formatRibuan(bayar), width) + "\n";
+      struk += alignRightLine("TOTAL", formatRibuan(total), width) + "\n";
+      struk += alignRightLine("BAYAR", formatRibuan(bayar), width) + "\n";
       if (status === "HUTANG") {
-        struk += alignRightLine("HUTANG", "Rp " + formatRibuan(debt), width) + "\n";
+        struk += alignRightLine("HUTANG", formatRibuan(debt), width) + "\n";
       } else {
-        struk += alignRightLine("KEMBALI", "Rp " + formatRibuan(change), width) + "\n";
+        struk += alignRightLine("KEMBALI", formatRibuan(change), width) + "\n";
       }
       struk += `${line}\n`;
       struk += centerText("Terima Kasih", width) + "\n";
-      struk += CMD_BOLD_OFF + "\n\n\n" + CMD_CUT_PARTIAL;
+      struk += CMD_BOLD_OFF + "\n\n" + CMD_CUT_PARTIAL;
       return struk;
     }
 
