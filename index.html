@@ -535,6 +535,19 @@
       font-weight: 800;
       font-size: 0.84rem;
     }
+    
+    .prod-form-actions {
+ 	 display: flex;
+ 	 gap: 10px;
+ 	 align-items: center;
+	  flex-wrap: wrap;
+	}
+
+	.btn-form-action {
+ 	 min-width: 110px; /* Atur lebar minimum tombol */
+ 	 padding: 8px 16px; /* Atur tinggi dan padding kiri-kanan */
+	  font-size: 0.82rem; /* Atur ukuran teks tombol */
+	}
 
     .cart-bottom {
       display: flex;
@@ -821,10 +834,10 @@
               </div>
             </div>
 
-            <div style="display:flex; gap:8px;">
-              <button type="submit" class="btn btn-primary" style="flex:1">Simpan</button>
-              <button type="button" class="btn btn-outline" onclick="resetProductForm()">Batal</button>
-            </div>
+            <div class="prod-form-actions">
+  			<button type="submit" class="btn btn-primary btn-form-action">Simpan</button>
+  			<button type="button" class="btn btn-outline btn-form-action" onclick="resetProductForm()">Batal</button>
+			</div>
           </form>
         </div>
 
