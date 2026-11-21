@@ -20,7 +20,7 @@
       --muted: #64748b;
       --border: #e2e8f0;
       --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
     }
 
     * {
@@ -33,7 +33,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      padding-bottom: 28px;
+      padding-bottom: 24px;
       line-height: 1.35;
     }
 
@@ -78,24 +78,86 @@
       display: none;
     }
 
-    header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 9px 14px;
-      box-shadow: var(--shadow-sm);
-      position: sticky;
-      top: 0;
-      z-index: 120;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    /* Tombol Menu Garis Tiga Mengambang di Pojok Kanan Atas */
+    .menu-wrapper {
+      position: fixed;
+      top: 10px;
+      right: 12px;
+      z-index: 300;
     }
 
-    .brand-title {
-      font-size: 0.96rem;
-      font-weight: 800;
+    .hamburger-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: var(--surface);
       color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hamburger-btn:hover {
+      background: var(--surface-soft);
+    }
+
+    .nav-dropdown {
+      position: absolute;
+      right: 0;
+      top: 44px;
+      min-width: 155px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      padding: 5px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 350;
+    }
+
+    .nav-dropdown.open {
+      display: flex;
+    }
+
+    .nav-item-btn {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav-item-btn:hover {
+      background: var(--surface-soft);
+    }
+
+    .nav-item-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Konten Utama Full ke Atas */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 10px 12px;
+    }
+
+    /* Memberi ruang kanan pada bar paling atas tiap menu agar tidak tertutup tombol ☰ */
+    .top-header-safe {
+      padding-right: 54px !important;
     }
 
     .checkout-panel {
@@ -104,6 +166,9 @@
       flex-wrap: wrap;
       gap: 14px;
       justify-content: space-between;
+      position: sticky;
+      top: 8px;
+      z-index: 100;
     }
 
     .checkout-fields {
@@ -210,7 +275,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-left: 18px;
+      margin-left: 16px;
     }
 
     @media (max-width: 768px) {
@@ -225,77 +290,6 @@
       .checkout-actions-group .btn {
         flex: 1;
       }
-    }
-
-    .menu-wrapper {
-      position: relative;
-    }
-
-    .hamburger-btn {
-      width: 38px;
-      height: 38px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: var(--surface);
-      color: var(--text);
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .hamburger-btn:hover {
-      background: var(--surface-soft);
-    }
-
-    .nav-dropdown {
-      position: absolute;
-      right: 0;
-      top: 44px;
-      min-width: 155px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      box-shadow: var(--shadow-md);
-      padding: 5px;
-      display: none;
-      flex-direction: column;
-      gap: 2px;
-      z-index: 300;
-    }
-
-    .nav-dropdown.open {
-      display: flex;
-    }
-
-    .nav-item-btn {
-      width: 100%;
-      border: none;
-      background: transparent;
-      padding: 8px 10px;
-      border-radius: 7px;
-      font-weight: 700;
-      font-size: 0.84rem;
-      color: var(--text);
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .nav-item-btn:hover {
-      background: var(--surface-soft);
-    }
-
-    .nav-item-btn.active {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 12px auto;
-      padding: 0 12px;
     }
 
     .kasir-layout {
@@ -431,6 +425,42 @@
       border-radius: 6px;
     }
 
+    /* Tombol Kotak Sejajar ke Samping di Halaman Pengaturan */
+    .settings-grid-actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .settings-grid-actions {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .btn-square-tile {
+      min-height: 78px;
+      padding: 10px 8px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.25;
+      font-size: 0.8rem;
+      font-weight: 800;
+      gap: 4px;
+    }
+
+    .btn-square-tile small {
+      font-size: 0.68rem;
+      font-weight: 600;
+      opacity: 0.88;
+      word-break: break-all;
+    }
+
     .search-wrapper {
       position: relative;
     }
@@ -448,7 +478,7 @@
       background: var(--surface-soft);
       border: 1px solid var(--border);
       border-radius: 8px;
-      max-height: 420px;
+      max-height: 440px;
       overflow-y: auto;
       padding: 4px 6px;
       display: none;
@@ -698,30 +728,27 @@
 
   <!-- ================= APLIKASI UTAMA ================= -->
   <div id="mainApp" class="hidden">
-    <header>
-      <div class="brand-title" id="activeTabTitle">Kasir</div>
-
-      <div class="menu-wrapper" id="menuWrapper">
-        <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="toggleNavMenu(event)" title="Menu">☰</button>
-        <div class="nav-dropdown" id="navDropdown">
-          <button class="nav-item-btn active" data-tab="kasir" onclick="switchTab('kasir')">Kasir</button>
-          <button class="nav-item-btn" data-tab="produk" onclick="switchTab('produk')">Produk</button>
-          <button class="nav-item-btn" data-tab="riwayat" onclick="switchTab('riwayat')">Riwayat</button>
-          <button class="nav-item-btn" data-tab="pengaturan" onclick="switchTab('pengaturan')">Pengaturan</button>
-        </div>
+    <!-- Tombol Garis Tiga di Pojok Kanan Atas -->
+    <div class="menu-wrapper" id="menuWrapper">
+      <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="toggleNavMenu(event)" title="Menu">☰</button>
+      <div class="nav-dropdown" id="navDropdown">
+        <button class="nav-item-btn active" data-tab="kasir" onclick="switchTab('kasir')">Kasir</button>
+        <button class="nav-item-btn" data-tab="produk" onclick="switchTab('produk')">Produk</button>
+        <button class="nav-item-btn" data-tab="riwayat" onclick="switchTab('riwayat')">Riwayat</button>
+        <button class="nav-item-btn" data-tab="pengaturan" onclick="switchTab('pengaturan')">Pengaturan</button>
       </div>
-    </header>
+    </div>
 
     <div class="container">
       <!-- ================= TAB 1: KASIR ================= -->
       <div id="tab-kasir">
-        <div id="editTrxBanner" class="edit-banner hidden">
+        <div id="editTrxBanner" class="edit-banner top-header-safe hidden">
           <span>Edit #<strong id="editingTrxCode"></strong></span>
           <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal</button>
         </div>
 
-        <!-- Panel Checkout Khusus di Menu Kasir -->
-        <div class="card checkout-panel">
+        <!-- Header Langsung Berisi Panel Checkout -->
+        <div class="card checkout-panel top-header-safe">
           <div class="checkout-fields">
             <div class="hc-total-wrap">
               <span class="hc-label">Total Belanja</span>
@@ -779,8 +806,8 @@
       <!-- ================= TAB 2: KELOLA PRODUK ================= -->
       <div id="tab-produk" class="hidden">
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong id="productFormTitle" style="font-size:0.9rem;">Tambah Produk</strong>
+          <div class="top-header-safe" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong id="productFormTitle" style="font-size:0.94rem;">Tambah Produk</strong>
             <button type="button" id="toggleExtraBtn" class="btn btn-outline btn-sm" onclick="toggleExtraFields()">
               + Detail
             </button>
@@ -835,8 +862,8 @@
       <!-- ================= TAB 3: RIWAYAT TRANSAKSI ================= -->
       <div id="tab-riwayat" class="hidden">
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
-            <strong style="font-size:0.88rem;">Riwayat (<span id="totalTrxCount">0</span>)</strong>
+          <div class="top-header-safe" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
+            <strong style="font-size:0.94rem;">Riwayat (<span id="totalTrxCount">0</span>)</strong>
             <input type="text" id="filterTrxInput" placeholder="Cari nama / no / barang..." style="max-width:250px; padding:6px 10px;">
           </div>
           <div id="trxSearchLoader" class="search-loader">Mencari...</div>
@@ -851,36 +878,49 @@
 
       <!-- ================= TAB 4: PENGATURAN ================= -->
       <div id="tab-pengaturan" class="hidden">
-        <div class="card" style="display:grid; gap:9px;">
-          <strong style="font-size:0.9rem;">Pengaturan Toko & Cetak</strong>
-          <div>
-            <label class="field-label">Nama Toko</label>
-            <input type="text" id="storeNameInput" placeholder="Nama toko">
+        <div class="card" style="display:grid; gap:10px;">
+          <div class="top-header-safe">
+            <strong style="font-size:0.94rem;">Pengaturan Toko & Cetak</strong>
           </div>
-          <div>
-            <label class="field-label">Alamat / No HP</label>
-            <input type="text" id="storeAddrInput" placeholder="Alamat atau nomor HP">
-          </div>
-          <div>
-            <label class="field-label">Ukuran Kertas</label>
-            <select id="paperSizeSelect">
-              <option value="80">80mm</option>
-              <option value="45">45mm</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" onclick="saveStoreSettings()">Simpan Pengaturan</button>
 
-          <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:9px;">
+            <div>
+              <label class="field-label">Nama Toko</label>
+              <input type="text" id="storeNameInput" placeholder="Nama toko">
+            </div>
+            <div>
+              <label class="field-label">Alamat / No HP</label>
+              <input type="text" id="storeAddrInput" placeholder="Alamat atau nomor HP">
+            </div>
+            <div>
+              <label class="field-label">Ukuran Kertas</label>
+              <select id="paperSizeSelect">
+                <option value="80">80mm</option>
+                <option value="45">45mm</option>
+              </select>
+            </div>
+          </div>
 
-          <button class="btn btn-danger" onclick="deleteHistoryExceptDebt()">
-            Hapus Semua Riwayat Kecuali Hutang
-          </button>
-          <button class="btn btn-outline" onclick="forceFullResync()">
-            Sinkron Ulang Cloud
-          </button>
-          <button class="btn btn-warning" onclick="logoutUser()">
-            Keluar (<span id="loggedInEmail">-</span>)
-          </button>
+          <hr style="border:none; border-top:1px solid var(--border); margin:2px 0;">
+
+          <!-- 4 Tombol Kotak Sejajar ke Samping -->
+          <div class="settings-grid-actions">
+            <button type="button" class="btn btn-primary btn-square-tile" onclick="saveStoreSettings()">
+              Simpan Pengaturan
+            </button>
+            <button type="button" class="btn btn-danger btn-square-tile" onclick="deleteHistoryExceptDebt()">
+              Hapus Riwayat
+              <small>Kecuali Hutang</small>
+            </button>
+            <button type="button" class="btn btn-outline btn-square-tile" onclick="forceFullResync()">
+              Sinkron
+              <small>Ulang Cloud</small>
+            </button>
+            <button type="button" class="btn btn-warning btn-square-tile" onclick="logoutUser()">
+              Keluar
+              <small id="loggedInEmail">-</small>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1036,7 +1076,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV16SimpleDB");
+    const dbLocal = new Dexie("KasirRealtimeV17SimpleDB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -1838,18 +1878,10 @@
       }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Tidak ada hasil</p>`;
     }
 
-    const TAB_LABELS = {
-      kasir: "Kasir",
-      produk: "Produk",
-      riwayat: "Riwayat",
-      pengaturan: "Pengaturan"
-    };
-
     window.switchTab = async (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
       });
-      document.getElementById("activeTabTitle").innerText = TAB_LABELS[tabName] || "Kasir";
       document.querySelectorAll(".nav-item-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.tab === tabName);
       });
