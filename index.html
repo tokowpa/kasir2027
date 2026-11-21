@@ -89,11 +89,24 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 10px;
     }
 
-    .header-checkout {
+    .brand-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .checkout-panel {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+    }
+
+    .checkout-fields {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
@@ -193,7 +206,7 @@
       font-weight: 600;
     }
 
-    .header-actions-group {
+    .checkout-actions-group {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -205,11 +218,11 @@
         width: 100%;
         max-width: 100%;
       }
-      .header-actions-group {
+      .checkout-actions-group {
         margin-left: 0;
         width: 100%;
       }
-      .header-actions-group .btn {
+      .checkout-actions-group .btn {
         flex: 1;
       }
     }
@@ -686,33 +699,7 @@
   <!-- ================= APLIKASI UTAMA ================= -->
   <div id="mainApp" class="hidden">
     <header>
-      <div class="header-checkout">
-        <div class="hc-total-wrap">
-          <span class="hc-label">Total Belanja</span>
-          <div class="total-amount" id="displayTotal">Rp 0</div>
-          <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
-        </div>
-
-        <div class="hc-field">
-          <span class="hc-label">Uang Pembeli</span>
-          <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
-        </div>
-
-        <div class="hc-suggest-wrap">
-          <span class="hc-label">Rekomendasi Uang</span>
-          <div id="suggestMoneyButtons" class="suggest-chips">-</div>
-        </div>
-
-        <div class="hc-field">
-          <span class="hc-label">Nama Pembeli</span>
-          <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Opsional" autocomplete="off">
-        </div>
-
-        <div class="header-actions-group">
-          <button type="button" class="btn btn-danger" onclick="clearCart()">Reset</button>
-          <button type="button" class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
-        </div>
-      </div>
+      <div class="brand-title" id="activeTabTitle">Kasir</div>
 
       <div class="menu-wrapper" id="menuWrapper">
         <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="toggleNavMenu(event)" title="Menu">☰</button>
@@ -731,6 +718,37 @@
         <div id="editTrxBanner" class="edit-banner hidden">
           <span>Edit #<strong id="editingTrxCode"></strong></span>
           <button class="btn btn-outline btn-sm" onclick="cancelEditTransaction()">Batal</button>
+        </div>
+
+        <!-- Panel Checkout Khusus di Menu Kasir -->
+        <div class="card checkout-panel">
+          <div class="checkout-fields">
+            <div class="hc-total-wrap">
+              <span class="hc-label">Total Belanja</span>
+              <div class="total-amount" id="displayTotal">Rp 0</div>
+              <div class="change-amount" id="displayChange">Kembalian: Rp 0</div>
+            </div>
+
+            <div class="hc-field">
+              <span class="hc-label">Uang Pembeli</span>
+              <input type="text" id="inputBayar" class="pay-input" inputmode="numeric" placeholder="0" autocomplete="off">
+            </div>
+
+            <div class="hc-suggest-wrap">
+              <span class="hc-label">Rekomendasi Uang</span>
+              <div id="suggestMoneyButtons" class="suggest-chips">-</div>
+            </div>
+
+            <div class="hc-field">
+              <span class="hc-label">Nama Pembeli</span>
+              <input type="text" id="inputBuyerName" class="buyer-input" placeholder="Opsional" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="checkout-actions-group">
+            <button type="button" class="btn btn-danger" onclick="clearCart()">Reset</button>
+            <button type="button" class="btn btn-primary" onclick="prosesBayar(true)">Cetak Nota</button>
+          </div>
         </div>
 
         <div class="kasir-layout">
@@ -1018,7 +1036,7 @@
       return VARIANT_UNITS.find(u => u.key === unitKey) || VARIANT_UNITS[1];
     }
 
-    const dbLocal = new Dexie("KasirRealtimeV15SimpleDB");
+    const dbLocal = new Dexie("KasirRealtimeV16SimpleDB");
     dbLocal.version(1).stores({
       products: "id, name, *allBarcodes, note, updatedAt",
       transactions: "id, code, buyerName, status, total, paid, debt, change, createdAt, updatedAt"
@@ -1820,10 +1838,18 @@
       }).join("") || `<p style="color:var(--muted); text-align:center; padding:12px;">Tidak ada hasil</p>`;
     }
 
+    const TAB_LABELS = {
+      kasir: "Kasir",
+      produk: "Produk",
+      riwayat: "Riwayat",
+      pengaturan: "Pengaturan"
+    };
+
     window.switchTab = async (tabName) => {
       ["kasir", "produk", "riwayat", "pengaturan"].forEach(t => {
         document.getElementById("tab-" + t).classList.toggle("hidden", t !== tabName);
       });
+      document.getElementById("activeTabTitle").innerText = TAB_LABELS[tabName] || "Kasir";
       document.querySelectorAll(".nav-item-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.tab === tabName);
       });
