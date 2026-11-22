@@ -525,7 +525,7 @@
     <div class="notif-container" id="notifContainer" aria-live="polite"></div>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-      import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+      import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
       const firebaseConfig = {
@@ -548,6 +548,7 @@
       window.fbSetDoc = setDoc;
       window.fbDeleteDoc = deleteDoc;
       window.fbDoc = doc;
+      window.fbOnSnapshot = onSnapshot;
 
       const auth = getAuth(app);
       window.fbAuth = auth;
@@ -578,6 +579,7 @@
       let currentPageRiwayat = 1;
       const itemsPerPageRiwayat = 25;
       let isAppLoaded = false;
+      let unsubscribeRiwayat = null;
 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       function playSuara(sukses = true) {
@@ -603,7 +605,7 @@
 
       function pastikanOnlineDanFirebase() {
         if (!navigator.onLine) {
-          showNotif("Koneksi offline! Sistem produk berjalan full online, aktifkan internet.", "error", 3500);
+          showNotif("Koneksi offline! Sistem berjalan online ke Firebase, aktifkan internet.", "error", 3500);
           return false;
         }
         if (!window.fbDB) {
@@ -635,6 +637,10 @@
       async function prosesLogout() {
         if (confirm("Anda yakin ingin keluar (logout)?")) {
           try {
+            if (unsubscribeRiwayat) {
+              unsubscribeRiwayat();
+              unsubscribeRiwayat = null;
+            }
             await window.fbSignOut(window.fbAuth);
             tutupPengaturan();
             showNotif("Berhasil Logout", "info");
@@ -660,6 +666,10 @@
                   isAppLoaded = true;
                 }
               } else {
+                if (unsubscribeRiwayat) {
+                  unsubscribeRiwayat();
+                  unsubscribeRiwayat = null;
+                }
                 loginDiv.style.display = 'flex';
                 appDiv.style.display = 'none';
                 isAppLoaded = false;
@@ -674,7 +684,7 @@
 
       async function muatProdukDariFirebase(tampilkanNotif = false) {
         if (!navigator.onLine || !window.fbDB) {
-          produkDB = produkDB_default;
+          produkDB = [...produkDB_default];
           renderTabelManajemen(document.getElementById('cariProdukManajemen').value);
           if (tampilkanNotif) showNotif("Tidak dapat terhubung ke Firebase (offline).", "error");
           return;
@@ -694,70 +704,93 @@
           showNotif("Gagal memuat produk dari Firebase: " + e.message, "error", 3500);
         }
       }
-      
+
       async function muatRiwayatDariFirebase() {
-  if (!navigator.onLine || !window.fbDB) return;
+        if (!navigator.onLine || !window.fbDB) return;
 
-  try {
-    const qSnap = await window.fbGetDocs(window.fbCol(window.fbDB, "riwayat"));
-    if (qSnap.empty) return;
+        try {
+          const qSnap = await window.fbGetDocs(window.fbCol(window.fbDB, "riwayat"));
+          const cloudIds = new Set();
+          const lokalSemua = await db.riwayat.toArray();
 
-    const lokalSemua = await db.riwayat.toArray();
-    const mapByFbId = new Map();
-    lokalSemua.forEach(item => {
-      if (item.fbId) mapByFbId.set(String(item.fbId), item);
-    });
+          const mapByFbId = new Map();
+          lokalSemua.forEach(item => {
+            if (item.fbId) mapByFbId.set(String(item.fbId), item);
+          });
 
-    for (const d of qSnap.docs) {
-      const dataCloud = d.data();
-      const docId = String(d.id);
+          for (const d of qSnap.docs) {
+            const dataCloud = d.data();
+            const docId = String(d.id);
+            cloudIds.add(docId);
 
-      const cocokLokal =
-        mapByFbId.get(docId) ||
-        lokalSemua.find(item =>
-          !item.fbId &&
-          item.tanggal === dataCloud.tanggal &&
-          item.total === dataCloud.total &&
-          (item.namaPembeli || '-') === (dataCloud.namaPembeli || '-')
-        );
+            const cocokLokal =
+              mapByFbId.get(docId) ||
+              lokalSemua.find(item =>
+                !item.fbId &&
+                item.tanggal === dataCloud.tanggal &&
+                item.total === dataCloud.total &&
+                (item.namaPembeli || '-') === (dataCloud.namaPembeli || '-')
+              );
 
-      const recordBersih = {
-        tanggal: dataCloud.tanggal || '',
-        namaPembeli: dataCloud.namaPembeli || '-',
-        total: dataCloud.total || '0',
-        uang: dataCloud.uang || '0',
-        kembali: dataCloud.kembali || '0',
-        statusHutang: Boolean(dataCloud.statusHutang),
-        detail: Array.isArray(dataCloud.detail) ? dataCloud.detail : [],
-        fbId: docId,
-        is_synced: 1
-      };
+            const recordBersih = {
+              tanggal: dataCloud.tanggal || '',
+              namaPembeli: dataCloud.namaPembeli || '-',
+              total: dataCloud.total || '0',
+              uang: dataCloud.uang || '0',
+              kembali: dataCloud.kembali || '0',
+              statusHutang: Boolean(dataCloud.statusHutang),
+              detail: Array.isArray(dataCloud.detail) ? dataCloud.detail : [],
+              fbId: docId,
+              is_synced: 1
+            };
 
-      if (cocokLokal) {
-        await db.riwayat.update(cocokLokal.id, recordBersih);
-      } else {
-        await db.riwayat.add(recordBersih);
+            if (cocokLokal) {
+              await db.riwayat.update(cocokLokal.id, recordBersih);
+            } else {
+              await db.riwayat.add(recordBersih);
+            }
+          }
+
+          for (const lokalItem of lokalSemua) {
+            if (lokalItem.fbId && !cloudIds.has(String(lokalItem.fbId))) {
+              await db.riwayat.delete(lokalItem.id);
+            }
+          }
+
+          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
+          renderRiwayat();
+        } catch (e) {
+          console.error("Gagal memuat riwayat dari Firebase:", e);
+        }
       }
-    }
 
-    riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-    renderRiwayat();
-  } catch (e) {
-    console.error("Gagal memuat riwayat dari Firebase:", e);
-  }
-}
+      function pantauRiwayatFirebase() {
+        if (!window.fbDB || !window.fbOnSnapshot) return;
+        if (unsubscribeRiwayat) unsubscribeRiwayat();
+
+        unsubscribeRiwayat = window.fbOnSnapshot(
+          window.fbCol(window.fbDB, "riwayat"),
+          async () => {
+            await muatRiwayatDariFirebase();
+          },
+          (err) => {
+            console.error("Listener riwayat terputus:", err);
+          }
+        );
+      }
 
       async function muatDataAwal() {
-		  try {
-		    riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-		    renderRiwayat();
+        try {
+          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
+          renderRiwayat();
 
-		    await muatProdukDariFirebase(false);
-		    await muatRiwayatDariFirebase();
-		  } catch (error) {
-		    console.error(error);
-		  }
-		}
+          await muatProdukDariFirebase(false);
+          await muatRiwayatDariFirebase();
+          pantauRiwayatFirebase();
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
       // === POPUP PENCARIAN ===
       const popupCari = document.getElementById('popupCari');
@@ -1016,36 +1049,36 @@
       }
 
       async function hapusRiwayatLunas() {
-  if (!confirm("Hapus SEMUA riwayat yang sudah lunas? Data yang berstatus 'Hutang' akan tetap aman dan tidak terhapus.")) return;
-  try {
-    const lunas = riwayat.filter(r => !r.statusHutang);
-    let gagalCloud = 0;
-
-    for (let r of lunas) {
-      if (navigator.onLine && window.fbDB && r.fbId) {
+        if (!confirm("Hapus SEMUA riwayat yang sudah lunas? Data yang berstatus 'Hutang' akan tetap aman dan tidak terhapus.")) return;
         try {
-          await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
-        } catch (err) {
-          gagalCloud++;
+          const lunas = riwayat.filter(r => !r.statusHutang);
+          let gagalCloud = 0;
+
+          for (let r of lunas) {
+            if (navigator.onLine && window.fbDB && r.fbId) {
+              try {
+                await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
+              } catch (err) {
+                gagalCloud++;
+              }
+            }
+            await db.riwayat.delete(r.id);
+          }
+
+          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
+          currentPageRiwayat = 1;
+          renderRiwayat();
+
+          if (gagalCloud > 0) {
+            showNotif(`${lunas.length} transaksi lunas dihapus lokal (${gagalCloud} gagal di Firebase).`, "info", 3500);
+          } else {
+            showNotif(`${lunas.length} transaksi lunas berhasil dihapus.`, "success");
+          }
+          tutupPengaturan();
+        } catch (e) {
+          showNotif("Gagal menghapus riwayat: " + e.message, "error");
         }
       }
-      await db.riwayat.delete(r.id);
-    }
-
-    riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-    currentPageRiwayat = 1;
-    renderRiwayat();
-
-    if (gagalCloud > 0) {
-      showNotif(`${lunas.length} transaksi lunas dihapus lokal (${gagalCloud} gagal di Firebase).`, "info", 3500);
-    } else {
-      showNotif(`${lunas.length} transaksi lunas berhasil dihapus.`, "success");
-    }
-    tutupPengaturan();
-  } catch (e) {
-    showNotif("Gagal menghapus riwayat: " + e.message, "error");
-  }
-}
 
       // === FUNGSI UTAMA KASIR ===
       function toggleRiwayat() { const box = document.getElementById("riwayatBox"), btn = document.getElementById("btnRiwayat"); if (box.style.display === "none") { box.style.display = "block"; btn.textContent = "Tutup Riwayat"; } else { box.style.display = "none"; btn.textContent = "RIWAYAT"; } }
@@ -1113,27 +1146,28 @@
 
       function lihatDetail(i) { const r = riwayat[i]; let detail = `=== Transaksi ===\n${r.tanggal}\n`; if(r.namaPembeli) detail += `Pelanggan: ${r.namaPembeli}\n`; detail += `\n`; r.detail.forEach(d => { detail += `${d.nama} - ${d.varian}\n${d.qty} x Rp${formatRupiah(d.harga)} = Rp${formatRupiah(d.harga*d.qty)}\n`; }); detail += `\nTotal: Rp ${r.total}\nUang: Rp ${r.uang}\nKembali: Rp ${r.kembali}\n`; alert(detail); }
       function editTransaksi(i) { const r = riwayat[i]; idRiwayatEdit = r.id; keranjang = JSON.parse(JSON.stringify(r.detail)); renderKeranjang(); document.getElementById("uangPembeli").value = r.uang; document.getElementById("namaPembeli").value = r.namaPembeli || ''; hitungKembalian(); showNotif("Mode Edit: Silakan update uang pembeli.", "info", 2000); }
-      async function hapusRiwayat(index) {
-  const r = riwayat[index];
-  if (!r) return;
-  const konfirmasi = confirm(`Hapus riwayat?\n\nTanggal: ${r.tanggal}\nTotal: Rp ${r.total}`);
-  if (!konfirmasi) return;
 
-  try {
-    if (navigator.onLine && window.fbDB && r.fbId) {
-      await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
-    }
-    await db.riwayat.delete(r.id);
-    riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-    if (riwayat.length > 0 && currentPageRiwayat > Math.ceil(riwayat.length / itemsPerPageRiwayat)) {
-      currentPageRiwayat--;
-    }
-    renderRiwayat();
-    showNotif("Riwayat transaksi dihapus.", "info");
-  } catch (e) {
-    showNotif("Gagal menghapus riwayat di Firebase: " + e.message, "error", 3500);
-  }
-}
+      async function hapusRiwayat(index) {
+        const r = riwayat[index]; if (!r) return;
+        const konfirmasi = confirm(`Hapus riwayat?\n\nTanggal: ${r.tanggal}\nTotal: Rp ${r.total}`);
+        if (!konfirmasi) return;
+
+        try {
+          if (navigator.onLine && window.fbDB && r.fbId) {
+            await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
+          }
+          await db.riwayat.delete(r.id);
+          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
+          if (riwayat.length > 0 && currentPageRiwayat > Math.ceil(riwayat.length / itemsPerPageRiwayat)) {
+            currentPageRiwayat--;
+          }
+          renderRiwayat();
+          showNotif("Riwayat transaksi dihapus.", "info");
+        } catch (e) {
+          showNotif("Gagal menghapus riwayat di Firebase: " + e.message, "error", 3500);
+        }
+      }
+
       inputPopupCari.addEventListener("input", (e) => {
         const query = e.target.value;
         const tbody = document.querySelector("#tabelHasil tbody");
@@ -1183,87 +1217,88 @@
       document.getElementById('btnSelesaiCetak').addEventListener('click', selesaikanDanCetak);
 
       async function simpanTransaksi() {
-  const total = keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0);
-  if (total <= 0) {
-    showNotif("Keranjang kosong!", "error");
-    return null;
-  }
-
-  const uangVal = document.getElementById("uangPembeli").value.replace(/\D/g, "");
-  const uang = parseInt(uangVal) || 0;
-  const selisih = uang - total;
-  const isHutang = uang < total;
-  const nilaiTampilan = formatRupiah(Math.abs(selisih));
-
-  if (isHutang) {
-    showNotif(`Disimpan sbg HUTANG: Rp ${nilaiTampilan}`, "error", 3500);
-  } else {
-    showNotif("Transaksi Berhasil!", "success");
-  }
-
-  let existingFbId = null;
-  if (idRiwayatEdit !== null) {
-    const lama = await db.riwayat.get(idRiwayatEdit);
-    if (lama && lama.fbId) existingFbId = lama.fbId;
-  }
-
-  const transaksi = {
-    tanggal: new Date().toLocaleString('id-ID', { hour12: false }),
-    namaPembeli: document.getElementById("namaPembeli").value.trim() || '-',
-    total: formatRupiah(total),
-    uang: formatRupiah(uang),
-    kembali: nilaiTampilan,
-    statusHutang: isHutang,
-    detail: JSON.parse(JSON.stringify(keranjang)),
-    fbId: existingFbId,
-    is_synced: 0
-  };
-
-  try {
-    let localId = idRiwayatEdit;
-    if (idRiwayatEdit !== null) {
-      await db.riwayat.update(idRiwayatEdit, transaksi);
-      idRiwayatEdit = null;
-    } else {
-      localId = await db.riwayat.add(transaksi);
-    }
-
-    if (navigator.onLine && window.fbDB) {
-      try {
-        const payloadFirebase = {
-          tanggal: transaksi.tanggal,
-          namaPembeli: transaksi.namaPembeli,
-          total: transaksi.total,
-          uang: transaksi.uang,
-          kembali: transaksi.kembali,
-          statusHutang: transaksi.statusHutang,
-          detail: transaksi.detail,
-          localId: localId
-        };
-
-        if (transaksi.fbId) {
-          await window.fbSetDoc(window.fbDoc(window.fbDB, "riwayat", String(transaksi.fbId)), payloadFirebase);
-        } else {
-          const docRef = await window.fbAddDoc(window.fbCol(window.fbDB, "riwayat"), payloadFirebase);
-          transaksi.fbId = docRef.id;
+        const total = keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0);
+        if (total <= 0) {
+          showNotif("Keranjang kosong!", "error");
+          return null;
         }
 
-        transaksi.is_synced = 1;
-        await db.riwayat.update(localId, { fbId: transaksi.fbId, is_synced: 1 });
-      } catch (fbErr) {
-        console.error("Gagal simpan riwayat ke Firebase:", fbErr);
-        showNotif("Tersimpan lokal, namun gagal kirim ke Firebase.", "info", 3500);
-      }
-    }
+        const uangVal = document.getElementById("uangPembeli").value.replace(/\D/g, "");
+        const uang = parseInt(uangVal) || 0;
+        const selisih = uang - total;
+        const isHutang = uang < total;
+        const nilaiTampilan = formatRupiah(Math.abs(selisih));
 
-    riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-    renderRiwayat();
-    return transaksi;
-  } catch (e) {
-    showNotif("Gagal simpan: " + e, "error");
-    return null;
-  }
-}
+        if (isHutang) {
+          showNotif(`Disimpan sbg HUTANG: Rp ${nilaiTampilan}`, "error", 3500);
+        } else {
+          showNotif("Transaksi Berhasil!", "success");
+        }
+
+        let existingFbId = null;
+        if (idRiwayatEdit !== null) {
+          const lama = await db.riwayat.get(idRiwayatEdit);
+          if (lama && lama.fbId) existingFbId = lama.fbId;
+        }
+
+        const transaksi = {
+          tanggal: new Date().toLocaleString('id-ID', { hour12: false }),
+          namaPembeli: document.getElementById("namaPembeli").value.trim() || '-',
+          total: formatRupiah(total),
+          uang: formatRupiah(uang),
+          kembali: nilaiTampilan,
+          statusHutang: isHutang,
+          detail: JSON.parse(JSON.stringify(keranjang)),
+          fbId: existingFbId,
+          is_synced: 0
+        };
+
+        try {
+          let localId = idRiwayatEdit;
+          if (idRiwayatEdit !== null) {
+            await db.riwayat.update(idRiwayatEdit, transaksi);
+            idRiwayatEdit = null;
+          } else {
+            localId = await db.riwayat.add(transaksi);
+          }
+
+          if (navigator.onLine && window.fbDB) {
+            try {
+              const payloadFirebase = {
+                tanggal: transaksi.tanggal,
+                namaPembeli: transaksi.namaPembeli,
+                total: transaksi.total,
+                uang: transaksi.uang,
+                kembali: transaksi.kembali,
+                statusHutang: transaksi.statusHutang,
+                detail: transaksi.detail,
+                localId: localId
+              };
+
+              if (transaksi.fbId) {
+                await window.fbSetDoc(window.fbDoc(window.fbDB, "riwayat", String(transaksi.fbId)), payloadFirebase);
+              } else {
+                const docRef = await window.fbAddDoc(window.fbCol(window.fbDB, "riwayat"), payloadFirebase);
+                transaksi.fbId = docRef.id;
+              }
+
+              transaksi.is_synced = 1;
+              await db.riwayat.update(localId, { fbId: transaksi.fbId, is_synced: 1 });
+            } catch (fbErr) {
+              console.error("Gagal simpan riwayat ke Firebase:", fbErr);
+              showNotif("Tersimpan lokal, namun gagal kirim ke Firebase.", "info", 3500);
+            }
+          }
+
+          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
+          renderRiwayat();
+          return transaksi;
+        } catch (e) {
+          showNotif("Gagal simpan: " + e, "error");
+          return null;
+        }
+      }
+
       function resetKeranjang() { keranjang = []; idRiwayatEdit = null; renderKeranjang(); document.getElementById("namaPembeli").value = ''; document.getElementById("uangPembeli").value = ''; hitungKembalian(); }
 
       async function selesaikanDanCetak() {
