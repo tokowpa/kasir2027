@@ -308,7 +308,97 @@
       }
       .form-group { margin-bottom: 12px; }
       .form-group label { display: block; margin-bottom: 5px; font-weight: 700; color: #334155; }
-      .varian-item { border: 1px solid #cbd5e1; padding: 12px; margin-top: 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.75); }
+
+      /* --- FORM PRODUK SEJAJAR & VARIAN RINGKAS --- */
+      .form-row-sejajar {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 14px;
+        align-items: start;
+      }
+      @media (max-width: 600px) {
+        .form-row-sejajar {
+          grid-template-columns: 1fr;
+        }
+      }
+      .bulk-grid-compact {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .bulk-grid-compact .form-group {
+        margin-bottom: 0;
+      }
+      .bulk-grid-compact label {
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+      .bulk-grid-compact input {
+        width: 100%;
+        padding: 7px 9px;
+        font-size: 13px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        box-sizing: border-box;
+        background: #ffffff;
+        color: #0f172a;
+      }
+
+      .varian-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 12px;
+        margin-top: 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+      .varian-item input {
+        flex: 1 1 130px;
+        min-width: 0;
+        padding: 8px 10px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        box-sizing: border-box;
+      }
+      .varian-item input:focus {
+        border-color: #4a8f6a;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 143, 106, 0.16);
+      }
+      .varian-item .button-hapus {
+        float: none !important;
+        padding: 8px 12px;
+        font-size: 13px;
+        margin: 0;
+        white-space: nowrap;
+      }
+
+      /* --- PILIHAN FORMAT NOTA DI PENGATURAN --- */
+      .pilihan-nota-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .pilihan-nota-group button {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      .btn-pilihan-aktif {
+        background: #2f6f4e !important;
+        box-shadow: 0 0 0 2px rgba(74, 143, 106, 0.35);
+      }
+      .btn-pilihan-nonaktif {
+        background: #94a3b8 !important;
+        box-shadow: none;
+      }
+
       .hidden { display: none; }
       .pagination-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
       .pagination-container button:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; box-shadow: none; }
@@ -443,27 +533,62 @@
             </table>
           </div>
           <div id="formProdukContainer" class="hidden">
-            <h2 id="formProdukJudul">Tambah Produk Baru</h2>
+            <h2 id="formProdukJudul" style="margin-top:0; margin-bottom:12px;">Tambah Produk Baru</h2>
             <input type="hidden" id="editIndex" />
-            <div class="form-group">
-              <label for="namaProduk">Nama Produk</label>
-              <input type="text" id="namaProduk" placeholder="Cth: Sarimi Gelas" />
+            <input type="hidden" id="barcodeProduk" value="" />
+            <input type="hidden" id="isiProduk" value="" />
+
+            <div class="form-row-sejajar">
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="namaProduk">Nama Produk</label>
+                <input
+                  type="text"
+                  id="namaProduk"
+                  placeholder="Cth: Sarimi Gelas"
+                  style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:15px;"
+                />
+
+                <button
+                  type="button"
+                  id="btnToggleDetailOpsional"
+                  class="button-sekunder"
+                  style="margin-top:8px; width:100%; font-size:13px; padding:8px 10px;"
+                  onclick="toggleDetailOpsional()"
+                >
+                  + Harga Beli &amp; Catatan
+                </button>
+
+                <div id="detailOpsionalBox" class="hidden" style="margin-top:10px; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:rgba(255,255,255,0.85);">
+                  <div class="form-group" style="margin-bottom:8px;">
+                    <label for="hargaBeliProduk" style="font-size:12px;">Harga Beli / Modal</label>
+                    <input
+                      type="text"
+                      inputmode="numeric"
+                      id="hargaBeliProduk"
+                      placeholder="Cth: 180.000"
+                      oninput="formatInputRibuan(this)"
+                      style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:14px;"
+                    />
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label for="catatanProduk" style="font-size:12px;">Catatan</label>
+                    <input
+                      type="text"
+                      id="catatanProduk"
+                      placeholder="Cth: Rak atas / stok terbatas"
+                      style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:14px;"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="margin-bottom:6px;">Harga Grosir / Bulk</label>
+                <div id="bulkPriceContainer" class="bulk-grid-compact"></div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="hargaBeliProduk">Harga Beli / Modal</label>
-              <input type="text" inputmode="numeric" id="hargaBeliProduk" placeholder="Cth: 180.000" oninput="formatInputRibuan(this)" />
-            </div>
-            <div class="form-group">
-              <label for="barcodeProduk">Barcode Utama (Karton/Bal)</label>
-              <input type="text" id="barcodeProduk" placeholder="Opsional" />
-            </div>
-            <div class="form-group">
-              <label for="isiProduk">Info Isi</label>
-              <input type="text" id="isiProduk" placeholder="Cth: 12 rtg x 10 pcs" />
-            </div>
-            <h3>Harga Grosir/Bulk</h3>
-            <div id="bulkPriceContainer" class="form-group"></div>
-            <h3>Varian Produk (Eceran)</h3>
+
+            <h3 style="margin-top:14px; margin-bottom:6px;">Varian Produk (Eceran)</h3>
             <div id="varianContainer"></div>
             <button type="button" class="button-sekunder" onclick="tambahInputVarian()">+ Tambah Varian</button>
             <hr />
@@ -509,6 +634,18 @@
             <input type="text" id="inputKodeAkses" placeholder="Contoh: KODE12345" style="width: 100%; padding: 10px; font-size: 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" oninput="simpanKodeAkses()" />
           </div>
 
+          <div class="form-group" style="margin-top: 15px;">
+            <label>Format Nota (QR Code & Kode Akses)</label>
+            <div class="pilihan-nota-group">
+              <button type="button" id="btnNotaDenganQr" onclick="aturModeQrKodeAkses('ya')">
+                Pakai QR & Kode Akses
+              </button>
+              <button type="button" id="btnNotaTanpaQr" onclick="aturModeQrKodeAkses('tidak')">
+                Tanpa QR & Kode Akses
+              </button>
+            </div>
+          </div>
+
           <hr style="margin: 20px 0;" />
 
           <button class="button-hapus" onclick="hapusRiwayatLunas()" style="width: 100%; padding: 12px; margin-bottom: 10px; font-size: 16px;">
@@ -530,13 +667,13 @@
 
       const firebaseConfig = {
         apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
-  authDomain: "wpastore-1d2c3.firebaseapp.com",
-  databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "wpastore-1d2c3",
-  storageBucket: "wpastore-1d2c3.firebasestorage.app",
-  messagingSenderId: "752685099267",
-  appId: "1:752685099267:web:8c516725cdd0885739a136"
-};
+	    authDomain: "wpastore-1d2c3.firebaseapp.com",
+  	  databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  	  projectId: "wpastore-1d2c3",
+  	  storageBucket: "wpastore-1d2c3.firebasestorage.app",
+  	  messagingSenderId: "752685099267",
+  	  appId: "1:752685099267:web:8c516725cdd0885739a136"
+	  };
 
       const app = initializeApp(firebaseConfig);
 
@@ -560,7 +697,7 @@
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
     <script>
       const produkDB_default = [
-        { "id": "default1", "nama": "KIRIM", "barcode": "0101010101", "hargaBeli": 0, "variasi": [{ "nama": "pcs", "barcode": "0202020202", "harga": 2000 }] }
+        { "id": "default1", "nama": "KIRIM", "barcode": "0101010101", "hargaBeli": 0, "catatan": "", "variasi": [{ "nama": "pcs", "barcode": "0202020202", "harga": 2000 }] }
       ];
       const db = new Dexie("KasirWpaDB");
       db.version(2).stores({
@@ -805,6 +942,27 @@
       // === MANAJEMEN PRODUK (FULL ONLINE FIREBASE) ===
       const modalProduk = document.getElementById("modalProduk"), listContainer = document.getElementById("listProdukContainer"), formContainer = document.getElementById("formProdukContainer"), cariProdukManajemenInput = document.getElementById("cariProdukManajemen");
 
+      function setDetailOpsionalVisible(tampil) {
+        const box = document.getElementById('detailOpsionalBox');
+        const btn = document.getElementById('btnToggleDetailOpsional');
+        if (!box || !btn) return;
+
+        if (tampil) {
+          box.classList.remove('hidden');
+          btn.textContent = '− Sembunyikan Harga Beli & Catatan';
+        } else {
+          box.classList.add('hidden');
+          btn.textContent = '+ Harga Beli & Catatan';
+        }
+      }
+
+      function toggleDetailOpsional() {
+        const box = document.getElementById('detailOpsionalBox');
+        if (!box) return;
+        const sedangTersembunyi = box.classList.contains('hidden');
+        setDetailOpsionalVisible(sedangTersembunyi);
+      }
+
       function renderBulkPriceInputs(produk = {}) {
         const container = document.getElementById('bulkPriceContainer');
         container.innerHTML = '';
@@ -828,9 +986,15 @@
         listContainer.classList.add("hidden"); formContainer.classList.remove("hidden");
         document.getElementById('formProdukJudul').textContent = "Tambah Produk Baru";
         document.getElementById('editIndex').value = "-1";
-        document.getElementById('namaProduk').value = ''; document.getElementById('barcodeProduk').value = '';
-        document.getElementById('isiProduk').value = ''; document.getElementById('hargaBeliProduk').value = '';
-        renderBulkPriceInputs(); document.getElementById('varianContainer').innerHTML = ''; tambahInputVarian();
+        document.getElementById('namaProduk').value = '';
+        document.getElementById('barcodeProduk').value = '';
+        document.getElementById('isiProduk').value = '';
+        document.getElementById('hargaBeliProduk').value = '';
+        document.getElementById('catatanProduk').value = '';
+        setDetailOpsionalVisible(false);
+        renderBulkPriceInputs();
+        document.getElementById('varianContainer').innerHTML = '';
+        tambahInputVarian();
       }
 
       function renderTabelManajemen(filter = '') {
@@ -857,7 +1021,8 @@
 
         produkTampil.forEach(produk => {
           let varianHtml = '';
-          if (produk.hargaBeli > 0) varianHtml += `<div style="font-size: 12px; color: #b84a4a; margin-bottom: 5px; padding-left: 16px;"><strong>Modal: Rp ${formatRupiah(produk.hargaBeli)}</strong></div>`;
+          if (produk.hargaBeli > 0) varianHtml += `<div style="font-size: 12px; color: #b84a4a; margin-bottom: 4px; padding-left: 16px;"><strong>Modal: Rp ${formatRupiah(produk.hargaBeli)}</strong></div>`;
+          if (produk.catatan && String(produk.catatan).trim() !== '') varianHtml += `<div style="font-size: 12px; color: #475569; margin-bottom: 5px; padding-left: 16px;"><i>Catatan: ${produk.catatan}</i></div>`;
           varianHtml += '<ul style="margin: 0; padding-left: 16px; font-size: 13px;">';
           bulkKeys.forEach(bk => { if (produk[bk.key]) varianHtml += `<li>${bk.label} <span class="badge ${bk.badge}">${bk.label}</span>: <strong>Rp ${formatRupiah(produk[bk.key])}</strong></li>`; });
           if (produk.variasi && produk.variasi.length > 0) produk.variasi.forEach(v => { varianHtml += `<li>${v.nama} <span class="badge badge-ecer">Ecer</span>: <strong>Rp ${formatRupiah(v.harga)}</strong></li>`; });
@@ -887,9 +1052,17 @@
       });
 
       function tambahInputVarian(varian = { nama: '', barcode: '', harga: '' }) {
-        const container = document.getElementById("varianContainer"); const div = document.createElement("div"); div.className = "varian-item";
+        const container = document.getElementById("varianContainer");
+        const div = document.createElement("div");
+        div.className = "varian-item";
         const hargaTampil = varian.harga ? formatRupiah(varian.harga) : '';
-        div.innerHTML = `<input type="text" class="varian-nama" value="${varian.nama}" placeholder="Nama"><input type="text" class="varian-barcode" value="${varian.barcode}" placeholder="Barcode"><input type="text" inputmode="numeric" class="varian-harga" value="${hargaTampil}" placeholder="Harga" oninput="formatInputRibuan(this)"><button type="button" class="button-hapus" style="float:right;" onclick="this.parentElement.remove()">Hapus Varian</button><div style="clear:both;"></div>`;
+
+        div.innerHTML = `
+          <input type="text" class="varian-nama" value="${varian.nama || ''}" placeholder="Nama varian (cth: pcs, bks)">
+          <input type="text" class="varian-barcode" value="${varian.barcode || ''}" placeholder="Barcode (opsional)">
+          <input type="text" inputmode="numeric" class="varian-harga" value="${hargaTampil}" placeholder="Harga ecer (cth: 3.000)" oninput="formatInputRibuan(this)">
+          <button type="button" class="button-hapus" onclick="this.parentElement.remove()">Hapus</button>
+        `;
         container.appendChild(div);
       }
 
@@ -898,8 +1071,12 @@
         listContainer.classList.add("hidden"); formContainer.classList.remove("hidden");
         document.getElementById('formProdukJudul').textContent = "Edit Produk";
         document.getElementById('editIndex').value = produk.id;
-        document.getElementById('namaProduk').value = produk.nama || ''; document.getElementById('barcodeProduk').value = produk.barcode || '';
-        document.getElementById('isiProduk').value = produk.isi || ''; document.getElementById('hargaBeliProduk').value = produk.hargaBeli ? formatRupiah(produk.hargaBeli) : '';
+        document.getElementById('namaProduk').value = produk.nama || '';
+        document.getElementById('barcodeProduk').value = produk.barcode || '';
+        document.getElementById('isiProduk').value = produk.isi || '';
+        document.getElementById('hargaBeliProduk').value = produk.hargaBeli ? formatRupiah(produk.hargaBeli) : '';
+        document.getElementById('catatanProduk').value = produk.catatan || '';
+        setDetailOpsionalVisible(Boolean(produk.hargaBeli > 0 || (produk.catatan && String(produk.catatan).trim() !== '')));
         renderBulkPriceInputs(produk);
         const varianContainer = document.getElementById('varianContainer'); varianContainer.innerHTML = '';
         if (produk.variasi && produk.variasi.length > 0) produk.variasi.forEach(v => tambahInputVarian(v)); else tambahInputVarian();
@@ -915,6 +1092,7 @@
         const produkData = {
           nama: nama,
           hargaBeli: parseInt(document.getElementById('hargaBeliProduk').value.replace(/\D/g, '')) || 0,
+          catatan: document.getElementById('catatanProduk').value.trim(),
           barcode: document.getElementById('barcodeProduk').value.trim(),
           isi: document.getElementById('isiProduk').value.trim(),
           variasi: []
@@ -1032,6 +1210,41 @@
         localStorage.setItem('kodeAksesNota', kode);
       }
 
+      function getModeQrKodeAkses() {
+        return localStorage.getItem('cetakQrKodeAkses') || 'ya';
+      }
+
+      function renderStatusTombolNota() {
+        const mode = getModeQrKodeAkses();
+        const btnYa = document.getElementById('btnNotaDenganQr');
+        const btnTidak = document.getElementById('btnNotaTanpaQr');
+        if (!btnYa || !btnTidak) return;
+
+        if (mode === 'ya') {
+          btnYa.classList.remove('btn-pilihan-nonaktif');
+          btnYa.classList.add('btn-pilihan-aktif');
+          btnTidak.classList.remove('btn-pilihan-aktif');
+          btnTidak.classList.add('btn-pilihan-nonaktif');
+        } else {
+          btnTidak.classList.remove('btn-pilihan-nonaktif');
+          btnTidak.classList.add('btn-pilihan-aktif');
+          btnYa.classList.remove('btn-pilihan-aktif');
+          btnYa.classList.add('btn-pilihan-nonaktif');
+        }
+      }
+
+      function aturModeQrKodeAkses(mode) {
+        localStorage.setItem('cetakQrKodeAkses', mode === 'tidak' ? 'tidak' : 'ya');
+        renderStatusTombolNota();
+        showNotif(
+          mode === 'tidak'
+            ? "Nota diatur: Tanpa QR & Kode Akses"
+            : "Nota diatur: Pakai QR & Kode Akses",
+          "success",
+          1800
+        );
+      }
+
       function muatPengaturan() {
         const savedSize = localStorage.getItem('printerSize') || '58';
         const selectSize = document.getElementById('ukuranKertas');
@@ -1040,6 +1253,8 @@
         const savedKode = localStorage.getItem('kodeAksesNota') || '';
         const inputKode = document.getElementById('inputKodeAkses');
         if (inputKode) inputKode.value = savedKode;
+
+        renderStatusTombolNota();
       }
 
       function simpanPengaturanKertas() {
@@ -1098,12 +1313,12 @@
         const tbody = document.querySelector("#tabelHasil tbody"); tbody.innerHTML = "";
         if (filter.trim() === "") return; const filterLower = filter.toLowerCase();
         produkDB.forEach(p => {
-          const namaProdukLower = p.nama.toLowerCase(), varianCocok = p.variasi && p.variasi.some(v => v.nama.toLowerCase().includes(filterLower));
+          const namaProdukLower = String(p.nama || '').toLowerCase(), varianCocok = p.variasi && p.variasi.some(v => String(v.nama || '').toLowerCase().includes(filterLower));
           if (namaProdukLower.includes(filterLower) || varianCocok) {
             const tr = document.createElement("tr"); tr.innerHTML = `<td><b>${p.nama}</b></td><td></td><td></td>`; tbody.appendChild(tr);
             if (p.variasi) {
               p.variasi.forEach(v => {
-                if (namaProdukLower.includes(filterLower) || v.nama.toLowerCase().includes(filterLower)) {
+                if (namaProdukLower.includes(filterLower) || String(v.nama || '').toLowerCase().includes(filterLower)) {
                   const trVarian = document.createElement("tr"); trVarian.className = "produk-varian"; trVarian.innerHTML = `<td style="padding-left:25px;">${v.nama} <span class="badge badge-ecer">Ecer</span></td><td>Rp ${formatRupiah(v.harga)}</td><td><button onclick="tambahKeranjangDanTutup('${p.nama}','${v.nama}','ecer',${v.harga})">Tambah</button></td>`; tbody.appendChild(trVarian);
                 }
               });
@@ -1119,7 +1334,7 @@
 
       function renderKeranjang() { const tbody = document.querySelector("#tabelKeranjang tbody"); tbody.innerHTML = ""; let total = 0; keranjang.forEach((item, index) => { const itemTotal = Number(item.harga) * Number(item.qty || 0); total += itemTotal; let badgeClass = "badge-ecer", badgeText = "Ecer"; const found = bulkKeys.find(b => b.key === item.jenis); if(found){ badgeClass = found.badge; badgeText = found.label; } const tr = document.createElement("tr"); tr.innerHTML = `<td>${item.nama}</td><td>${item.varian} <span class="badge ${badgeClass}">${badgeText}</span></td><td>Rp ${formatRupiah(item.harga)}</td><td><div class="qty-container"><button class="qty-btn button-sekunder" onclick="ubahQtyStep(${index}, -1)">-</button><input type="number" class="qty-input" min="1" value="${item.qty}" onchange="ubahQty(${index}, this.value)"><button class="qty-btn" onclick="ubahQtyStep(${index}, 1)">+</button></div></td><td>Rp ${formatRupiah(itemTotal)}</td><td><button class="button-hapus" onclick="hapusItem(${index})">Hapus</button></td>`; tbody.appendChild(tr); }); document.getElementById("totalBelanja").textContent = formatRupiah(total); renderUangRekomendasi(); hitungKembalian(); }
       function tambahKeranjangDanTutup(nama, varian, jenis, harga) { tambahKeranjang(nama, varian, jenis, harga); tutupPopupCari(); }
-      function tambahKeranjang(nama, varian, jenis, harga) { harga = Number(harga); varian = varian.replace(/\(isi.*?\)/gi, "").trim(); const index = keranjang.findIndex(i => i.nama === nama && i.varian === varian && i.jenis === jenis); if (index > -1) { let item = keranjang.splice(index, 1)[0]; item.qty++; keranjang.unshift(item); } else { keranjang.unshift({ nama, varian, jenis, harga, qty: 1 }); } renderKeranjang(); showNotif(`${nama} ${varian ? "- " + varian : ""} ditambahkan`, "success", 2000); }
+      function tambahKeranjang(nama, varian, jenis, harga) { harga = Number(harga); varian = String(varian || '').replace(/\(isi.*?\)/gi, "").trim(); const index = keranjang.findIndex(i => i.nama === nama && i.varian === varian && i.jenis === jenis); if (index > -1) { let item = keranjang.splice(index, 1)[0]; item.qty++; keranjang.unshift(item); } else { keranjang.unshift({ nama, varian, jenis, harga, qty: 1 }); } renderKeranjang(); showNotif(`${nama} ${varian ? "- " + varian : ""} ditambahkan`, "success", 2000); }
       function hapusItem(i) { const removed = keranjang.splice(i, 1)[0]; renderKeranjang(); if (removed) showNotif(`${removed.nama} ${removed.varian} dihapus`, "info", 1800); }
       function ubahQtyStep(index, amount) { const item = keranjang[index]; if (!item) return; let qtyBaru = item.qty + amount; ubahQty(index, qtyBaru); }
       function ubahQty(i, val) { const qty = parseInt(val); keranjang[i].qty = (isNaN(qty) || qty < 1) ? 1 : qty; renderKeranjang(); showNotif("Jumlah diperbarui", "info", 1200); }
@@ -1130,7 +1345,7 @@
 
       function renderRiwayat() {
         const filter = document.getElementById('cariRiwayat').value.toLowerCase(); const tbody = document.querySelector("#tabelRiwayat tbody"); tbody.innerHTML = "";
-        const riwayatTampil = riwayat.filter(r => { const nama = (r.namaPembeli || '').toLowerCase(); const tanggal = r.tanggal.toLowerCase(); const total = r.total.toLowerCase(); const status = r.statusHutang ? 'hutang' : ''; return nama.includes(filter) || tanggal.includes(filter) || total.includes(filter) || status.includes(filter); });
+        const riwayatTampil = riwayat.filter(r => { const nama = String(r.namaPembeli || '').toLowerCase(); const tanggal = String(r.tanggal || '').toLowerCase(); const total = String(r.total || '').toLowerCase(); const status = r.statusHutang ? 'hutang' : ''; return nama.includes(filter) || tanggal.includes(filter) || total.includes(filter) || status.includes(filter); });
         const totalPages = Math.ceil(riwayatTampil.length / itemsPerPageRiwayat) || 1; if (currentPageRiwayat > totalPages) currentPageRiwayat = totalPages;
         const startIdx = (currentPageRiwayat - 1) * itemsPerPageRiwayat; const pagedData = riwayatTampil.slice(startIdx, startIdx + itemsPerPageRiwayat);
         pagedData.forEach(r => {
@@ -1186,14 +1401,14 @@
       });
 
       async function cariDanTambahProdukByBarcode(barcode) {
-        if (!barcode) return false; const barcodeBersih = barcode.trim(); let pGrosir = produkDB.find(p => p.barcode === barcodeBersih);
+        if (!barcode) return false; const barcodeBersih = barcode.trim(); let pGrosir = produkDB.find(p => String(p.barcode || '') === barcodeBersih);
         if (pGrosir) {
           let harga = 0, jenis = 'pcs', label = 'Pcs';
           for (let bk of bulkKeys) { if (pGrosir[bk.key]) { harga = pGrosir[bk.key]; jenis = bk.key; label = bk.label; break; } }
           let infoIsi = pGrosir.isi ? ` (isi ${pGrosir.isi})` : ''; tambahKeranjang(pGrosir.nama, label + infoIsi, jenis, harga); return true;
         }
-        let pEcer = produkDB.find(p => p.variasi && p.variasi.some(v => v.barcode === barcodeBersih));
-        if (pEcer) { const v = pEcer.variasi.find(v => v.barcode === barcodeBersih); if (v) { tambahKeranjang(pEcer.nama, v.nama, 'ecer', v.harga); return true; } }
+        let pEcer = produkDB.find(p => p.variasi && p.variasi.some(v => String(v.barcode || '') === barcodeBersih));
+        if (pEcer) { const v = pEcer.variasi.find(v => String(v.barcode || '') === barcodeBersih); if (v) { tambahKeranjang(pEcer.nama, v.nama, 'ecer', v.harga); return true; } }
         return false;
       }
       async function handleGlobalScan(e) {
@@ -1373,28 +1588,31 @@
 
         add([ESC, 0x61, 1]); add("Terima kasih telah berbelanja!" + NL + NL + NL);
 
-        const kodeAkses = localStorage.getItem('kodeAksesNota') || '';
-        if (kodeAkses.trim() !== "") {
-          add([ESC, 0x45, 1]);
-          add(`KODE AKSES: ${kodeAkses}` + NL);
-          add([ESC, 0x45, 0]);
-          add(NL);
+        if (getModeQrKodeAkses() === 'ya') {
+          const kodeAkses = localStorage.getItem('kodeAksesNota') || '';
+          if (kodeAkses.trim() !== "") {
+            add([ESC, 0x45, 1]);
+            add(`KODE AKSES: ${kodeAkses}` + NL);
+            add([ESC, 0x45, 0]);
+            add(NL);
+          }
+
+          const qrData = "https://wpashop.com";
+          const qrDataLen = qrData.length + 3;
+          const pL = qrDataLen % 256;
+          const pH = Math.floor(qrDataLen / 256);
+
+          add([ESC, 0x61, 1]);
+          add([GS, (0x28), 0x6b, 0x04, 0x00, 0x31, 0x41, 0x30, 0x00]);
+          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, 0x06]);
+          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, 0x30]);
+          add([GS, 0x28, 0x6b, pL, pH, 0x31, 0x50, 0x30]);
+          add(qrData);
+          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x30]);
+
+          add(NL + "Kunjungi wpashop.com" + NL + NL);
         }
 
-        const qrData = "https://wpashop.com";
-        const qrDataLen = qrData.length + 3;
-        const pL = qrDataLen % 256;
-        const pH = Math.floor(qrDataLen / 256);
-
-        add([ESC, 0x61, 1]);
-        add([GS, (0x28), 0x6b, 0x04, 0x00, 0x31, 0x41, 0x30, 0x00]);
-        add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, 0x06]);
-        add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, 0x30]);
-        add([GS, 0x28, 0x6b, pL, pH, 0x31, 0x50, 0x30]);
-        add(qrData);
-        add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x30]);
-
-        add(NL + "Kunjungi wpashop.com" + NL + NL);
         add([GS, 0x56, 66, 0]);
 
         return new Uint8Array(commands);
