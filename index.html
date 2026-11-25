@@ -1,1625 +1,1073 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ADMIN WPA</title>
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#4a8f6a" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
-    <style>
-      /* --- SETUP BACKGROUND & BASE STYLES (TEMA SAGE & WARM MIST) --- */
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        padding: 12px;
-        background: linear-gradient(135deg, #f3f6f4 0%, #e4ece7 50%, #edf1f5 100%);
-        min-height: 100vh;
-        margin: 0;
-        color: #1e293b;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      h1, h2 {
-        text-align: center;
-        color: #1f3a2d;
-        font-weight: 700;
-        letter-spacing: -0.4px;
-      }
-
-      /* --- KARTU LOGIN LEMBUT --- */
-      #loginContainer {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        background: transparent;
-      }
-      .login-card {
-        background: rgba(255, 255, 255, 0.78);
-        backdrop-filter: blur(22px) saturate(160%);
-        -webkit-backdrop-filter: blur(22px) saturate(160%);
-        padding: 30px;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        box-shadow: 0 16px 36px rgba(31, 58, 45, 0.1);
-        width: 90%;
-        max-width: 340px;
-        text-align: center;
-      }
-      .login-card h2 { color: #1f3a2d; margin-bottom: 20px; }
-      .login-card input {
-        width: 100%;
-        padding: 14px;
-        margin: 8px 0;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        box-sizing: border-box;
-        font-size: 15px;
-        background: rgba(255, 255, 255, 0.95);
-        color: #0f172a;
-        outline: none;
-        transition: border-color 0.2s, box-shadow 0.2s;
-      }
-      .login-card input:focus {
-        background: #ffffff;
-        border-color: #4a8f6a;
-        box-shadow: 0 0 0 3px rgba(74, 143, 106, 0.18);
-      }
-      .login-card button {
-        width: 100%;
-        padding: 14px;
-        font-size: 16px;
-        margin-top: 15px;
-        background: #4a8f6a;
-        color: #ffffff;
-        font-weight: 600;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(74, 143, 106, 0.25);
-        transition: transform 0.1s ease, background 0.2s ease;
-      }
-      .login-card button:hover { background: #3f7d5b; }
-      .login-card button:active { transform: scale(0.98); }
-      #appContainer { display: none; }
-
-      .keranjang, .riwayat, .manajemen { margin-top: 10px; }
-
-      /* --- TABEL TEMA KACA LEMBUT --- */
-      table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-top: 10px;
-        background: rgba(255, 255, 255, 0.82);
-        backdrop-filter: blur(18px) saturate(150%);
-        -webkit-backdrop-filter: blur(18px) saturate(150%);
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        box-shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
-      }
-      th, td {
-        border-bottom: 1px solid rgba(148, 163, 184, 0.22);
-        padding: 12px 14px;
-        text-align: left;
-      }
-      th {
-        background: #2f4f42;
-        color: #f8fafc;
-        font-weight: 700;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      td {
-        color: #1e293b;
-        font-size: 15px;
-        font-weight: 600;
-      }
-      tr:last-child td { border-bottom: none; }
-      tr:nth-child(even) { background: rgba(241, 246, 243, 0.55); }
-      tr:hover { background: rgba(218, 235, 225, 0.55); }
-
-      /* --- TOMBOL LEMBUT --- */
-      button {
-        padding: 8px 14px;
-        cursor: pointer;
-        margin: 2px;
-        border: none;
-        border-radius: 10px;
-        background: #4a8f6a;
-        color: #ffffff;
-        font-weight: 600;
-        font-size: 14px;
-        box-shadow: 0 2px 6px rgba(74, 143, 106, 0.22);
-        transition: all 0.2s ease;
-      }
-      button:hover { background: #3f7d5b; }
-      button:active { transform: scale(0.96); }
-
-      .button-hapus {
-        background: #d96b6b;
-        box-shadow: 0 2px 6px rgba(217, 107, 107, 0.22);
-      }
-      .button-hapus:hover { background: #c45858; }
-
-      .button-sekunder {
-        background: #7c8b99;
-        box-shadow: 0 2px 6px rgba(124, 139, 153, 0.2);
-      }
-      .button-sekunder:hover { background: #697886; }
-
-      /* --- BADGES --- */
-      .badge {
-        padding: 4px 8px;
-        border-radius: 8px;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: 700;
-        margin-left: 4px;
-        display: inline-block;
-      }
-      .badge-ecer { background: #4a8f6a; }
-      .badge-karton { background: #4c7fb3; }
-      .badge-slop { background: #d68c45; }
-      .badge-pak { background: #8c6bb1; }
-      .badge-sak { background: #9c7a54; }
-      .badge-bal { background: #5a9eb8; color: #ffffff; }
-      .badge-pcs { background: #334155; }
-      .badge-hutang { background: #d96b6b; }
-
-      .uang-rekomendasi button {
-        background: rgba(255, 255, 255, 0.9);
-        color: #1e293b;
-        border: 1px solid #cbd5e1;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
-      }
-      .uang-rekomendasi button:hover { background: #ffffff; }
-      .produk-varian { font-size: 13px; margin-left: 15px; color: #475569; font-weight: 500; }
-
-      .info-kembalian { font-size: 24px; font-weight: 800; margin-top: 8px; transition: color 0.3s ease; }
-      .info-kembalian.lunas { color: #2f6f4e; }
-      .info-kembalian.kurang { color: #b84a4a; }
-
-      .qty-container { display: flex; justify-content: center; align-items: center; }
-      .qty-btn { width: 32px; height: 32px; padding: 0; font-size: 16px; font-weight: bold; line-height: 32px; text-align: center; border-radius: 8px; }
-
-      /* --- KOTAK RINGKASAN KASIR --- */
-      .summary-box {
-        background: rgba(255, 255, 255, 0.78);
-        backdrop-filter: blur(22px) saturate(160%);
-        -webkit-backdrop-filter: blur(22px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.85);
-        border-radius: 20px;
-        padding: 16px;
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 12px;
-        box-shadow: 0 10px 26px rgba(30, 41, 59, 0.08);
-      }
-      .summary-item { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-      .summary-item-tombol { flex: 1.5; display: flex; flex-direction: row; gap: 8px; align-self: flex-end; }
-      .summary-item-tombol button { flex: 1; height: 60px; margin: 0; font-size: 18px; font-weight: 700; white-space: nowrap; border-radius: 14px; }
-
-      .summary-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: #334155;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .summary-item input[type="text"],
-      .summary-item input[type="number"],
-      .summary-item .button-utama-full {
-        width: 100% !important;
-        padding: 10px 12px;
-        margin: 0;
-        box-sizing: border-box;
-        font-size: 15px;
-        font-weight: 600;
-        border-radius: 10px;
-        border: 1px solid #cbd5e1;
-        background: rgba(255, 255, 255, 0.95);
-        color: #0f172a;
-        outline: none;
-      }
-      .summary-item input[type="text"]:focus,
-      .summary-item input[type="number"]:focus {
-        border-color: #4a8f6a;
-        box-shadow: 0 0 0 3px rgba(74, 143, 106, 0.15);
-      }
-
-      .total {
-        margin-top: 0;
-        margin-bottom: 0;
-        font-size: 38px;
-        font-weight: 800;
-        text-align: left;
-        padding-top: 3px;
-        color: #1e293b;
-        letter-spacing: -1px;
-      }
-      .info-kembalian { font-size: 20px; font-weight: 800; margin-top: 0; padding-top: 8px; }
-
-      input[type="number"].qty-input {
-        width: 45px;
-        padding: 4px;
-        text-align: center;
-        margin: 0 5px;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        box-sizing: border-box;
-        height: 32px;
-        font-weight: bold;
-        color: #0f172a;
-        -moz-appearance: textfield;
-      }
-      input[type="number"].qty-input::-webkit-outer-spin-button,
-      input[type="number"].qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-      /* --- NOTIFIKASI --- */
-      .notif-container { position: fixed; top: 16px; right: 16px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: calc(100% - 32px); }
-      .notif { pointer-events: auto; min-width: 220px; max-width: 420px; padding: 14px 18px; border-radius: 14px; color: #fff; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.14); opacity: 0; transform: translateY(-8px); animation: notifIn 250ms ease forwards; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.45); }
-      .notif .icon { font-weight: 700; width: 20px; text-align: center; }
-      .notif.success { background: rgba(64, 138, 98, 0.92); backdrop-filter: blur(12px); }
-      .notif.error { background: rgba(196, 88, 88, 0.92); backdrop-filter: blur(12px); }
-      .notif.info { background: rgba(76, 127, 179, 0.92); backdrop-filter: blur(12px); }
-      .notif.fade-out { animation: notifOut 350ms ease forwards; }
-      @keyframes notifIn { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-      @keyframes notifOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-8px) scale(0.98); } }
-
-      /* --- MODAL / POPUP --- */
-      .modal, .popup-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(30, 41, 59, 0.25); backdrop-filter: blur(6px); }
-      .modal-content, .popup-content {
-        background-color: rgba(250, 252, 250, 0.94);
-        backdrop-filter: blur(26px) saturate(160%);
-        -webkit-backdrop-filter: blur(26px) saturate(160%);
-        margin: 5% auto;
-        padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        width: 85%;
-        max-width: 700px;
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16);
-        color: #1e293b;
-      }
-      .modal-close { color: #64748b; float: right; font-size: 24px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
-      .modal-close:hover, .modal-close:focus { color: #0f172a; }
-      .popup-content { max-height: 80vh; overflow-y: auto; }
-      #inputPopupCari {
-        margin-bottom: 15px;
-        width: 100%;
-        padding: 12px;
-        box-sizing: border-box;
-        border-radius: 10px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        font-size: 15px;
-        color: #0f172a;
-      }
-      .form-group { margin-bottom: 12px; }
-      .form-group label { display: block; margin-bottom: 5px; font-weight: 700; color: #334155; }
-
-      /* --- FORM PRODUK SEJAJAR & VARIAN RINGKAS --- */
-      .form-row-sejajar {
-        display: grid;
-        grid-template-columns: 1fr 1.6fr;
-        gap: 14px;
-        align-items: start;
-      }
-      @media (max-width: 600px) {
-        .form-row-sejajar {
-          grid-template-columns: 1fr;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>WPA SHOP CETAK RESI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca'
+            }
+          },
+          fontFamily: {
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace']
+          }
         }
       }
-      .bulk-grid-compact {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-      }
-      .bulk-grid-compact .form-group {
-        margin-bottom: 0;
-      }
-      .bulk-grid-compact label {
-        font-size: 12px;
-        margin-bottom: 3px;
-      }
-      .bulk-grid-compact input {
-        width: 100%;
-        padding: 7px 9px;
-        font-size: 13px;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        box-sizing: border-box;
-        background: #ffffff;
-        color: #0f172a;
-      }
+    };
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .label-sheet {
+      background-color: #ffffff;
+      background-image: radial-gradient(#e2e8f0 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+      box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.08);
+    }
+    .touch-btn {
+      min-height: 44px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 antialiased selection:bg-brand-100 selection:text-brand-700" x-data="nokoTsplSpooler()" x-init="init()">
 
-      .varian-item {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-        border: 1px solid #cbd5e1;
-        padding: 10px 12px;
-        margin-top: 8px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.82);
-      }
-      .varian-item input {
-        flex: 1 1 130px;
-        min-width: 0;
-        padding: 8px 10px;
-        font-size: 14px;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        color: #0f172a;
-        box-sizing: border-box;
-      }
-      .varian-item input:focus {
-        border-color: #4a8f6a;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(74, 143, 106, 0.16);
-      }
-      .varian-item .button-hapus {
-        float: none !important;
-        padding: 8px 12px;
-        font-size: 13px;
-        margin: 0;
-        white-space: nowrap;
-      }
-
-      /* --- PILIHAN FORMAT NOTA DI PENGATURAN --- */
-      .pilihan-nota-group {
-        display: flex;
-        gap: 10px;
-        margin-top: 8px;
-      }
-      .pilihan-nota-group button {
-        flex: 1;
-        padding: 10px 12px;
-        font-size: 14px;
-      }
-      .btn-pilihan-aktif {
-        background: #2f6f4e !important;
-        box-shadow: 0 0 0 2px rgba(74, 143, 106, 0.35);
-      }
-      .btn-pilihan-nonaktif {
-        background: #94a3b8 !important;
-        box-shadow: none;
-      }
-
-      .hidden { display: none; }
-      .pagination-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; }
-      .pagination-container button:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; box-shadow: none; }
-      hr { border: none; border-top: 1px solid rgba(148, 163, 184, 0.3); }
-    </style>
-  </head>
-  <body>
-    <div id="loginContainer">
-      <div class="login-card">
-        <h2 style="margin-top:0;">Login Wpa Shop</h2>
-        <input type="email" id="loginEmail" placeholder="Masukkan Email" />
-        <input type="password" id="loginPassword" placeholder="Masukkan Password" />
-        <button id="btnLogin" onclick="prosesLogin()">Masuk</button>
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
+          WPA
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-slate-900 text-base sm:text-lg truncate">WPA CETAK RESI</h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200" x-text="storageMode"></span>
+          </div>
+          <p class="text-xs text-slate-500 truncate">Xprinter feat WPA <span x-text="profile.direction"></span></p>
+        </div>
       </div>
+
+      <!-- View Switcher -->
+      <nav class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+        <button @click="activeTab = 'spooler'"
+          :class="activeTab === 'spooler' ? 'bg-white text-brand-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'"
+          class="touch-btn px-3 sm:px-4 rounded-lg text-xs sm:text-sm transition">
+          <span>Spooler &amp; PDF</span>
+        </button>
+        <button @click="activeTab = 'queue'"
+          :class="activeTab === 'queue' ? 'bg-white text-brand-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'"
+          class="touch-btn px-3 sm:px-4 rounded-lg text-xs sm:text-sm transition flex items-center gap-1.5">
+          <span>Antrean</span>
+          <span class="px-1.5 py-0.5 text-[11px] rounded-full bg-brand-100 text-brand-700 font-semibold" x-text="jobs.length"></span>
+        </button>
+        <button @click="activeTab = 'inspector'"
+          :class="activeTab === 'inspector' ? 'bg-white text-brand-700 shadow-sm font-semibold' : 'text-slate-600 hover:text-slate-900'"
+          class="touch-btn px-3 sm:px-4 rounded-lg text-xs sm:text-sm transition">
+          <span>TSPL Payload</span>
+        </button>
+      </nav>
     </div>
+  </header>
 
-    <div id="appContainer">
-      <div id="popupCari" class="popup-overlay">
-        <div class="popup-content">
-          <span class="modal-close" onclick="tutupPopupCari()">&times;</span>
-          <h2>Cari Produk</h2>
-          <input type="text" id="inputPopupCari" placeholder="Ketik nama produk atau scan barcode..." />
-          <table id="tabelHasil">
-            <thead>
-              <tr>
-                <th>Produk</th>
-                <th>Harga</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+  <!-- Toast Banner -->
+  <div x-show="toast.show" x-cloak x-transition
+    class="fixed bottom-4 right-4 z-50 max-w-sm w-full sm:w-auto bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center justify-between gap-3 text-sm">
+    <span x-text="toast.message"></span>
+    <button @click="toast.show = false" class="text-slate-300 hover:text-white font-semibold px-1">✕</button>
+  </div>
 
-      <div class="keranjang">
-        <div class="summary-box">
-          <div class="summary-item">
-            <label class="summary-label" for="namaPembeli">Nama Pembeli</label>
-            <input type="text" id="namaPembeli" placeholder="Opsional" />
-          </div>
-          <div class="summary-item">
-            <label class="summary-label">Total Belanja</label>
-            <div class="total" style="font-size: 30px;">
-              <span id="totalBelanja">0</span>
+  <!-- Main Workspace -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+
+    <!-- TAB 1: SPOOLER & PDF -->
+    <section x-show="activeTab === 'spooler'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+      <!-- Left Column: Label & PDF Settings (7 cols) -->
+      <div class="lg:col-span-7 space-y-5">
+
+        <!-- Label & USB/OTG Profile Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-semibold text-slate-900 text-base">Profil Label &amp; Koneksi USB/OTG</h2>
+              <p class="text-xs text-slate-500">Xprinter XP-D4601B • 100×100mm (800×800 dots @ 203 DPI)</p>
             </div>
-          </div>
-          <div class="summary-item">
-            <label class="summary-label" for="uangPembeli">Uang Pembeli</label>
-            <input type="text" inputmode="numeric" id="uangPembeli" placeholder="0" oninput="formatUangPembeli(this)" />
-          </div>
-          <div class="summary-item">
-            <div class="info-kembalian">
-              <span id="labelKembalian" style="font-size: 12px;">Kembalian:</span><br />
-              <span style="font-size: 18px;"></span><span id="kembalian" style="font-size: 30px;">0</span>
-            </div>
-          </div>
-          <div class="summary-item-tombol">
-            <button id="btnSelesaiCetak" class="button-utama-full" style="background: #4c7fb3;">
-              BAYAR
-            </button>
-            <button id="bukaPencarianBtn" class="button-utama-full">
-              CARI
+            <button type="button" @click="connectWebUsb()"
+              class="touch-btn px-3.5 rounded-xl border text-xs font-semibold transition"
+              :class="usbDevice ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'">
+              <span x-text="usbDevice ? ('USB Terhubung: ' + (usbDevice.productName || 'Printer')) : 'Hubungkan WebUSB'"></span>
             </button>
           </div>
-        </div>
 
-        <table id="tabelKeranjang">
-          <thead>
-            <tr>
-              <th>Nama</th>
-              <th>Varian</th>
-              <th>Harga</th>
-              <th>Qty</th>
-              <th>Total</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <hr />
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Model Printer</label>
+              <input type="text" x-model="profile.printerName" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Lebar Label (mm)</label>
+              <input type="number" min="25" max="104" x-model.number="profile.labelWidthMm" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Tinggi Label (mm)</label>
+              <input type="number" min="20" max="300" x-model.number="profile.labelHeightMm" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+          </div>
 
-      <div class="manajemen">
-        <button id="btnManajemen" onclick="openManajemenProduk()">PRODUK</button>
-        <button id="btnRiwayat" onclick="toggleRiwayat()">RIWAYAT</button>
-        <button id="btnBackupRestore" class="button-sekunder" onclick="openModalBackup()">Backup/Restore</button>
-        <button id="btnPengaturan" class="button-sekunder" onclick="bukaPengaturan()" style="background: #7c6ca8;">PENGATURAN</button>
-      </div>
+          <!-- DIRECTION & Alignment Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Arah Cetak (TSPL DIRECTION)</label>
+              <select x-model="profile.direction" @change="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="1,0">1,0 — Normal (Tanpa Mirror)</option>
+                <option value="0,0">0,0 — Balik Arah Feed</option>
+                <option value="1,1">1,1 — Mirror Horizontal</option>
+                <option value="0,1">0,1 — Balik Feed + Mirror</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Posisi Vertikal</label>
+              <select x-model="profile.verticalAlign" @change="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="bottom">Tepi Bawah (Aman Gap)</option>
+                <option value="top">Tepi Atas (0,0)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Margin Bawah (dots)</label>
+              <input type="number" min="0" max="120" x-model.number="profile.bottomMarginDots" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+          </div>
 
-      <div class="riwayat">
-        <div id="riwayatBox" style="display:none; margin-top:10px;">
-          <h2>Riwayat Transaksi</h2>
-          <input type="text" id="cariRiwayat" placeholder="Cari riwayat (nama, tanggal, total)..." />
-          <table id="tabelRiwayat">
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Pembeli</th>
-                <th>Total</th>
-                <th>Uang</th>
-                <th>Kembali/Hutang</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <div id="paginationRiwayat" class="pagination-container">
-            <button id="btnPrevPage" class="button-sekunder" onclick="ubahHalamanRiwayat(-1)">Prev</button>
-            <span id="infoHalamanRiwayat" style="font-weight:bold;">Halaman 1 dari 1</span>
-            <button id="btnNextPage" class="button-sekunder" onclick="ubahHalamanRiwayat(1)">Next</button>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Gap Sensor (mm)</label>
+              <input type="number" min="0" max="20" x-model.number="profile.gapMm" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Threshold Bitmap</label>
+              <input type="number" min="30" max="240" x-model.number="profile.ditherThreshold" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Fit / Skala (%)</label>
+              <input type="number" min="30" max="150" x-model.number="profile.fillScalePct" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Density (0-15)</label>
+              <input type="number" min="0" max="15" x-model.number="profile.density" @input="saveProfile(); scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div id="modalProduk" class="modal">
-        <div class="modal-content">
-          <span class="modal-close" onclick="closeManajemenProduk()">&times;</span>
-          <div id="listProdukContainer">
-            <h2>Daftar Produk</h2>
-            <input type="text" id="cariProdukManajemen" placeholder="Cari nama produk atau barcode..." />
-            <button onclick="showFormTambahProduk()">+ Tambah Produk Baru</button>
-            <table id="tabelManajemenProduk">
-              <thead>
-                <tr>
-                  <th>Nama Produk</th>
-                  <th>Varian & Harga</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+        <!-- Source Mode Switcher -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="font-semibold text-slate-900 text-base">Sumber Label / PDF</h2>
+            <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <button @click="sourceMode = 'pdf'; scheduleRender()"
+                :class="sourceMode === 'pdf' ? 'bg-white text-brand-700 shadow-sm font-semibold' : 'text-slate-600'"
+                class="touch-btn px-3.5 rounded-lg text-xs sm:text-sm transition">
+                File PDF
+              </button>
+              <button @click="sourceMode = 'text'; scheduleRender()"
+                :class="sourceMode === 'text' ? 'bg-white text-brand-700 shadow-sm font-semibold' : 'text-slate-600'"
+                class="touch-btn px-3.5 rounded-lg text-xs sm:text-sm transition">
+                Teks Label TSPL
+              </button>
+            </div>
           </div>
-          <div id="formProdukContainer" class="hidden">
-            <h2 id="formProdukJudul" style="margin-top:0; margin-bottom:12px;">Tambah Produk Baru</h2>
-            <input type="hidden" id="editIndex" />
-            <input type="hidden" id="barcodeProduk" value="" />
-            <input type="hidden" id="isiProduk" value="" />
 
-            <div class="form-row-sejajar">
-              <div class="form-group" style="margin-bottom:0;">
-                <label for="namaProduk">Nama Produk</label>
-                <input
-                  type="text"
-                  id="namaProduk"
-                  placeholder="Cth: Sarimi Gelas"
-                  style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:15px;"
-                />
+          <!-- PDF SOURCE PANEL -->
+          <div x-show="sourceMode === 'pdf'" class="space-y-4">
+            <div
+              @dragover.prevent="isDraggingPdf = true"
+              @dragleave.prevent="isDraggingPdf = false"
+              @drop.prevent="handlePdfDrop($event)"
+              :class="isDraggingPdf ? 'border-brand-500 bg-brand-50/60' : 'border-slate-300 bg-slate-50 hover:bg-slate-100/70'"
+              class="border-2 border-dashed rounded-2xl p-5 text-center transition">
+              <input type="file" accept="application/pdf,.pdf" x-ref="pdfInput" @change="handlePdfFileSelect($event)" class="hidden" />
+              <div class="space-y-2">
+                <p class="text-sm font-semibold text-slate-800">Pilih atau seret file PDF resi / label ke sini</p>
+                <p class="text-xs text-slate-500">Atur DIRECTION jika cetakan terbalik, dan sesuaikan Margin Bawah (dots) agar bagian bawah resi tidak terpotong.</p>
+                <div class="pt-1 flex flex-wrap items-center justify-center gap-2">
+                  <button type="button" @click="$refs.pdfInput.click()"
+                    class="touch-btn px-4 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-xs transition">
+                    Pilih File PDF
+                  </button>
+                  <button type="button" @click="enableManualTextFallback()"
+                    class="touch-btn px-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-medium transition">
+                    Mode Teks Fallback
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                <button
-                  type="button"
-                  id="btnToggleDetailOpsional"
-                  class="button-sekunder"
-                  style="margin-top:8px; width:100%; font-size:13px; padding:8px 10px;"
-                  onclick="toggleDetailOpsional()"
-                >
-                  + Harga Beli &amp; Catatan
-                </button>
-
-                <div id="detailOpsionalBox" class="hidden" style="margin-top:10px; padding:10px; border:1px solid #cbd5e1; border-radius:10px; background:rgba(255,255,255,0.85);">
-                  <div class="form-group" style="margin-bottom:8px;">
-                    <label for="hargaBeliProduk" style="font-size:12px;">Harga Beli / Modal</label>
-                    <input
-                      type="text"
-                      inputmode="numeric"
-                      id="hargaBeliProduk"
-                      placeholder="Cth: 180.000"
-                      oninput="formatInputRibuan(this)"
-                      style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:14px;"
-                    />
-                  </div>
-                  <div class="form-group" style="margin-bottom:0;">
-                    <label for="catatanProduk" style="font-size:12px;">Catatan</label>
-                    <input
-                      type="text"
-                      id="catatanProduk"
-                      placeholder="Cth: Rak atas / stok terbatas"
-                      style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:14px;"
-                    />
-                  </div>
+            <div x-show="pdfState.fileName" class="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <p class="text-sm font-semibold text-slate-900 truncate" x-text="pdfState.fileName"></p>
+                  <p class="text-xs text-slate-500">
+                    <span x-text="pdfState.numPages + ' halaman'"></span> •
+                    <span x-text="formatBytes(pdfState.fileSize)"></span> •
+                    <span class="text-brand-700 font-medium" x-text="pdfState.statusText"></span>
+                  </p>
                 </div>
               </div>
 
-              <div class="form-group" style="margin-bottom:0;">
-                <label style="margin-bottom:6px;">Harga Grosir / Bulk</label>
-                <div id="bulkPriceContainer" class="bulk-grid-compact"></div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Mode Output TSPL</label>
+                  <select x-model="pdfState.outputMode" @change="scheduleRender()"
+                    class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <option value="bitmap">TSPL BITMAP (Resi / Grafis)</option>
+                    <option value="text">TSPL TEXT Lines</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Cakupan Halaman</label>
+                  <select x-model="pdfState.rangeMode" @change="scheduleRender()"
+                    class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <option value="all">Semua Halaman</option>
+                    <option value="custom">Rentang Kustom (cth: 1, 2-4)</option>
+                  </select>
+                </div>
+                <div x-show="pdfState.rangeMode === 'custom'">
+                  <label class="block text-xs font-medium text-slate-600 mb-1">Rentang Halaman</label>
+                  <input type="text" placeholder="1, 2-4" x-model="pdfState.customRange" @input="scheduleRender()"
+                    class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Teks PDF (Dapat Diedit / Fallback)</label>
+                <textarea rows="5" x-model="pdfState.extractedText" @input="scheduleRender()"
+                  class="w-full p-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
               </div>
             </div>
-
-            <h3 style="margin-top:14px; margin-bottom:6px;">Varian Produk (Eceran)</h3>
-            <div id="varianContainer"></div>
-            <button type="button" class="button-sekunder" onclick="tambahInputVarian()">+ Tambah Varian</button>
-            <hr />
-            <button type="button" onclick="simpanProduk()">Simpan Produk</button>
-            <button type="button" class="button-sekunder" onclick="showListProduk()">Batal</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="modalBackup" class="modal">
-        <div class="modal-content">
-          <span class="modal-close" onclick="closeModalBackup()">&times;</span>
-          <h2>Backup & Restore Data Produk</h2>
-          <div class="backup-section" style="margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;">
-            <h3>Backup Data</h3>
-            <p>Simpan semua data produk Anda ke dalam sebuah file JSON.</p>
-            <button onclick="backupProduk()">Download File Backup</button>
-          </div>
-          <div class="restore-section">
-            <h3>Restore Data</h3>
-            <p>Pilih file backup (.json) untuk mengembalikan data produk.</p>
-            <input type="file" id="fileRestore" accept=".json" />
-            <button class="button-hapus" onclick="restoreProduk()">Restore dari File</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="modalPengaturan" class="modal">
-        <div class="modal-content">
-          <span class="modal-close" onclick="tutupPengaturan()">&times;</span>
-          <h2>Pengaturan Aplikasi</h2>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="ukuranKertas">Ukuran Kertas Printer (RawBT)</label>
-            <select id="ukuranKertas" style="width: 100%; padding: 8px; font-size: 16px;" onchange="simpanPengaturanKertas()">
-              <option value="58">58mm (Kecil)</option>
-              <option value="80">80mm (Besar)</option>
-            </select>
           </div>
 
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="inputKodeAkses">Kode Akses (Muncul di atas QR)</label>
-            <input type="text" id="inputKodeAkses" placeholder="Contoh: KODE12345" style="width: 100%; padding: 10px; font-size: 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" oninput="simpanKodeAkses()" />
-          </div>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label>Format Nota (QR Code & Kode Akses)</label>
-            <div class="pilihan-nota-group">
-              <button type="button" id="btnNotaDenganQr" onclick="aturModeQrKodeAkses('ya')">
-                Pakai QR & Kode Akses
-              </button>
-              <button type="button" id="btnNotaTanpaQr" onclick="aturModeQrKodeAkses('tidak')">
-                Tanpa QR & Kode Akses
-              </button>
+          <!-- TEXT / LABEL SOURCE PANEL -->
+          <div x-show="sourceMode === 'text'" class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Judul / Header Label</label>
+              <input type="text" x-model="textDoc.title" @input="scheduleRender()"
+                class="w-full touch-btn px-3 rounded-xl border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Isi Label</label>
+              <textarea rows="7" x-model="textDoc.body" @input="scheduleRender()"
+                class="w-full p-3 rounded-xl border border-slate-300 bg-white text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
             </div>
           </div>
 
-          <hr style="margin: 20px 0;" />
-
-          <button class="button-hapus" onclick="hapusRiwayatLunas()" style="width: 100%; padding: 12px; margin-bottom: 10px; font-size: 16px;">
-            ⚠ Hapus Semua Riwayat (Kecuali Hutang)
-          </button>
-
-          <button class="button-sekunder" onclick="prosesLogout()" style="width: 100%; padding: 12px; font-size: 16px; background:#64748b;">
-            🚪 Keluar (Logout)
-          </button>
+          <!-- Action Buttons -->
+          <div class="pt-2 flex flex-wrap items-center gap-2.5">
+            <button type="button" @click="sendOrQueuePrint()"
+              class="touch-btn flex-1 sm:flex-initial px-5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-xs transition">
+              <span x-text="usbDevice ? 'Cetak Langsung via WebUSB' : 'Kirim ke Antrean Cetak'"></span>
+            </button>
+            <button type="button" @click="downloadPayload('bin')"
+              class="touch-btn px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition">
+              Export .BIN (TSPL)
+            </button>
+            <button type="button" @click="downloadPayload('txt')"
+              class="touch-btn px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs sm:text-sm font-semibold transition">
+              Export .TSPL/.TXT
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="notif-container" id="notifContainer" aria-live="polite"></div>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-      import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-      import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+      <!-- Right Column: Label 100x100mm Preview (5 cols) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="font-semibold text-slate-900 text-base">Pratinjau Label <span x-text="profile.labelWidthMm + '×' + profile.labelHeightMm + 'mm'"></span></h2>
+              <p class="text-xs text-slate-500" x-text="previewSummary"></p>
+            </div>
+            <span x-show="isRendering" class="text-xs font-medium text-brand-600 animate-pulse">Memproses...</span>
+          </div>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyCiDlnl6AiHWsbJOpG0MHc8sTCn_MebTqI",
-	    authDomain: "wpastore-1d2c3.firebaseapp.com",
-  	  databaseURL: "https://wpastore-1d2c3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  	  projectId: "wpastore-1d2c3",
-  	  storageBucket: "wpastore-1d2c3.firebasestorage.app",
-  	  messagingSenderId: "752685099267",
-  	  appId: "1:752685099267:web:8c516725cdd0885739a136"
-	  };
+          <div class="bg-slate-200/70 rounded-2xl p-4 flex flex-col items-center overflow-x-auto">
+            <div :style="labelPreviewStyle"
+              :class="profile.verticalAlign === 'bottom' ? 'justify-end' : 'justify-start'"
+              class="label-sheet rounded-md border border-slate-300 overflow-hidden flex flex-col">
+              <div id="preview-pages-container" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      const app = initializeApp(firebaseConfig);
+    <!-- TAB 2: QUEUE -->
+    <section x-show="activeTab === 'queue'" x-cloak class="space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="font-semibold text-slate-900 text-base">Antrean Cetak Label</h2>
+            <p class="text-xs text-slate-500">Tersimpan di IndexedDB (Dexie) / localStorage</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="processNextJob()" :disabled="!jobs.some(j => j.status === 'queued')"
+              class="touch-btn px-4 rounded-xl bg-brand-600 disabled:opacity-40 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold transition">
+              Proses Berikutnya
+            </button>
+            <button @click="clearJobs()" :disabled="jobs.length === 0"
+              class="touch-btn px-3.5 rounded-xl bg-rose-50 disabled:opacity-40 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs sm:text-sm font-semibold transition">
+              Bersihkan
+            </button>
+          </div>
+        </div>
 
-      window.fbDB = getFirestore(app);
-      window.fbCol = collection;
-      window.fbGetDocs = getDocs;
-      window.fbAddDoc = addDoc;
-      window.fbUpdateDoc = updateDoc;
-      window.fbSetDoc = setDoc;
-      window.fbDeleteDoc = deleteDoc;
-      window.fbDoc = doc;
-      window.fbOnSnapshot = onSnapshot;
+        <template x-if="jobs.length === 0">
+          <div class="text-center py-10 text-sm text-slate-500 border border-dashed border-slate-200 rounded-xl">
+            Belum ada tugas cetak di antrean.
+          </div>
+        </template>
 
-      const auth = getAuth(app);
-      window.fbAuth = auth;
-      window.fbSignIn = signInWithEmailAndPassword;
-      window.fbSignOut = signOut;
-      window.fbOnAuthStateChanged = onAuthStateChanged;
-    </script>
+        <div class="space-y-3">
+          <template x-for="job in jobs" :key="job.id">
+            <div class="p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="space-y-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-semibold text-sm text-slate-900 truncate" x-text="job.title"></span>
+                  <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold"
+                    :class="{
+                      'bg-amber-100 text-amber-800': job.status === 'queued',
+                      'bg-sky-100 text-sky-800': job.status === 'printing',
+                      'bg-emerald-100 text-emerald-800': job.status === 'printed'
+                    }"
+                    x-text="job.status.toUpperCase()"></span>
+                  <span class="text-xs text-slate-500" x-text="job.modeLabel + ' • ' + job.labelSize + ' • DIR ' + (job.direction || '1,0')"></span>
+                </div>
+                <p class="text-xs text-slate-500 font-mono">
+                  <span x-text="job.createdAt"></span> • <span x-text="job.payloadBytes + ' bytes'"></span>
+                </p>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button @click="activeTab = 'inspector'" class="touch-btn px-3 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700">
+                  Lihat TSPL
+                </button>
+                <button @click="deleteJob(job.id)" class="touch-btn px-3 rounded-lg bg-white hover:bg-rose-50 border border-slate-200 text-xs font-semibold text-rose-600">
+                  Hapus
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
 
-    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
-    <script>
-      const produkDB_default = [
-        { "id": "default1", "nama": "KIRIM", "barcode": "0101010101", "hargaBeli": 0, "catatan": "", "variasi": [{ "nama": "pcs", "barcode": "0202020202", "harga": 2000 }] }
-      ];
-      const db = new Dexie("KasirWpaDB");
-      db.version(2).stores({
-        produk: '++id, nama, barcode, *variasi.barcode',
-        riwayat: '++id, tanggal, namaPembeli, total, is_synced'
-      });
+    <!-- TAB 3: TSPL PAYLOAD INSPECTOR -->
+    <section x-show="activeTab === 'inspector'" x-cloak class="space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-semibold text-slate-900 text-base">TSPL Payload Inspector (100×100mm)</h2>
+            <p class="text-xs text-slate-500">Perintah TSPL (`SIZE`, `GAP`, `DENSITY`, `DIRECTION <span x-text="profile.direction"></span>`, `CLS`, `BITMAP` / `TEXT`, `PRINT 1,1`)</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="copyCommandText()" class="touch-btn px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
+              Salin Perintah TSPL
+            </button>
+            <button @click="downloadPayload('bin')" class="touch-btn px-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold">
+              Unduh .BIN
+            </button>
+          </div>
+        </div>
 
-      let produkDB = [];
-      let searchTimeout = null;
-      let searchManajemenTimeout = null;
-      let keranjang = [];
-      let riwayat = [];
-      let idRiwayatEdit = null;
-      let globalScanBuffer = "";
-      let globalScanTimer = null;
-      let currentPageRiwayat = 1;
-      const itemsPerPageRiwayat = 25;
-      let isAppLoaded = false;
-      let unsubscribeRiwayat = null;
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-slate-500 block">Ukuran Payload</span>
+            <span class="font-mono font-bold text-base text-slate-900" x-text="currentPayloadBytes.length + ' bytes'"></span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-slate-500 block">DIRECTION Aktif</span>
+            <span class="font-mono font-bold text-base text-slate-900" x-text="'DIRECTION ' + profile.direction"></span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-slate-500 block">Halaman Aktif</span>
+            <span class="font-mono font-bold text-base text-slate-900" x-text="selectedPageNumbers.length + ' hal'"></span>
+          </div>
+        </div>
 
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      function playSuara(sukses = true) {
-        try {
-          if (audioCtx.state === 'suspended') audioCtx.resume();
-          const oscillator = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          oscillator.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-          if (sukses) {
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.1);
-          } else {
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.3);
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Perintah TSPL &amp; Ringkasan Header</label>
+          <pre class="p-3.5 rounded-xl bg-slate-950 text-emerald-300 text-xs font-mono overflow-x-auto whitespace-pre-wrap" x-text="tsplCommandPreview"></pre>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Hex Dump (Cuplikan 1.600 Byte Pertama)</label>
+          <pre class="p-3.5 rounded-xl bg-slate-900 text-sky-200 text-xs font-mono overflow-x-auto leading-relaxed" x-text="hexPreview"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    if (window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    function nokoTsplSpooler() {
+      return {
+        activeTab: 'spooler',
+        storageMode: 'localStorage',
+        db: null,
+        usbDevice: null,
+        usbOutEndpoint: null,
+        isDraggingPdf: false,
+        isRendering: false,
+        renderTimer: null,
+        sourceMode: 'text',
+        selectedPageNumbers: [1],
+        currentPayloadBytes: new Uint8Array(0),
+        tsplCommandPreview: '',
+
+        toast: { show: false, message: '' },
+
+        profile: {
+          printerName: 'Xprinter XP-D4601B',
+          labelWidthMm: 100,
+          labelHeightMm: 100,
+          gapMm: 3,
+          direction: '1,0',
+          verticalAlign: 'bottom',
+          bottomMarginDots: 32,
+          ditherThreshold: 165,
+          fillScalePct: 95,
+          density: 10
+        },
+
+        textDoc: {
+          title: 'RESI LABEL 100x100MM',
+          body: [
+            'TOKO WPA SHOP GROSIR',
+            'JATISARI, SENORI, TUBAN',
+            'XPRINTER XP-D4601B',
+            'KERTAS 100x100MM'
+          ].join('\n')
+        },
+
+        pdfState: {
+          fileName: '',
+          fileSize: 0,
+          numPages: 0,
+          statusText: 'Siap menerima file PDF',
+          outputMode: 'bitmap',
+          rangeMode: 'all',
+          customRange: '1',
+          extractedText: '',
+          pageCanvases: []
+        },
+
+        jobs: [],
+
+        get labelPreviewStyle() {
+          const widthPx = Math.min(360, Math.max(240, Math.round(this.profile.labelWidthMm * 3.4)));
+          const ratio = this.profile.labelHeightMm / Math.max(1, this.profile.labelWidthMm);
+          const heightPx = Math.min(420, Math.round(widthPx * ratio));
+          return `width: ${widthPx}px; min-height: ${heightPx}px;`;
+        },
+
+        get previewSummary() {
+          if (this.sourceMode === 'pdf' && this.pdfState.fileName) {
+            return `${this.pdfState.fileName} • DIR ${this.profile.direction} • ${this.profile.verticalAlign === 'bottom' ? 'Bawah' : 'Atas'}`;
           }
-        } catch(e) {}
-      }
+          return `${this.textDoc.title} • DIR ${this.profile.direction} • ${this.profile.verticalAlign === 'bottom' ? 'Bawah' : 'Atas'}`;
+        },
 
-      function pastikanOnlineDanFirebase() {
-        if (!navigator.onLine) {
-          showNotif("Koneksi offline! Sistem berjalan online ke Firebase, aktifkan internet.", "error", 3500);
-          return false;
-        }
-        if (!window.fbDB) {
-          showNotif("Koneksi Firebase belum siap, coba beberapa saat lagi.", "error");
-          return false;
-        }
-        return true;
-      }
+        get hexPreview() {
+          const bytes = this.currentPayloadBytes;
+          if (!bytes || bytes.length === 0) return '(Kosong)';
+          const limit = Math.min(bytes.length, 1600);
+          const lines = [];
+          for (let i = 0; i < limit; i += 16) {
+            const chunk = Array.from(bytes.slice(i, i + 16))
+              .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+              .join(' ');
+            lines.push(`${i.toString(16).padStart(4, '0').toUpperCase()} : ${chunk}`);
+          }
+          if (bytes.length > limit) {
+            lines.push(`... (+${bytes.length - limit} bytes lagi)`);
+          }
+          return lines.join('\n');
+        },
 
-      // === SISTEM LOGIN & LOGOUT ===
-      async function prosesLogin() {
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPassword').value;
-        const btn = document.getElementById('btnLogin');
+        async init() {
+          this.initStorage();
+          await this.loadSavedData();
+          this.renderPreviewAndPayload();
+        },
 
-        if (!email || !pass) return showNotif("Harap isi Email & Password", "error");
-
-        btn.textContent = "Memproses..."; btn.disabled = true;
-        try {
-          await window.fbSignIn(window.fbAuth, email, pass);
-          showNotif("Login Berhasil!", "success");
-        } catch (error) {
-          showNotif("Gagal Login: Periksa Email/Password!", "error");
-        } finally {
-          btn.textContent = "Masuk"; btn.disabled = false;
-        }
-      }
-
-      async function prosesLogout() {
-        if (confirm("Anda yakin ingin keluar (logout)?")) {
+        initStorage() {
           try {
-            if (unsubscribeRiwayat) {
-              unsubscribeRiwayat();
-              unsubscribeRiwayat = null;
-            }
-            await window.fbSignOut(window.fbAuth);
-            tutupPengaturan();
-            showNotif("Berhasil Logout", "info");
-          } catch(e) {
-            showNotif("Gagal Logout", "error");
-          }
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-          if (window.fbAuth && window.fbOnAuthStateChanged) {
-            window.fbOnAuthStateChanged(window.fbAuth, (user) => {
-              const loginDiv = document.getElementById('loginContainer');
-              const appDiv = document.getElementById('appContainer');
-
-              if (user) {
-                loginDiv.style.display = 'none';
-                appDiv.style.display = 'block';
-
-                if (!isAppLoaded) {
-                  muatDataAwal();
-                  isAppLoaded = true;
-                }
-              } else {
-                if (unsubscribeRiwayat) {
-                  unsubscribeRiwayat();
-                  unsubscribeRiwayat = null;
-                }
-                loginDiv.style.display = 'flex';
-                appDiv.style.display = 'none';
-                isAppLoaded = false;
-              }
-            });
-          }
-        }, 500);
-
-        document.addEventListener('keydown', handleGlobalScan);
-        muatPengaturan();
-      });
-
-      async function muatProdukDariFirebase(tampilkanNotif = false) {
-        if (!navigator.onLine || !window.fbDB) {
-          produkDB = [...produkDB_default];
-          renderTabelManajemen(document.getElementById('cariProdukManajemen').value);
-          if (tampilkanNotif) showNotif("Tidak dapat terhubung ke Firebase (offline).", "error");
-          return;
-        }
-        try {
-          const qSnap = await window.fbGetDocs(window.fbCol(window.fbDB, "produk"));
-          const daftar = [];
-          qSnap.forEach((d) => {
-            const p = d.data();
-            p.id = d.id;
-            daftar.push(p);
-          });
-          produkDB = daftar.length > 0 ? daftar : [...produkDB_default];
-          renderTabelManajemen(document.getElementById('cariProdukManajemen').value);
-          if (tampilkanNotif) showNotif(`Memuat ${daftar.length} produk dari Firebase`, "success", 1800);
-        } catch (e) {
-          showNotif("Gagal memuat produk dari Firebase: " + e.message, "error", 3500);
-        }
-      }
-
-      async function muatRiwayatDariFirebase() {
-        if (!navigator.onLine || !window.fbDB) return;
-
-        try {
-          const qSnap = await window.fbGetDocs(window.fbCol(window.fbDB, "riwayat"));
-          const cloudIds = new Set();
-          const lokalSemua = await db.riwayat.toArray();
-
-          const mapByFbId = new Map();
-          lokalSemua.forEach(item => {
-            if (item.fbId) mapByFbId.set(String(item.fbId), item);
-          });
-
-          for (const d of qSnap.docs) {
-            const dataCloud = d.data();
-            const docId = String(d.id);
-            cloudIds.add(docId);
-
-            const cocokLokal =
-              mapByFbId.get(docId) ||
-              lokalSemua.find(item =>
-                !item.fbId &&
-                item.tanggal === dataCloud.tanggal &&
-                item.total === dataCloud.total &&
-                (item.namaPembeli || '-') === (dataCloud.namaPembeli || '-')
-              );
-
-            const recordBersih = {
-              tanggal: dataCloud.tanggal || '',
-              namaPembeli: dataCloud.namaPembeli || '-',
-              total: dataCloud.total || '0',
-              uang: dataCloud.uang || '0',
-              kembali: dataCloud.kembali || '0',
-              statusHutang: Boolean(dataCloud.statusHutang),
-              detail: Array.isArray(dataCloud.detail) ? dataCloud.detail : [],
-              fbId: docId,
-              is_synced: 1
-            };
-
-            if (cocokLokal) {
-              await db.riwayat.update(cocokLokal.id, recordBersih);
-            } else {
-              await db.riwayat.add(recordBersih);
-            }
-          }
-
-          for (const lokalItem of lokalSemua) {
-            if (lokalItem.fbId && !cloudIds.has(String(lokalItem.fbId))) {
-              await db.riwayat.delete(lokalItem.id);
-            }
-          }
-
-          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-          renderRiwayat();
-        } catch (e) {
-          console.error("Gagal memuat riwayat dari Firebase:", e);
-        }
-      }
-
-      function pantauRiwayatFirebase() {
-        if (!window.fbDB || !window.fbOnSnapshot) return;
-        if (unsubscribeRiwayat) unsubscribeRiwayat();
-
-        unsubscribeRiwayat = window.fbOnSnapshot(
-          window.fbCol(window.fbDB, "riwayat"),
-          async () => {
-            await muatRiwayatDariFirebase();
-          },
-          (err) => {
-            console.error("Listener riwayat terputus:", err);
-          }
-        );
-      }
-
-      async function muatDataAwal() {
-        try {
-          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-          renderRiwayat();
-
-          await muatProdukDariFirebase(false);
-          await muatRiwayatDariFirebase();
-          pantauRiwayatFirebase();
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-      // === POPUP PENCARIAN ===
-      const popupCari = document.getElementById('popupCari');
-      const bukaPencarianBtn = document.getElementById('bukaPencarianBtn');
-      const inputPopupCari = document.getElementById('inputPopupCari');
-
-      function bukaPopupCari() { popupCari.style.display = 'block'; setTimeout(() => inputPopupCari.focus(), 50); }
-      function tutupPopupCari() { popupCari.style.display = 'none'; inputPopupCari.value = ""; document.querySelector("#tabelHasil tbody").innerHTML = ""; }
-      bukaPencarianBtn.addEventListener('click', bukaPopupCari);
-      window.addEventListener('click', (event) => { if (event.target == popupCari) tutupPopupCari(); });
-
-      // === MANAJEMEN PRODUK (FULL ONLINE FIREBASE) ===
-      const modalProduk = document.getElementById("modalProduk"), listContainer = document.getElementById("listProdukContainer"), formContainer = document.getElementById("formProdukContainer"), cariProdukManajemenInput = document.getElementById("cariProdukManajemen");
-
-      function setDetailOpsionalVisible(tampil) {
-        const box = document.getElementById('detailOpsionalBox');
-        const btn = document.getElementById('btnToggleDetailOpsional');
-        if (!box || !btn) return;
-
-        if (tampil) {
-          box.classList.remove('hidden');
-          btn.textContent = '− Sembunyikan Harga Beli & Catatan';
-        } else {
-          box.classList.add('hidden');
-          btn.textContent = '+ Harga Beli & Catatan';
-        }
-      }
-
-      function toggleDetailOpsional() {
-        const box = document.getElementById('detailOpsionalBox');
-        if (!box) return;
-        const sedangTersembunyi = box.classList.contains('hidden');
-        setDetailOpsionalVisible(sedangTersembunyi);
-      }
-
-      function renderBulkPriceInputs(produk = {}) {
-        const container = document.getElementById('bulkPriceContainer');
-        container.innerHTML = '';
-        bulkKeys.forEach(bk => {
-          const nilai = produk[bk.key] ? formatRupiah(produk[bk.key]) : '';
-          const div = document.createElement('div');
-          div.className = 'form-group';
-          div.innerHTML = `<label for="harga-${bk.key}">${bk.label}</label><input type="text" inputmode="numeric" id="harga-${bk.key}" data-key="${bk.key}" value="${nilai}" placeholder="Kosongkan jika tidak ada" oninput="formatInputRibuan(this)">`;
-          container.appendChild(div);
-        });
-      }
-      function openManajemenProduk() {
-        cariProdukManajemenInput.value = '';
-        muatProdukDariFirebase(false);
-        showListProduk();
-        modalProduk.style.display = "block";
-      }
-      function closeManajemenProduk() { modalProduk.style.display = "none"; }
-      function showListProduk() { listContainer.classList.remove("hidden"); formContainer.classList.add("hidden"); }
-      function showFormTambahProduk() {
-        listContainer.classList.add("hidden"); formContainer.classList.remove("hidden");
-        document.getElementById('formProdukJudul').textContent = "Tambah Produk Baru";
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('namaProduk').value = '';
-        document.getElementById('barcodeProduk').value = '';
-        document.getElementById('isiProduk').value = '';
-        document.getElementById('hargaBeliProduk').value = '';
-        document.getElementById('catatanProduk').value = '';
-        setDetailOpsionalVisible(false);
-        renderBulkPriceInputs();
-        document.getElementById('varianContainer').innerHTML = '';
-        tambahInputVarian();
-      }
-
-      function renderTabelManajemen(filter = '') {
-        const tbody = document.querySelector("#tabelManajemenProduk tbody");
-        tbody.innerHTML = "";
-
-        if (filter.trim() === '') {
-          tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 25px; color: #64748b;"><i>🔍 Ketik nama produk atau barcode untuk mulai mencari...</i></td></tr>`;
-          return;
-        }
-
-        const filterLower = filter.toLowerCase();
-        const produkTampil = produkDB.filter(p => {
-          const namaCocok = String(p.nama || '').toLowerCase().includes(filterLower);
-          const barcodeCocok = p.barcode && String(p.barcode).includes(filter);
-          const varianCocok = p.variasi && p.variasi.some(v => v.barcode && String(v.barcode).includes(filter));
-          return namaCocok || barcodeCocok || varianCocok;
-        });
-
-        if (produkTampil.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: #64748b;"><i>Tidak ada produk yang cocok dengan pencarian</i></td></tr>`;
-          return;
-        }
-
-        produkTampil.forEach(produk => {
-          let varianHtml = '';
-          if (produk.hargaBeli > 0) varianHtml += `<div style="font-size: 12px; color: #b84a4a; margin-bottom: 4px; padding-left: 16px;"><strong>Modal: Rp ${formatRupiah(produk.hargaBeli)}</strong></div>`;
-          if (produk.catatan && String(produk.catatan).trim() !== '') varianHtml += `<div style="font-size: 12px; color: #475569; margin-bottom: 5px; padding-left: 16px;"><i>Catatan: ${produk.catatan}</i></div>`;
-          varianHtml += '<ul style="margin: 0; padding-left: 16px; font-size: 13px;">';
-          bulkKeys.forEach(bk => { if (produk[bk.key]) varianHtml += `<li>${bk.label} <span class="badge ${bk.badge}">${bk.label}</span>: <strong>Rp ${formatRupiah(produk[bk.key])}</strong></li>`; });
-          if (produk.variasi && produk.variasi.length > 0) produk.variasi.forEach(v => { varianHtml += `<li>${v.nama} <span class="badge badge-ecer">Ecer</span>: <strong>Rp ${formatRupiah(v.harga)}</strong></li>`; });
-          if (varianHtml === '<ul style="margin: 0; padding-left: 16px; font-size: 13px;">') varianHtml = '<small style="color: #64748b;"><i>Belum ada harga</i></small>'; else varianHtml += '</ul>';
-
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${produk.nama}</td><td>${varianHtml}</td><td><button onclick="showFormEditProduk('${produk.id}')">Edit</button><button class="button-hapus" onclick="hapusProduk('${produk.id}')">Hapus</button></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-
-      cariProdukManajemenInput.addEventListener('input', (e) => {
-        const query = e.target.value;
-        const tbody = document.querySelector("#tabelManajemenProduk tbody");
-
-        if (query.trim() === "") {
-          if (searchManajemenTimeout) clearTimeout(searchManajemenTimeout);
-          renderTabelManajemen("");
-          return;
-        }
-
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 15px; color: #64748b; font-style: italic;">⏳ Mencari data produk...</td></tr>`;
-        if (searchManajemenTimeout) clearTimeout(searchManajemenTimeout);
-        searchManajemenTimeout = setTimeout(() => {
-          renderTabelManajemen(query);
-        }, 400);
-      });
-
-      function tambahInputVarian(varian = { nama: '', barcode: '', harga: '' }) {
-        const container = document.getElementById("varianContainer");
-        const div = document.createElement("div");
-        div.className = "varian-item";
-        const hargaTampil = varian.harga ? formatRupiah(varian.harga) : '';
-
-        div.innerHTML = `
-          <input type="text" class="varian-nama" value="${varian.nama || ''}" placeholder="Nama varian (cth: pcs, bks)">
-          <input type="text" class="varian-barcode" value="${varian.barcode || ''}" placeholder="Barcode (opsional)">
-          <input type="text" inputmode="numeric" class="varian-harga" value="${hargaTampil}" placeholder="Harga ecer (cth: 3.000)" oninput="formatInputRibuan(this)">
-          <button type="button" class="button-hapus" onclick="this.parentElement.remove()">Hapus</button>
-        `;
-        container.appendChild(div);
-      }
-
-      function showFormEditProduk(id) {
-        const produk = produkDB.find(p => String(p.id) === String(id)); if (!produk) return;
-        listContainer.classList.add("hidden"); formContainer.classList.remove("hidden");
-        document.getElementById('formProdukJudul').textContent = "Edit Produk";
-        document.getElementById('editIndex').value = produk.id;
-        document.getElementById('namaProduk').value = produk.nama || '';
-        document.getElementById('barcodeProduk').value = produk.barcode || '';
-        document.getElementById('isiProduk').value = produk.isi || '';
-        document.getElementById('hargaBeliProduk').value = produk.hargaBeli ? formatRupiah(produk.hargaBeli) : '';
-        document.getElementById('catatanProduk').value = produk.catatan || '';
-        setDetailOpsionalVisible(Boolean(produk.hargaBeli > 0 || (produk.catatan && String(produk.catatan).trim() !== '')));
-        renderBulkPriceInputs(produk);
-        const varianContainer = document.getElementById('varianContainer'); varianContainer.innerHTML = '';
-        if (produk.variasi && produk.variasi.length > 0) produk.variasi.forEach(v => tambahInputVarian(v)); else tambahInputVarian();
-      }
-
-      async function simpanProduk() {
-        if (!pastikanOnlineDanFirebase()) return;
-
-        const id = document.getElementById('editIndex').value;
-        const nama = document.getElementById('namaProduk').value.trim();
-        if (!nama) return showNotif("Nama produk kosong!", "error");
-
-        const produkData = {
-          nama: nama,
-          hargaBeli: parseInt(document.getElementById('hargaBeliProduk').value.replace(/\D/g, '')) || 0,
-          catatan: document.getElementById('catatanProduk').value.trim(),
-          barcode: document.getElementById('barcodeProduk').value.trim(),
-          isi: document.getElementById('isiProduk').value.trim(),
-          variasi: []
-        };
-
-        const bulkInputs = document.querySelectorAll('#bulkPriceContainer input[data-key]');
-        bulkInputs.forEach(input => {
-          const key = input.dataset.key;
-          const value = parseInt(input.value.replace(/\D/g, ''));
-          if (key && value > 0) produkData[key] = value;
-        });
-
-        const varianItems = document.querySelectorAll('.varian-item');
-        varianItems.forEach(item => {
-          const namaVarian = item.querySelector('.varian-nama').value.trim();
-          const hargaVarian = parseInt(item.querySelector('.varian-harga').value.replace(/\D/g, ''));
-          if (namaVarian && hargaVarian > 0) {
-            produkData.variasi.push({
-              nama: namaVarian,
-              barcode: item.querySelector('.varian-barcode').value.trim(),
-              harga: hargaVarian
-            });
-          }
-        });
-
-        try {
-          if (id === "-1" || id === "default1") {
-            const docRef = await window.fbAddDoc(window.fbCol(window.fbDB, "produk"), produkData);
-            const produkTersimpan = { id: docRef.id, ...produkData };
-            if (id === "default1") {
-              produkDB = produkDB.filter(p => p.id !== "default1");
-            }
-            produkDB.push(produkTersimpan);
-            showNotif("Produk baru tersimpan langsung ke Firebase!", "success");
-          } else {
-            const docRef = window.fbDoc(window.fbDB, "produk", String(id));
-            await window.fbSetDoc(docRef, produkData);
-            const produkTersimpan = { id: String(id), ...produkData };
-            const indexLokal = produkDB.findIndex(p => String(p.id) === String(id));
-            if (indexLokal > -1) {
-              produkDB[indexLokal] = produkTersimpan;
-            } else {
-              produkDB.push(produkTersimpan);
-            }
-            showNotif("Perubahan produk tersimpan langsung ke Firebase!", "success");
-          }
-          renderTabelManajemen(cariProdukManajemenInput.value);
-          showListProduk();
-        } catch (e) {
-          showNotif("Gagal menyimpan ke Firebase: " + e.message, "error", 3500);
-        }
-      }
-
-      async function hapusProduk(id) {
-        if (!pastikanOnlineDanFirebase()) return;
-
-        const target = produkDB.find(p => String(p.id) === String(id));
-        const namaLabel = target ? target.nama : "produk ini";
-        if (!confirm(`Hapus "${namaLabel}" secara permanen dari Firebase?`)) return;
-
-        try {
-          if (String(id) !== "default1") {
-            const docRef = window.fbDoc(window.fbDB, "produk", String(id));
-            await window.fbDeleteDoc(docRef);
-          }
-          produkDB = produkDB.filter(p => String(p.id) !== String(id));
-          renderTabelManajemen(cariProdukManajemenInput.value);
-          showNotif(`"${namaLabel}" berhasil dihapus dari Firebase!`, "success");
-        } catch (e) {
-          showNotif("Gagal menghapus di Firebase: " + e.message, "error", 3500);
-        }
-      }
-
-      // === BACKUP & RESTORE ===
-      function openModalBackup() { document.getElementById("modalBackup").style.display = "block"; }
-      function closeModalBackup() { document.getElementById("modalBackup").style.display = "none"; }
-      function backupProduk() {
-        if (produkDB.length === 0) { showNotif("Tidak ada data produk.", "error"); return; }
-        const dataStr = JSON.stringify(produkDB, null, 2);
-        const dataBlob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(dataBlob);
-        const a = document.createElement("a"); a.href = url;
-        const tgl = new Date(); const tglStr = `${tgl.getFullYear()}-${String(tgl.getMonth() + 1).padStart(2, '0')}-${String(tgl.getDate()).padStart(2, '0')}`;
-        a.download = `produk_backup_${tglStr}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-      }
-      async function restoreProduk() {
-        const fileInput = document.getElementById('fileRestore'); const file = fileInput.files[0];
-        if (!file) { showNotif("Silakan pilih file backup.", "error"); return; }
-        if (confirm("Restore data? Ini hanya memuat daftar produk ke tampilan sesi ini tanpa mengubah dokumen di Firebase secara massal.")) {
-          const reader = new FileReader();
-          reader.onload = async function(e) {
-            try {
-              const data = JSON.parse(e.target.result);
-              if (!Array.isArray(data) || (data.length > 0 && typeof data[0].nama === 'undefined')) throw new Error("Format invalid.");
-              produkDB = data;
-              renderTabelManajemen(cariProdukManajemenInput.value);
-              showNotif("Data produk berhasil dimuat dari file!", "success");
-              closeModalBackup();
-              fileInput.value = '';
-            } catch (err) { showNotif("Gagal me-restore data: " + err.message, "error", 3500); }
-          };
-          reader.onerror = () => showNotif("Gagal membaca file.", "error"); reader.readAsText(file);
-        }
-      }
-
-      // === PENGATURAN ===
-      function bukaPengaturan() {
-        muatPengaturan();
-        document.getElementById('modalPengaturan').style.display = "block";
-      }
-      function tutupPengaturan() { document.getElementById('modalPengaturan').style.display = "none"; }
-
-      function simpanKodeAkses() {
-        const kode = document.getElementById('inputKodeAkses').value;
-        localStorage.setItem('kodeAksesNota', kode);
-      }
-
-      function getModeQrKodeAkses() {
-        return localStorage.getItem('cetakQrKodeAkses') || 'ya';
-      }
-
-      function renderStatusTombolNota() {
-        const mode = getModeQrKodeAkses();
-        const btnYa = document.getElementById('btnNotaDenganQr');
-        const btnTidak = document.getElementById('btnNotaTanpaQr');
-        if (!btnYa || !btnTidak) return;
-
-        if (mode === 'ya') {
-          btnYa.classList.remove('btn-pilihan-nonaktif');
-          btnYa.classList.add('btn-pilihan-aktif');
-          btnTidak.classList.remove('btn-pilihan-aktif');
-          btnTidak.classList.add('btn-pilihan-nonaktif');
-        } else {
-          btnTidak.classList.remove('btn-pilihan-nonaktif');
-          btnTidak.classList.add('btn-pilihan-aktif');
-          btnYa.classList.remove('btn-pilihan-aktif');
-          btnYa.classList.add('btn-pilihan-nonaktif');
-        }
-      }
-
-      function aturModeQrKodeAkses(mode) {
-        localStorage.setItem('cetakQrKodeAkses', mode === 'tidak' ? 'tidak' : 'ya');
-        renderStatusTombolNota();
-        showNotif(
-          mode === 'tidak'
-            ? "Nota diatur: Tanpa QR & Kode Akses"
-            : "Nota diatur: Pakai QR & Kode Akses",
-          "success",
-          1800
-        );
-      }
-
-      function muatPengaturan() {
-        const savedSize = localStorage.getItem('printerSize') || '58';
-        const selectSize = document.getElementById('ukuranKertas');
-        if (selectSize) selectSize.value = savedSize;
-
-        const savedKode = localStorage.getItem('kodeAksesNota') || '';
-        const inputKode = document.getElementById('inputKodeAkses');
-        if (inputKode) inputKode.value = savedKode;
-
-        renderStatusTombolNota();
-      }
-
-      function simpanPengaturanKertas() {
-        const val = document.getElementById('ukuranKertas').value;
-        localStorage.setItem('printerSize', val);
-        showNotif("Ukuran Kertas disimpan: " + val + "mm", "success", 1500);
-      }
-
-      async function hapusRiwayatLunas() {
-        if (!confirm("Hapus SEMUA riwayat yang sudah lunas? Data yang berstatus 'Hutang' akan tetap aman dan tidak terhapus.")) return;
-        try {
-          const lunas = riwayat.filter(r => !r.statusHutang);
-          let gagalCloud = 0;
-
-          for (let r of lunas) {
-            if (navigator.onLine && window.fbDB && r.fbId) {
-              try {
-                await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
-              } catch (err) {
-                gagalCloud++;
-              }
-            }
-            await db.riwayat.delete(r.id);
-          }
-
-          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-          currentPageRiwayat = 1;
-          renderRiwayat();
-
-          if (gagalCloud > 0) {
-            showNotif(`${lunas.length} transaksi lunas dihapus lokal (${gagalCloud} gagal di Firebase).`, "info", 3500);
-          } else {
-            showNotif(`${lunas.length} transaksi lunas berhasil dihapus.`, "success");
-          }
-          tutupPengaturan();
-        } catch (e) {
-          showNotif("Gagal menghapus riwayat: " + e.message, "error");
-        }
-      }
-
-      // === FUNGSI UTAMA KASIR ===
-      function toggleRiwayat() { const box = document.getElementById("riwayatBox"), btn = document.getElementById("btnRiwayat"); if (box.style.display === "none") { box.style.display = "block"; btn.textContent = "Tutup Riwayat"; } else { box.style.display = "none"; btn.textContent = "RIWAYAT"; } }
-      const bulkKeys = [ {key:"karton", label:"Karton", badge:"badge-karton"}, {key:"slop", label:"Slop", badge:"badge-slop"}, {key:"pak", label:"Pak", badge:"badge-pak"}, {key:"sak", label:"Sak", badge:"badge-sak"}, {key:"bal", label:"Bal", badge:"badge-bal"}, {key:"pcs", label:"Pcs", badge:"badge-pcs"} ];
-      function formatRupiah(n) { if (!n && n !== 0) return "0"; return Number(n).toLocaleString('id-ID'); }
-      function formatUangPembeli(el) { let angka = el.value.replace(/\D/g, ""); if (angka === "") { el.value = ""; hitungKembalian(); return; } el.value = Number(angka).toLocaleString("id-ID"); hitungKembalian(); }
-      function formatInputRibuan(el) { let pos = el.selectionStart; let pan = el.value.length; let ang = el.value.replace(/\D/g, ""); if (ang === "") { el.value = ""; return; } el.value = Number(ang).toLocaleString("id-ID"); pos = pos + (el.value.length - pan); el.setSelectionRange(pos, pos); }
-      function renderUangRekomendasi() {
-        const total = keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0); const rekomendasi = []; const nominalDasar = [50000, 100000, 200000, 500000]; nominalDasar.forEach(n => { if (n >= total) rekomendasi.push(n); });
-        const div = document.getElementById("uangRekomendasi"); if (!div) return; div.innerHTML = "";
-        rekomendasi.forEach(n => { const btn = document.createElement("button"); btn.textContent = "Rp " + formatRupiah(n); btn.onclick = () => { document.getElementById("uangPembeli").value = formatRupiah(n); hitungKembalian(); }; div.appendChild(btn); });
-      }
-      const notifContainer = document.getElementById("notifContainer");
-      function showNotif(message, type="info", duration=2500) { const div = document.createElement("div"); div.className = "notif " + type; const icon = document.createElement("div"); icon.className = "icon"; icon.textContent = type === "success" ? "✓" : (type === "error" ? "✕" : "i"); const txt = document.createElement("div"); txt.innerHTML = message; div.appendChild(icon); div.appendChild(txt); notifContainer.appendChild(div); setTimeout(() => { div.classList.add("fade-out"); div.addEventListener("animationend", () => { if (div.parentNode) div.parentNode.removeChild(div); }); }, duration); }
-
-      function renderHasilCari(filter="") {
-        const tbody = document.querySelector("#tabelHasil tbody"); tbody.innerHTML = "";
-        if (filter.trim() === "") return; const filterLower = filter.toLowerCase();
-        produkDB.forEach(p => {
-          const namaProdukLower = String(p.nama || '').toLowerCase(), varianCocok = p.variasi && p.variasi.some(v => String(v.nama || '').toLowerCase().includes(filterLower));
-          if (namaProdukLower.includes(filterLower) || varianCocok) {
-            const tr = document.createElement("tr"); tr.innerHTML = `<td><b>${p.nama}</b></td><td></td><td></td>`; tbody.appendChild(tr);
-            if (p.variasi) {
-              p.variasi.forEach(v => {
-                if (namaProdukLower.includes(filterLower) || String(v.nama || '').toLowerCase().includes(filterLower)) {
-                  const trVarian = document.createElement("tr"); trVarian.className = "produk-varian"; trVarian.innerHTML = `<td style="padding-left:25px;">${v.nama} <span class="badge badge-ecer">Ecer</span></td><td>Rp ${formatRupiah(v.harga)}</td><td><button onclick="tambahKeranjangDanTutup('${p.nama}','${v.nama}','ecer',${v.harga})">Tambah</button></td>`; tbody.appendChild(trVarian);
-                }
+            if (window.Dexie) {
+              const db = new Dexie('NokoBridgeTspl100DirDB');
+              db.version(1).stores({
+                settings: 'key',
+                jobs: 'id, createdAt'
               });
+              this.db = db;
+              this.storageMode = 'IndexedDB (Dexie)';
             }
-            bulkKeys.forEach(bk => {
-              if (typeof p[bk.key] !== "undefined") {
-                const hargaBulk = p[bk.key], labelIsi = p.isi ? ` (isi ${p.isi})` : ''; const trVarian = document.createElement("tr"); trVarian.className = "produk-varian"; trVarian.innerHTML = `<td style="padding-left:25px;">${bk.label}${labelIsi} <span class="badge ${bk.badge}">${bk.label}</span></td><td>Rp ${formatRupiah(hargaBulk)}</td><td><button onclick="tambahKeranjangDanTutup('${p.nama}','${bk.label}${labelIsi}','${bk.key}',${hargaBulk})">Tambah</button></td>`; tbody.appendChild(trVarian);
-              }
-            });
+          } catch (_) {
+            this.db = null;
+            this.storageMode = 'localStorage';
           }
-        });
-      }
+        },
 
-      function renderKeranjang() { const tbody = document.querySelector("#tabelKeranjang tbody"); tbody.innerHTML = ""; let total = 0; keranjang.forEach((item, index) => { const itemTotal = Number(item.harga) * Number(item.qty || 0); total += itemTotal; let badgeClass = "badge-ecer", badgeText = "Ecer"; const found = bulkKeys.find(b => b.key === item.jenis); if(found){ badgeClass = found.badge; badgeText = found.label; } const tr = document.createElement("tr"); tr.innerHTML = `<td>${item.nama}</td><td>${item.varian} <span class="badge ${badgeClass}">${badgeText}</span></td><td>Rp ${formatRupiah(item.harga)}</td><td><div class="qty-container"><button class="qty-btn button-sekunder" onclick="ubahQtyStep(${index}, -1)">-</button><input type="number" class="qty-input" min="1" value="${item.qty}" onchange="ubahQty(${index}, this.value)"><button class="qty-btn" onclick="ubahQtyStep(${index}, 1)">+</button></div></td><td>Rp ${formatRupiah(itemTotal)}</td><td><button class="button-hapus" onclick="hapusItem(${index})">Hapus</button></td>`; tbody.appendChild(tr); }); document.getElementById("totalBelanja").textContent = formatRupiah(total); renderUangRekomendasi(); hitungKembalian(); }
-      function tambahKeranjangDanTutup(nama, varian, jenis, harga) { tambahKeranjang(nama, varian, jenis, harga); tutupPopupCari(); }
-      function tambahKeranjang(nama, varian, jenis, harga) { harga = Number(harga); varian = String(varian || '').replace(/\(isi.*?\)/gi, "").trim(); const index = keranjang.findIndex(i => i.nama === nama && i.varian === varian && i.jenis === jenis); if (index > -1) { let item = keranjang.splice(index, 1)[0]; item.qty++; keranjang.unshift(item); } else { keranjang.unshift({ nama, varian, jenis, harga, qty: 1 }); } renderKeranjang(); showNotif(`${nama} ${varian ? "- " + varian : ""} ditambahkan`, "success", 2000); }
-      function hapusItem(i) { const removed = keranjang.splice(i, 1)[0]; renderKeranjang(); if (removed) showNotif(`${removed.nama} ${removed.varian} dihapus`, "info", 1800); }
-      function ubahQtyStep(index, amount) { const item = keranjang[index]; if (!item) return; let qtyBaru = item.qty + amount; ubahQty(index, qtyBaru); }
-      function ubahQty(i, val) { const qty = parseInt(val); keranjang[i].qty = (isNaN(qty) || qty < 1) ? 1 : qty; renderKeranjang(); showNotif("Jumlah diperbarui", "info", 1200); }
-      function hitungKembalian() {
-        const total = keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0); const uang = parseInt(document.getElementById("uangPembeli").value.replace(/\D/g, "")) || 0; const kembali = uang - total; const labelEl = document.getElementById("labelKembalian"); const kembaliEl = document.getElementById("kembalian"); const boxEl = document.querySelector(".info-kembalian");
-        if (kembali >= 0) { labelEl.textContent = "Kembalian:"; kembaliEl.textContent = formatRupiah(kembali); boxEl.classList.add("lunas"); boxEl.classList.remove("kurang"); } else { const kekurangan = -kembali; labelEl.textContent = "Kekurangan:"; kembaliEl.textContent = formatRupiah(kekurangan); boxEl.classList.add("kurang"); boxEl.classList.remove("lunas"); }
-      }
-
-      function renderRiwayat() {
-        const filter = document.getElementById('cariRiwayat').value.toLowerCase(); const tbody = document.querySelector("#tabelRiwayat tbody"); tbody.innerHTML = "";
-        const riwayatTampil = riwayat.filter(r => { const nama = String(r.namaPembeli || '').toLowerCase(); const tanggal = String(r.tanggal || '').toLowerCase(); const total = String(r.total || '').toLowerCase(); const status = r.statusHutang ? 'hutang' : ''; return nama.includes(filter) || tanggal.includes(filter) || total.includes(filter) || status.includes(filter); });
-        const totalPages = Math.ceil(riwayatTampil.length / itemsPerPageRiwayat) || 1; if (currentPageRiwayat > totalPages) currentPageRiwayat = totalPages;
-        const startIdx = (currentPageRiwayat - 1) * itemsPerPageRiwayat; const pagedData = riwayatTampil.slice(startIdx, startIdx + itemsPerPageRiwayat);
-        pagedData.forEach(r => {
-          const originalIndex = riwayat.findIndex(item => item === r); const tr = document.createElement("tr");
-          const badgeHutang = r.statusHutang ? '<span class="badge badge-hutang">Hutang</span>' : ''; const labelKolomTerakhir = r.statusHutang ? 'Hutang' : 'Kembali';
-          tr.innerHTML = `<td>${r.tanggal}</td><td>${r.namaPembeli || '-'} ${badgeHutang}</td><td>Rp ${r.total}</td><td>Rp ${r.uang}</td><td>Rp ${r.kembali} <small>(${labelKolomTerakhir})</small></td><td><button onclick="lihatDetail(${originalIndex})">Lihat</button><button onclick="editTransaksi(${originalIndex})">Edit</button><button class="button-hapus" onclick="hapusRiwayat(${originalIndex})">Hapus</button></td>`;
-          tbody.appendChild(tr);
-        });
-        document.getElementById("infoHalamanRiwayat").textContent = `Halaman ${currentPageRiwayat} dari ${totalPages}`; document.getElementById("btnPrevPage").disabled = (currentPageRiwayat === 1); document.getElementById("btnNextPage").disabled = (currentPageRiwayat === totalPages);
-      }
-      document.getElementById('cariRiwayat').addEventListener('input', () => { currentPageRiwayat = 1; renderRiwayat(); });
-      function ubahHalamanRiwayat(dir) { currentPageRiwayat += dir; renderRiwayat(); }
-
-      function lihatDetail(i) { const r = riwayat[i]; let detail = `=== Transaksi ===\n${r.tanggal}\n`; if(r.namaPembeli) detail += `Pelanggan: ${r.namaPembeli}\n`; detail += `\n`; r.detail.forEach(d => { detail += `${d.nama} - ${d.varian}\n${d.qty} x Rp${formatRupiah(d.harga)} = Rp${formatRupiah(d.harga*d.qty)}\n`; }); detail += `\nTotal: Rp ${r.total}\nUang: Rp ${r.uang}\nKembali: Rp ${r.kembali}\n`; alert(detail); }
-      function editTransaksi(i) { const r = riwayat[i]; idRiwayatEdit = r.id; keranjang = JSON.parse(JSON.stringify(r.detail)); renderKeranjang(); document.getElementById("uangPembeli").value = r.uang; document.getElementById("namaPembeli").value = r.namaPembeli || ''; hitungKembalian(); showNotif("Mode Edit: Silakan update uang pembeli.", "info", 2000); }
-
-      async function hapusRiwayat(index) {
-        const r = riwayat[index]; if (!r) return;
-        const konfirmasi = confirm(`Hapus riwayat?\n\nTanggal: ${r.tanggal}\nTotal: Rp ${r.total}`);
-        if (!konfirmasi) return;
-
-        try {
-          if (navigator.onLine && window.fbDB && r.fbId) {
-            await window.fbDeleteDoc(window.fbDoc(window.fbDB, "riwayat", String(r.fbId)));
-          }
-          await db.riwayat.delete(r.id);
-          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-          if (riwayat.length > 0 && currentPageRiwayat > Math.ceil(riwayat.length / itemsPerPageRiwayat)) {
-            currentPageRiwayat--;
-          }
-          renderRiwayat();
-          showNotif("Riwayat transaksi dihapus.", "info");
-        } catch (e) {
-          showNotif("Gagal menghapus riwayat di Firebase: " + e.message, "error", 3500);
-        }
-      }
-
-      inputPopupCari.addEventListener("input", (e) => {
-        const query = e.target.value;
-        const tbody = document.querySelector("#tabelHasil tbody");
-
-        if (query.trim() === "") {
-          tbody.innerHTML = "";
-          if (searchTimeout) clearTimeout(searchTimeout);
-          return;
-        }
-
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 15px; color: #64748b; font-style: italic;">⏳ Sedang mencari produk...</td></tr>`;
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          renderHasilCari(query);
-        }, 400);
-      });
-
-      async function cariDanTambahProdukByBarcode(barcode) {
-        if (!barcode) return false; const barcodeBersih = barcode.trim(); let pGrosir = produkDB.find(p => String(p.barcode || '') === barcodeBersih);
-        if (pGrosir) {
-          let harga = 0, jenis = 'pcs', label = 'Pcs';
-          for (let bk of bulkKeys) { if (pGrosir[bk.key]) { harga = pGrosir[bk.key]; jenis = bk.key; label = bk.label; break; } }
-          let infoIsi = pGrosir.isi ? ` (isi ${pGrosir.isi})` : ''; tambahKeranjang(pGrosir.nama, label + infoIsi, jenis, harga); return true;
-        }
-        let pEcer = produkDB.find(p => p.variasi && p.variasi.some(v => String(v.barcode || '') === barcodeBersih));
-        if (pEcer) { const v = pEcer.variasi.find(v => String(v.barcode || '') === barcodeBersih); if (v) { tambahKeranjang(pEcer.nama, v.nama, 'ecer', v.harga); return true; } }
-        return false;
-      }
-      async function handleGlobalScan(e) {
-        const targetTag = e.target.tagName.toLowerCase(); if (targetTag === 'input' || targetTag === 'textarea') return;
-        if (globalScanTimer) clearTimeout(globalScanTimer); globalScanTimer = setTimeout(() => { globalScanBuffer = ""; }, 250);
-        if (e.key === 'Enter') {
-          if (globalScanBuffer.length > 3) {
-            e.preventDefault(); const barcodeBersih = globalScanBuffer.trim(); const produkDitemukan = await cariDanTambahProdukByBarcode(barcodeBersih);
-            if (produkDitemukan) playSuara(true); else { playSuara(false); showNotif(`Barcode [${barcodeBersih}] tidak ditemukan`, "error", 3000); }
-            globalScanBuffer = "";
-          }
-        } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) { globalScanBuffer += e.key; }
-      }
-      inputPopupCari.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault(); const val = e.target.value.trim(); const produkDitemukan = await cariDanTambahProdukByBarcode(val);
-          if (produkDitemukan) { playSuara(true); showNotif("Scan berhasil","success"); tutupPopupCari(); } else { playSuara(false); showNotif("Barcode Kosong","error"); tutupPopupCari(); }
-        }
-      });
-
-      document.getElementById('btnSelesaiCetak').addEventListener('click', selesaikanDanCetak);
-
-      async function simpanTransaksi() {
-        const total = keranjang.reduce((sum, i) => sum + i.harga * i.qty, 0);
-        if (total <= 0) {
-          showNotif("Keranjang kosong!", "error");
-          return null;
-        }
-
-        const uangVal = document.getElementById("uangPembeli").value.replace(/\D/g, "");
-        const uang = parseInt(uangVal) || 0;
-        const selisih = uang - total;
-        const isHutang = uang < total;
-        const nilaiTampilan = formatRupiah(Math.abs(selisih));
-
-        if (isHutang) {
-          showNotif(`Disimpan sbg HUTANG: Rp ${nilaiTampilan}`, "error", 3500);
-        } else {
-          showNotif("Transaksi Berhasil!", "success");
-        }
-
-        let existingFbId = null;
-        if (idRiwayatEdit !== null) {
-          const lama = await db.riwayat.get(idRiwayatEdit);
-          if (lama && lama.fbId) existingFbId = lama.fbId;
-        }
-
-        const transaksi = {
-          tanggal: new Date().toLocaleString('id-ID', { hour12: false }),
-          namaPembeli: document.getElementById("namaPembeli").value.trim() || '-',
-          total: formatRupiah(total),
-          uang: formatRupiah(uang),
-          kembali: nilaiTampilan,
-          statusHutang: isHutang,
-          detail: JSON.parse(JSON.stringify(keranjang)),
-          fbId: existingFbId,
-          is_synced: 0
-        };
-
-        try {
-          let localId = idRiwayatEdit;
-          if (idRiwayatEdit !== null) {
-            await db.riwayat.update(idRiwayatEdit, transaksi);
-            idRiwayatEdit = null;
-          } else {
-            localId = await db.riwayat.add(transaksi);
-          }
-
-          if (navigator.onLine && window.fbDB) {
-            try {
-              const payloadFirebase = {
-                tanggal: transaksi.tanggal,
-                namaPembeli: transaksi.namaPembeli,
-                total: transaksi.total,
-                uang: transaksi.uang,
-                kembali: transaksi.kembali,
-                statusHutang: transaksi.statusHutang,
-                detail: transaksi.detail,
-                localId: localId
-              };
-
-              if (transaksi.fbId) {
-                await window.fbSetDoc(window.fbDoc(window.fbDB, "riwayat", String(transaksi.fbId)), payloadFirebase);
-              } else {
-                const docRef = await window.fbAddDoc(window.fbCol(window.fbDB, "riwayat"), payloadFirebase);
-                transaksi.fbId = docRef.id;
-              }
-
-              transaksi.is_synced = 1;
-              await db.riwayat.update(localId, { fbId: transaksi.fbId, is_synced: 1 });
-            } catch (fbErr) {
-              console.error("Gagal simpan riwayat ke Firebase:", fbErr);
-              showNotif("Tersimpan lokal, namun gagal kirim ke Firebase.", "info", 3500);
-            }
-          }
-
-          riwayat = await db.riwayat.orderBy('id').reverse().toArray();
-          renderRiwayat();
-          return transaksi;
-        } catch (e) {
-          showNotif("Gagal simpan: " + e, "error");
-          return null;
-        }
-      }
-
-      function resetKeranjang() { keranjang = []; idRiwayatEdit = null; renderKeranjang(); document.getElementById("namaPembeli").value = ''; document.getElementById("uangPembeli").value = ''; hitungKembalian(); }
-
-      async function selesaikanDanCetak() {
-        const transaksi = await simpanTransaksi();
-        if (transaksi) {
+        async loadSavedData() {
           try {
-            cetakRawBT(transaksi);
-            showNotif("Membuka aplikasi Print RawBT...", "info");
+            if (this.db) {
+              const savedProfile = await this.db.settings.get('tspl_100_dir_profile');
+              if (savedProfile?.value) {
+                this.profile = { ...this.profile, ...savedProfile.value };
+              }
+              const savedJobs = await this.db.jobs.orderBy('createdAt').reverse().toArray();
+              if (Array.isArray(savedJobs)) {
+                this.jobs = savedJobs;
+              }
+              return;
+            }
+          } catch (_) {
+            this.storageMode = 'localStorage';
+          }
+
+          const lsProfile = localStorage.getItem('nokobridge_tspl_100_dir_profile');
+          if (lsProfile) {
+            this.profile = { ...this.profile, ...JSON.parse(lsProfile) };
+          }
+          const lsJobs = localStorage.getItem('nokobridge_tspl_100_dir_jobs');
+          if (lsJobs) {
+            this.jobs = JSON.parse(lsJobs);
+          }
+        },
+
+        async saveProfile() {
+          const clean = JSON.parse(JSON.stringify(this.profile));
+          localStorage.setItem('nokobridge_tspl_100_dir_profile', JSON.stringify(clean));
+          if (this.db) {
+            try {
+              await this.db.settings.put({ key: 'tspl_100_dir_profile', value: clean });
+            } catch (_) {}
+          }
+        },
+
+        async persistJobs() {
+          const clean = JSON.parse(JSON.stringify(this.jobs));
+          localStorage.setItem('nokobridge_tspl_100_dir_jobs', JSON.stringify(clean));
+          if (this.db) {
+            try {
+              await this.db.jobs.clear();
+              if (clean.length > 0) {
+                await this.db.jobs.bulkPut(clean);
+              }
+            } catch (_) {}
+          }
+        },
+
+        async connectWebUsb() {
+          if (!navigator.usb || typeof navigator.usb.requestDevice !== 'function') {
+            this.showToast('WebUSB tidak didukung di browser ini. Gunakan Export .BIN / aplikasi bridge Android.');
+            return;
+          }
+
+          try {
+            const device = await navigator.usb.requestDevice({ filters: [] });
+            await device.open();
+            if (device.configuration === null) {
+              await device.selectConfiguration(1);
+            }
+
+            const iface = device.configuration.interfaces[0];
+            await device.claimInterface(iface.interfaceNumber);
+            const outEndpoint = iface.alternate.endpoints.find(ep => ep.direction === 'out');
+
+            if (!outEndpoint) {
+              throw new Error('Endpoint OUT USB tidak ditemukan');
+            }
+
+            this.usbDevice = device;
+            this.usbOutEndpoint = outEndpoint.endpointNumber;
+            this.showToast(`Terhubung ke USB: ${device.productName || 'Printer Label'}`);
           } catch (err) {
-            console.error("Gagal mencetak:", err);
-            showNotif("Error sistem cetak: " + err.message, "error", 4000);
+            this.showToast(`Koneksi WebUSB batal/gagal: ${err.message || err}`);
+          }
+        },
+
+        async sendOrQueuePrint() {
+          this.renderPreviewAndPayload();
+          await this.enqueuePrintJob();
+
+          if (this.usbDevice && this.usbOutEndpoint !== null) {
+            try {
+              const chunkSize = 16384;
+              for (let offset = 0; offset < this.currentPayloadBytes.length; offset += chunkSize) {
+                const slice = this.currentPayloadBytes.slice(offset, offset + chunkSize);
+                await this.usbDevice.transferOut(this.usbOutEndpoint, slice);
+              }
+              if (this.jobs[0]) {
+                this.jobs[0].status = 'printed';
+                await this.persistJobs();
+              }
+              this.showToast(`Data TSPL (DIRECTION ${this.profile.direction}) dikirim via WebUSB`);
+            } catch (err) {
+              this.showToast(`Gagal kirim via WebUSB: ${err.message || err}`);
+            }
+          }
+        },
+
+        enableManualTextFallback() {
+          this.sourceMode = 'pdf';
+          if (!this.pdfState.fileName) {
+            this.pdfState.fileName = 'resi-manual.pdf';
+            this.pdfState.numPages = 1;
+            this.pdfState.outputMode = 'text';
+            this.pdfState.statusText = 'Mode teks manual aktif';
+            if (!this.pdfState.extractedText) {
+              this.pdfState.extractedText = 'RESI LABEL 100x100MM\nAGEN WPA SHOP\nJATISARI, SENORI, TUBAN';
+            }
+          }
+          this.renderPreviewAndPayload();
+        },
+
+        handlePdfDrop(event) {
+          this.isDraggingPdf = false;
+          const file = event.dataTransfer?.files?.[0];
+          if (file) this.processPdfFile(file);
+        },
+
+        handlePdfFileSelect(event) {
+          const file = event.target?.files?.[0];
+          if (file) this.processPdfFile(file);
+        },
+
+        async processPdfFile(file) {
+          if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+            this.showToast('Pilih file berekstensi .pdf');
+            return;
+          }
+
+          this.sourceMode = 'pdf';
+          this.isRendering = true;
+          this.pdfState.fileName = file.name;
+          this.pdfState.fileSize = file.size;
+          this.pdfState.pageCanvases = [];
+          this.pdfState.extractedText = '';
+          this.pdfState.statusText = 'Membaca PDF...';
+
+          try {
+            if (!window.pdfjsLib || typeof window.pdfjsLib.getDocument !== 'function') {
+              throw new Error('PDF.js tidak tersedia');
+            }
+
+            const buffer = await file.arrayBuffer();
+            const pdfDoc = await window.pdfjsLib.getDocument({ data: buffer }).promise;
+            this.pdfState.numPages = pdfDoc.numPages;
+
+            const renderedPages = [];
+            const allLines = [];
+
+            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+              const page = await pdfDoc.getPage(pageNum);
+              const viewport = page.getViewport({ scale: 2.5 });
+              const canvas = document.createElement('canvas');
+              canvas.width = Math.round(viewport.width);
+              canvas.height = Math.round(viewport.height);
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              await page.render({ canvasContext: ctx, viewport }).promise;
+              renderedPages.push({ pageNum, canvas });
+
+              const textContent = await page.getTextContent();
+              const lines = this.groupTextItemsByLine(textContent.items || []);
+              allLines.push(`--- Halaman ${pageNum} ---`);
+              allLines.push(lines.join('\n'));
+            }
+
+            this.pdfState.pageCanvases = renderedPages;
+            this.pdfState.extractedText = allLines.join('\n').trim();
+            this.pdfState.statusText = `Berhasil dirender (${pdfDoc.numPages} hal)`;
+            this.showToast(`PDF "${file.name}" siap dicetak`);
+          } catch (_) {
+            this.pdfState.numPages = 1;
+            this.pdfState.statusText = 'Fallback mode aktif';
+            if (!this.pdfState.extractedText) {
+              this.pdfState.extractedText = `[Fallback PDF: ${file.name}]\nEdit atau tempel teks resi di sini.`;
+            }
+            this.showToast('PDF dimuat dengan mode fallback');
           } finally {
-            resetKeranjang();
+            this.isRendering = false;
+            this.renderPreviewAndPayload();
           }
-        }
-      }
+        },
 
-      function cetakRawBT(transaksi) {
-        const dataNota = buatDataESCPOS(transaksi);
-        let binary = '';
-        for (let i = 0; i < dataNota.length; i++) {
-          binary += String.fromCharCode(dataNota[i]);
-        }
-        const base64 = btoa(binary);
-        const intentUrl = `intent:base64,${base64}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;`;
-        window.location.href = intentUrl;
-      }
+        groupTextItemsByLine(items) {
+          const rows = [];
+          for (const item of items) {
+            const str = (item.str || '').trim();
+            if (!str) continue;
+            const y = Array.isArray(item.transform) ? item.transform[5] : 0;
+            const x = Array.isArray(item.transform) ? item.transform[4] : 0;
+            let row = rows.find(r => Math.abs(r.y - y) <= 5);
+            if (!row) {
+              row = { y, parts: [] };
+              rows.push(row);
+            }
+            row.parts.push({ x, str });
+          }
+          rows.sort((a, b) => b.y - a.y);
+          return rows.map(r => {
+            r.parts.sort((a, b) => a.x - b.x);
+            return r.parts.map(p => p.str).join(' ');
+          });
+        },
 
-      function buatDataESCPOS(transaksi) {
-        const encoder = new TextEncoder();
-        let commands = [];
-        function add(data) {
-          if (typeof data === 'string') commands.push(...encoder.encode(data));
-          else if (Array.isArray(data)) commands.push(...data);
-        }
+        parsePageRange(rangeStr, totalPages) {
+          if (!totalPages || totalPages < 1) return [1];
+          if (!rangeStr || !rangeStr.trim()) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+          }
+          const pages = new Set();
+          for (const part of rangeStr.split(',').map(s => s.trim()).filter(Boolean)) {
+            if (part.includes('-')) {
+              const [a, b] = part.split('-').map(n => parseInt(n.trim(), 10));
+              if (!isNaN(a) && !isNaN(b)) {
+                const start = Math.max(1, Math.min(a, b));
+                const end = Math.min(totalPages, Math.max(a, b));
+                for (let p = start; p <= end; p++) pages.add(p);
+              }
+            } else {
+              const num = parseInt(part, 10);
+              if (!isNaN(num) && num >= 1 && num <= totalPages) pages.add(num);
+            }
+          }
+          const sorted = Array.from(pages).sort((a, b) => a - b);
+          return sorted.length > 0 ? sorted : [1];
+        },
 
-        const sizeSetting = localStorage.getItem('printerSize') || '58';
-        const lebarKertas = sizeSetting === '80' ? 48 : 32;
-        const garisPutus = "-".repeat(lebarKertas);
+        scheduleRender() {
+          clearTimeout(this.renderTimer);
+          this.renderTimer = setTimeout(() => {
+            this.renderPreviewAndPayload();
+          }, 90);
+        },
 
-        function formatItem(item) {
-          let teksNama = `${item.nama} ${item.varian}`;
-          if (teksNama.length > lebarKertas) teksNama = teksNama.substring(0, lebarKertas);
+        renderPreviewAndPayload() {
+          const container = document.getElementById('preview-pages-container');
+          if (!container) return;
+          container.innerHTML = '';
 
-          const hargaQty = `${item.qty} x ${formatRupiah(item.harga)}`;
-          const total = formatRupiah(item.harga * item.qty);
+          const wMm = Math.max(25, Math.min(104, Number(this.profile.labelWidthMm) || 100));
+          const hMm = Math.max(20, Math.min(300, Number(this.profile.labelHeightMm) || 100));
+          const gapMm = Math.max(0, Number(this.profile.gapMm) || 3);
+          const density = Math.max(0, Math.min(15, Number(this.profile.density) || 10));
+          const scaleFactor = Math.max(0.3, Math.min(1.5, (Number(this.profile.fillScalePct) || 95) / 100));
+          const bottomMargin = Math.max(0, Math.min(120, Number(this.profile.bottomMarginDots) || 0));
+          const validDirs = ['1,0', '0,0', '1,1', '0,1'];
+          const dirCmd = validDirs.includes(this.profile.direction) ? this.profile.direction : '1,0';
 
-          let line1 = teksNama.padEnd(lebarKertas) + '\n';
+          const fullWidthDots = wMm * 8;
+          const fullHeightDots = hMm * 8;
+          const usableHeightDots = Math.max(16, fullHeightDots - (this.profile.verticalAlign === 'bottom' ? bottomMargin : 0));
+          const maxWidthDots = Math.round(fullWidthDots * scaleFactor);
+          const maxHeightDots = Math.round(usableHeightDots * scaleFactor);
 
-          const leftStr = "  " + hargaQty;
-          const rightStr = total;
-          let pad = lebarKertas - leftStr.length - rightStr.length;
-          if (pad < 1) pad = 1;
+          const byteChunks = [];
+          const logLines = [];
 
-          let line2 = leftStr + " ".repeat(pad) + rightStr + '\n';
-          return line1 + line2;
-        }
+          const pushCmd = (cmdStr) => {
+            logLines.push(cmdStr.trim());
+            byteChunks.push(new TextEncoder().encode(cmdStr + '\r\n'));
+          };
 
-        const ESC = 0x1B; const GS = 0x1D; const NL = '\n';
-        add([ESC, 0x40]);
-        add([ESC, 0x61, 1]); add([ESC, 0x45, 1]); add([GS, 0x21, 0x11]);
-        add("Wpa Shop" + NL);
-        add([GS, 0x21, 0x0]); add([ESC, 0x45, 0]);
-        add("Jatisari Senori Tuban" + NL); add("Wa: 0852-3480-3820" + NL + NL);
-        add([ESC, 0x61, 0]);
-        add(`Tanggal  : ${transaksi.tanggal}` + NL); add(`Pelanggan: ${transaksi.namaPembeli}` + NL); add(garisPutus + NL);
-        for (const item of transaksi.detail) { add(formatItem(item)); }
-        add(garisPutus + NL);
+          if (this.sourceMode === 'pdf') {
+            const totalPages = Math.max(1, this.pdfState.numPages || 1);
+            this.selectedPageNumbers =
+              this.pdfState.rangeMode === 'custom'
+                ? this.parsePageRange(this.pdfState.customRange, totalPages)
+                : Array.from({ length: totalPages }, (_, i) => i + 1);
 
-        add([ESC, 0x61, 2]);
-        add(`Total   : Rp ${transaksi.total}` + NL); add(`Bayar   : Rp ${transaksi.uang}` + NL); add(`Kembali : Rp ${transaksi.kembali}` + NL + NL);
+            if (this.pdfState.outputMode === 'bitmap' && this.pdfState.pageCanvases.length > 0) {
+              for (const pageNum of this.selectedPageNumbers) {
+                const found = this.pdfState.pageCanvases.find(p => p.pageNum === pageNum);
+                if (!found) continue;
 
-        add([ESC, 0x61, 1]); add("Terima kasih telah berbelanja!" + NL + NL + NL);
+                const monoCanvas = this.fitCanvasToLabel(found.canvas, maxWidthDots, maxHeightDots);
+                const card = document.createElement('div');
+                card.className = 'bg-white';
+                monoCanvas.className = 'w-full h-auto block';
+                card.appendChild(monoCanvas);
+                container.appendChild(card);
 
-        if (getModeQrKodeAkses() === 'ya') {
-          const kodeAkses = localStorage.getItem('kodeAksesNota') || '';
-          if (kodeAkses.trim() !== "") {
-            add([ESC, 0x45, 1]);
-            add(`KODE AKSES: ${kodeAkses}` + NL);
-            add([ESC, 0x45, 0]);
-            add(NL);
+                pushCmd(`SIZE ${wMm} mm,${hMm} mm`);
+                pushCmd(`GAP ${gapMm} mm,0 mm`);
+                pushCmd(`DENSITY ${density}`);
+                pushCmd(`DIRECTION ${dirCmd}`);
+                pushCmd('CLS');
+
+                const xPos = 0;
+                const yPos = this.profile.verticalAlign === 'bottom'
+                  ? Math.max(0, fullHeightDots - monoCanvas.height - bottomMargin)
+                  : 0;
+
+                const { widthBytes, heightDots, bitmapData } = this.canvasToTsplBitmap(monoCanvas);
+                pushCmd(`BITMAP ${xPos},${yPos},${widthBytes},${heightDots},1,`);
+                byteChunks.push(bitmapData);
+                byteChunks.push(new TextEncoder().encode('\r\n'));
+                pushCmd('PRINT 1,1');
+              }
+            } else {
+              const lines = (this.pdfState.extractedText || `PDF: ${this.pdfState.fileName || 'Label'}`)
+                .split('\n')
+                .map(l => l.trim())
+                .filter(Boolean)
+                .slice(0, 14);
+
+              const pre = document.createElement('pre');
+              pre.className = 'p-2 text-sm font-bold font-mono text-slate-900 whitespace-pre-wrap leading-normal';
+              pre.textContent = lines.join('\n');
+              container.appendChild(pre);
+
+              pushCmd(`SIZE ${wMm} mm,${hMm} mm`);
+              pushCmd(`GAP ${gapMm} mm,0 mm`);
+              pushCmd(`DENSITY ${density}`);
+              pushCmd(`DIRECTION ${dirCmd}`);
+              pushCmd('CLS');
+
+              const lineStep = 54;
+              const totalTextHeight = lines.length * lineStep;
+              let yDot = this.profile.verticalAlign === 'bottom'
+                ? Math.max(0, fullHeightDots - totalTextHeight - bottomMargin)
+                : 0;
+              for (const line of lines) {
+                const safe = line.replace(/"/g, "'").slice(0, 28);
+                pushCmd(`TEXT 0,${yDot},"3",0,2,2,"${safe}"`);
+                yDot += lineStep;
+              }
+              pushCmd('PRINT 1,1');
+            }
+          } else {
+            this.selectedPageNumbers = [1];
+            const previewText = `${this.textDoc.title}\n${this.textDoc.body}`;
+            const pre = document.createElement('pre');
+            pre.className = 'p-2 text-sm font-bold font-mono text-slate-900 whitespace-pre-wrap leading-normal';
+            pre.textContent = previewText;
+            container.appendChild(pre);
+
+            pushCmd(`SIZE ${wMm} mm,${hMm} mm`);
+            pushCmd(`GAP ${gapMm} mm,0 mm`);
+            pushCmd(`DENSITY ${density}`);
+            pushCmd(`DIRECTION ${dirCmd}`);
+            pushCmd('CLS');
+
+            const allLines = [this.textDoc.title, ...this.textDoc.body.split('\n')].filter(l => l.trim().length > 0);
+            const lineHeights = allLines.map((_, idx) => (idx === 0 ? 80 : 54));
+            const totalTextHeight = lineHeights.reduce((sum, h) => sum + h, 0);
+
+            let yDot = this.profile.verticalAlign === 'bottom'
+              ? Math.max(0, fullHeightDots - totalTextHeight - bottomMargin)
+              : 0;
+            allLines.forEach((line, idx) => {
+              const safe = line.replace(/"/g, "'").slice(0, 26);
+              const multX = idx === 0 ? 3 : 2;
+              const multY = idx === 0 ? 3 : 2;
+              pushCmd(`TEXT 0,${yDot},"3",0,${multX},${multY},"${safe}"`);
+              yDot += lineHeights[idx];
+            });
+            pushCmd('PRINT 1,1');
           }
 
-          const qrData = "https://wpashop.com";
-          const qrDataLen = qrData.length + 3;
-          const pL = qrDataLen % 256;
-          const pH = Math.floor(qrDataLen / 256);
+          this.currentPayloadBytes = this.concatUint8Arrays(byteChunks);
+          this.tsplCommandPreview = logLines.join('\n');
+        },
 
-          add([ESC, 0x61, 1]);
-          add([GS, (0x28), 0x6b, 0x04, 0x00, 0x31, 0x41, 0x30, 0x00]);
-          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x43, 0x06]);
-          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x45, 0x30]);
-          add([GS, 0x28, 0x6b, pL, pH, 0x31, 0x50, 0x30]);
-          add(qrData);
-          add([GS, 0x28, 0x6b, 0x03, 0x00, 0x31, 0x51, 0x30]);
+        fitCanvasToLabel(srcCanvas, maxW, maxH) {
+          const scale = Math.min(maxW / Math.max(1, srcCanvas.width), maxH / Math.max(1, srcCanvas.height));
+          const targetW = Math.max(16, Math.floor((srcCanvas.width * scale) / 8) * 8);
+          const targetH = Math.max(16, Math.round(srcCanvas.height * scale));
 
-          add(NL + "Kunjungi wpashop.com" + NL + NL);
+          const canvas = document.createElement('canvas');
+          canvas.width = targetW;
+          canvas.height = targetH;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, targetW, targetH);
+          ctx.drawImage(srcCanvas, 0, 0, targetW, targetH);
+
+          const img = ctx.getImageData(0, 0, targetW, targetH);
+          const d = img.data;
+          const threshold = Number(this.profile.ditherThreshold) || 165;
+          for (let i = 0; i < d.length; i += 4) {
+            const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+            const v = lum < threshold ? 10 : 255;
+            d[i] = v;
+            d[i + 1] = v;
+            d[i + 2] = v;
+            d[i + 3] = 255;
+          }
+          ctx.putImageData(img, 0, 0);
+          return canvas;
+        },
+
+        canvasToTsplBitmap(monoCanvas) {
+          const w = monoCanvas.width;
+          const h = monoCanvas.height;
+          const widthBytes = Math.ceil(w / 8);
+          const pixels = monoCanvas.getContext('2d').getImageData(0, 0, w, h).data;
+          const bitmapData = new Uint8Array(widthBytes * h);
+          bitmapData.fill(0xff);
+
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const lum = pixels[(y * w + x) * 4];
+              if (lum < 128) {
+                const byteIndex = y * widthBytes + Math.floor(x / 8);
+                const bitMask = 1 << (7 - (x % 8));
+                bitmapData[byteIndex] &= ~bitMask;
+              }
+            }
+          }
+
+          return { widthBytes, heightDots: h, bitmapData };
+        },
+
+        concatUint8Arrays(arrays) {
+          const total = arrays.reduce((acc, a) => acc + a.length, 0);
+          const out = new Uint8Array(total);
+          let pos = 0;
+          for (const a of arrays) {
+            out.set(a, pos);
+            pos += a.length;
+          }
+          return out;
+        },
+
+        async enqueuePrintJob() {
+          this.renderPreviewAndPayload();
+          const title = this.sourceMode === 'pdf'
+            ? (this.pdfState.fileName || 'Label PDF')
+            : (this.textDoc.title || 'Label TSPL');
+          const modeLabel = this.sourceMode === 'pdf'
+            ? `PDF (${this.pdfState.outputMode})`
+            : 'TSPL Text';
+
+          const job = {
+            id: 'tspl100d_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+            title,
+            modeLabel,
+            labelSize: `${this.profile.labelWidthMm}×${this.profile.labelHeightMm}mm`,
+            direction: this.profile.direction,
+            payloadBytes: this.currentPayloadBytes.length,
+            status: 'queued',
+            createdAt: new Date().toLocaleString('id-ID')
+          };
+
+          this.jobs.unshift(job);
+          await this.persistJobs();
+          this.showToast(`"${title}" masuk antrean (DIRECTION ${this.profile.direction})`);
+        },
+
+        async processNextJob() {
+          const idx = this.jobs.findIndex(j => j.status === 'queued');
+          if (idx === -1) return;
+          this.jobs[idx].status = 'printing';
+          await this.persistJobs();
+          setTimeout(async () => {
+            if (this.jobs[idx]) {
+              this.jobs[idx].status = 'printed';
+              await this.persistJobs();
+              this.showToast(`Selesai diproses: ${this.jobs[idx].title}`);
+            }
+          }, 400);
+        },
+
+        async deleteJob(id) {
+          this.jobs = this.jobs.filter(j => j.id !== id);
+          await this.persistJobs();
+        },
+
+        async clearJobs() {
+          this.jobs = [];
+          await this.persistJobs();
+          this.showToast('Antrean dibersihkan');
+        },
+
+        downloadPayload(ext) {
+          this.renderPreviewAndPayload();
+          const base = (this.sourceMode === 'pdf' ? (this.pdfState.fileName || 'resi-100x100') : (this.textDoc.title || 'resi-100x100'))
+            .replace(/[^a-zA-Z0-9_-]+/g, '_')
+            .toLowerCase();
+
+          const blob = ext === 'bin'
+            ? new Blob([this.currentPayloadBytes], { type: 'application/octet-stream' })
+            : new Blob([this.tsplCommandPreview], { type: 'text/plain;charset=utf-8' });
+
+          const filename = ext === 'bin' ? `${base}.bin` : `${base}.tspl.txt`;
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          this.showToast(`Mengunduh ${filename}`);
+        },
+
+        async copyCommandText() {
+          try {
+            await navigator.clipboard.writeText(this.tsplCommandPreview);
+            this.showToast('Perintah TSPL disalin');
+          } catch (_) {
+            this.showToast('Gagal menyalin otomatis');
+          }
+        },
+
+        formatBytes(bytes) {
+          if (!bytes) return '0 B';
+          const units = ['B', 'KB', 'MB'];
+          const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+          return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
+        },
+
+        showToast(message) {
+          this.toast.message = message;
+          this.toast.show = true;
+          clearTimeout(this._toastTimer);
+          this._toastTimer = setTimeout(() => {
+            this.toast.show = false;
+          }, 2600);
         }
-
-        add([GS, 0x56, 66, 0]);
-
-        return new Uint8Array(commands);
-      }
-    </script>
-    <script>
-      if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error: ', err)); }); }
-    </script>
-  </body>
+      };
+    }
+  </script>
+</body>
 </html>
